@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: elixir if
+# key: eif
+# expand-env: ((yas-indent-line 'fixed))
+# group: eex
+# condition: (member (file-name-extension buffer-file-name) '("leex" "eex"))
+# --
+<%= if ${1:condition} do %>
+  $0
+<% else %>
+<% end %>

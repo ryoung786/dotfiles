@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Logger.info
+# key: linfo
+# --
+Logger.info("[xxx] $1 #{inspect($0)}")

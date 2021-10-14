@@ -1,0 +1,39 @@
+.tool-versions
+.DS_Store
+.vscode
+*.code-workspace
+.gitconfig
+
+# emacs temp files
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+.org-id-locations
+*_archive
+# flymake-mode
+*_flymake.*
+/eshell/history
+/eshell/lastdir
+/elpa/
+*.rel
+/auto/
+.cask/
+dist/
+flycheck_*.el
+.projectile
+.dir-locals.el
+/network-security.data
+
+# elixir LS
+/.elixir_ls/
+
+*-emacs-elixir-format*
+.adserver.secrets
+
+# megaphone stuff
+notary

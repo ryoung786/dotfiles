@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: IO.inspect
+# key: iox
+# --
+IO.inspect($1, label: "[xxx] $0")
