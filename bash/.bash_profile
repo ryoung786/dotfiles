@@ -9,11 +9,6 @@ if [ -f '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion
 
 export PATH=~/.local/bin:$PATH
 
-# gcloud
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc"
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc"
-
-
 
 if [ -f ~/.bashrc ]; then
 	. ~/.bashrc

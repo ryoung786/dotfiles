@@ -19,6 +19,7 @@
 ;; this needs to be early on for some reason :shrug:
 (use-package exec-path-from-shell
   :init (when (memq window-system '(mac ns x))
+          (setq exec-path-from-shell-arguments '("-l"))
           (exec-path-from-shell-initialize)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -27,7 +28,7 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(add-to-list 'default-frame-alist '(font . "Inconsolata-21"))
+(add-to-list 'default-frame-alist '(font . "Inconsolata-18"))
 
 ;; osx specific things
 (setq mac-command-modifier 'meta)
@@ -95,6 +96,8 @@
   :bind-keymap ("C-c p" . projectile-command-map)
   :init (setq projectile-switch-project-action #'projectile-dired))
 
+(use-package ripgrep)
+
 (use-package counsel)
 
 (use-package ivy
@@ -106,7 +109,8 @@
   :config
   (setq ivy-use-virtual-buffers t)
   (setq ivy-height 7)
-  (setq ivy-count-format "%d/%d "))
+  (setq ivy-count-format "%d/%d ")
+  (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder))))
 
 (use-package ivy-rich
   :hook (ivy-mode . ivy-rich-mode)
@@ -118,6 +122,9 @@
 
 (use-package all-the-icons-ivy
   :init (add-hook 'after-init-hook 'all-the-icons-ivy-setup))
+
+(use-package orderless
+  :custom (completion-styles '(orderless)))
 
 (use-package which-key
   :diminish which-key-mode
@@ -136,7 +143,8 @@
   :hook ((go-mode . lsp)
          (ruby-mode . lsp)
          (java-mode . lsp)
-         (elixir-mode . lsp))
+         (elixir-mode . lsp)
+         (scala-mode . lsp))
   :config
   (setq lsp-ui-doc-enable nil
         lsp-file-watch-threshold 10000)
@@ -153,8 +161,9 @@
 
 (use-package company
   :diminish
-  :config (progn
-            (add-hook 'after-init-hook 'global-company-mode)))
+  :config
+  (add-hook 'after-init-hook 'global-company-mode)
+  (setq lsp-completion-provider :capf))
 (use-package company-box
   :diminish
   :hook (company-mode . company-box-mode))
@@ -257,6 +266,20 @@
 (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
 
 (setq ruby-insert-encoding-magic-comment nil)
+
+(use-package scala-mode
+  :mode "\\.s\\(cala\\|bt\\)$")
+(use-package sbt-mode
+  :commands sbt-start sbt-command
+  :custom (sbt:default-command "testQuick")
+  :config
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map))
+(use-package lsp-metals)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Custom Functions
@@ -420,7 +443,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(scroll-bar-mode nil)
