@@ -133,9 +133,6 @@
   (setq which-key-sort-order 'which-key-key-order-alpha
         which-key-idle-secondary-delay 1.0))
 
-(load-file "~/.emacs.d/init-tree-sitter.el")
-(require 'init-tree-sitter)
-
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :diminish lsp-mode
@@ -232,6 +229,8 @@
   :mode
   (("\\.js" . rjsx-mode)
    ("\\.tsx" . rjsx-mode)))
+
+(use-package yaml-mode)
 
 (use-package prettier-js
   :hook ((js-mode . prettier-js-mode)
@@ -443,7 +442,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(scroll-bar-mode nil)
@@ -469,6 +468,7 @@
      (340 . "#2790C3")
      (360 . "#66D9EF")))
  '(vc-annotate-very-old-color nil)
+ '(warning-suppress-types '((comp)))
  '(weechat-color-list
    '(unspecified "#272822" "#3C3D37" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
  '(ws-butler-global-mode t)

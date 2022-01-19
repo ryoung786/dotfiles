@@ -22,7 +22,6 @@
   (hook/tree-sitter-common))
 
 (use-package tree-sitter
-  :ensure t
   :diminish
   :hook ((elixir-mode . hook/elixir-tree-sitter))
   :custom-face
@@ -35,10 +34,7 @@
   (setq tree-sitter-debug-jump-buttons t))
 
 (use-package tree-sitter-langs
-  :ensure t
   :after tree-sitter
-  ;; :config
-  ;; (add-to-list 'tree-sitter-major-mode-language-alist '(elixir-mode . elixir))
   )
 
 (provide 'init-tree-sitter)

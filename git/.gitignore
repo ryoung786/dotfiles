@@ -37,3 +37,7 @@ flycheck_*.el
 
 # megaphone stuff
 notary
+
+# scala lsp
+.bloop
+.metals

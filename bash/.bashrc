@@ -15,11 +15,11 @@ export -f onport
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 # megaphone golang
-export GOPROXY=https://gomodproxy.spotify.net
-export GOPRIVATE=github.com/panoplymedia
-export GONOSUMDB=ghe.spotify.net
-export GO111MODULE=on
-export GPG_TTY=$(tty)
+# export GOPROXY=https://gomodproxy.spotify.net
+# export GOPRIVATE=github.com/panoplymedia
+# export GONOSUMDB=ghe.spotify.net
+# export GO111MODULE=on
+# export GPG_TTY=$(tty)
 
 export EDITOR="emacsclient -t -a ''"
 export SPOTIFY_DOMAIN="guc3.spotify.net"
