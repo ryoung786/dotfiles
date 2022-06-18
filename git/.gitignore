@@ -1,4 +1,4 @@
-.tool-versions
+# .tool-versions
 .DS_Store
 .vscode
 *.code-workspace
@@ -30,14 +30,18 @@ flycheck_*.el
 /network-security.data
 
 # elixir LS
+.elixir_ls/
 /.elixir_ls/
+*.beam
 
 *-emacs-elixir-format*
 .adserver.secrets
 
-# megaphone stuff
-notary
-
 # scala lsp
 .bloop
 .metals
+
+yarn.lock
+node_modules/
+
+.docker.env

@@ -3,7 +3,7 @@
 # key: efor
 # expand-env: ((yas-indent-line 'fixed))
 # group: eex
-# condition: (member (file-name-extension buffer-file-name) '("leex" "eex"))
+# condition: (member (file-name-extension buffer-file-name) '("leex" "eex" "heex"))
 # --
 <%= for $1 <- $2 do %>
   $0

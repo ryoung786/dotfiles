@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: elixir form
+# key: eoform
+# expand-env: ((yas-indent-line 'fixed))
+# group: eex
+# condition: (member (file-name-extension buffer-file-name) '("leex" "eex"))
+# --
+<%= f = form_for ${1:@changeset}, "#", [phx_submit: "${2:post}", phx_change: "${3:validate}", multipart: true] %>
+  $0
+  <%= submit "${4:Submit}" %>
+</form>

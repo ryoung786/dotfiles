@@ -1,11 +1,16 @@
 # -*- mode: snippet -*-
 # name: elixir form
-# key: eform
+# key: .form
 # expand-env: ((yas-indent-line 'fixed))
 # group: eex
-# condition: (member (file-name-extension buffer-file-name) '("leex" "eex"))
+# condition: (member (file-name-extension buffer-file-name) '("heex"))
 # --
-<%= f = form_for ${1:@changeset}, "#", [phx_submit: "${2:post}", phx_change: "${3:validate}", multipart: true] %>
+<.form let={f}
+      for={${1:@changeset}}
+      id="${2:form-id}"
+      phx-target={@myself}
+      phx-change="validate"
+      phx-submit="save">
   $0
-  <%= submit "${4:Submit}" %>
-</form>
+  <%= submit "${4:Submit}" phx_disable_with: "Saving..." %>
+</.form>

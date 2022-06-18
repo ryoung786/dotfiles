@@ -19,7 +19,7 @@
 ;; this needs to be early on for some reason :shrug:
 (use-package exec-path-from-shell
   :init (when (memq window-system '(mac ns x))
-          (setq exec-path-from-shell-arguments '("-l"))
+          ;; (setq exec-path-from-shell-arguments '("-l"))
           (exec-path-from-shell-initialize)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -27,6 +27,7 @@
 
 
 (fset 'yes-or-no-p 'y-or-n-p)
+(setq initial-scratch-message ";; ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┬ ┬\n;; ╚═╗│  ├┬┘├─┤ │ │  ├─┤\n;; ╚═╝└─┘┴└─┴ ┴ ┴ └─┘┴ ┴\n")
 
 (add-to-list 'default-frame-alist '(font . "Inconsolata-18"))
 
@@ -77,11 +78,13 @@
   :hook (lsp-after-open . lsp-origami-try-enable))
 
 (use-package markdown-mode
-  :mode ("\\.md\\'" . gfm-mode)
+  :mode ("\\.\\(live\\)?md\\'" . gfm-mode)
   :commands (markdown-mode gfm-mode)
   :bind ("C-c C-c l" . my-markdown-preview)
   :config
+  (add-to-list 'markdown-code-lang-modes '("json" . js-mode))
   (setq markdown-command "pandoc -t html5"
+        markdown-fontify-code-blocks-natively t
         markdown-css-paths '("~/.emacs.d/markdown.css")))
 (use-package grip-mode
   :bind (:map markdown-mode-command-map
@@ -145,7 +148,7 @@
   :config
   (setq lsp-ui-doc-enable nil
         lsp-file-watch-threshold 10000)
-  :init (add-to-list 'exec-path "~/dev/elixir-ls"))
+  :init (add-to-list 'exec-path "~/dev/elixir-ls/release"))
 
 (use-package lsp-ui
   :requires lsp-mode flycheck
@@ -176,7 +179,7 @@
   (("\\html\\.[hl]?eex$" . web-mode)
    ("\\.html$" . web-mode))
   :config
-  (setq web-mode-engines-alist '(("elixir" . "\\.html\\[lh]?.eex\\'"))
+  (setq web-mode-engines-alist '(("elixir" . "\\.html\\.[lh]?.eex\\'"))
         web-mode-extra-auto-pairs '(("elixir" . (("{{ " . " }}"))))
         web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
@@ -192,6 +195,10 @@
   :bind (("C-c C-n" . flycheck-next-error)
          ("C-c C-p" . flycheck-previous-error))
   :hook (elixir-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t))))
+
+(use-package direnv
+ :config (direnv-mode)
+ :custom (direnv-always-show-summary nil))
 
 (use-package org
   :bind (("C-c j l" . insert-jira-link)))
@@ -442,7 +449,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(scroll-bar-mode nil)
@@ -494,4 +501,5 @@
  '(tree-sitter-hl-face:operator ((t)))
  '(tree-sitter-hl-face:property ((t)))
  '(tree-sitter-hl-face:variable ((t)))
- '(vterm-color-black ((t (:background "MediumPurple1" :foreground "#19181A")))))
+ '(vterm-color-black ((t (:background "MediumPurple1" :foreground "#19181A"))))
+ '(web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum")))))
