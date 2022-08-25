@@ -27,7 +27,7 @@
 
 
 (fset 'yes-or-no-p 'y-or-n-p)
-(setq initial-scratch-message ";; ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┬ ┬\n;; ╚═╗│  ├┬┘├─┤ │ │  ├─┤\n;; ╚═╝└─┘┴└─┴ ┴ ┴ └─┘┴ ┴\n")
+(setq initial-scratch-message ";; ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┬ ┬\n;; ╚═╗│  ├┬┘├─┤ │ │  ├─┤\n;; ╚═╝└─┘┴└─┴ ┴ ┴ └─┘┴ ┴\n\n")
 
 (add-to-list 'default-frame-alist '(font . "Inconsolata-18"))
 
@@ -195,10 +195,6 @@
   :bind (("C-c C-n" . flycheck-next-error)
          ("C-c C-p" . flycheck-previous-error))
   :hook (elixir-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t))))
-
-(use-package direnv
- :config (direnv-mode)
- :custom (direnv-always-show-summary nil))
 
 (use-package org
   :bind (("C-c j l" . insert-jira-link)))
