@@ -6,6 +6,7 @@
 [core]
 	editor = emacs -q -nw
 	excludesfile = /Users/ryoung/.gitignore
+	pager = less -FX
 
 [alias]
 	co = checkout
