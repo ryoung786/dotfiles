@@ -67,9 +67,19 @@
 (use-package vterm
   :commands vterm
   :hook (vterm-mode . (lambda () (setq term-prompt-regexp "^\\([0-9][0-9]:[0-9][0-9] \$ \\|iex([0-9]+)> \\)")))
-  :bind (("M-C-9" . multi-vterm-dedicated-toggle))
-  :config (setq vterm-max-scrollback 10000))
-(use-package multi-vterm)
+  :config
+  (setq vterm-max-scrollback 10000)
+  (add-to-list 'display-buffer-alist
+             '("\\*vterm\\*"
+                (display-buffer-in-side-window)
+                (window-height . 0.25)
+                (slot . -1)
+                (side . bottom)
+                (window-parameters . ((no-delete-other-windows . t))))))
+(use-package multi-vterm
+  :bind (("M-C-8" . multi-vterm-project)))
+(use-package vterm-toggle
+  :bind (("M-C-9" . vterm-toggle)))
 
 (use-package ws-butler :diminish)
 
@@ -147,8 +157,7 @@
          (scala-mode . lsp))
   :config
   (setq lsp-ui-doc-enable nil
-        lsp-file-watch-threshold 10000)
-  :init (add-to-list 'exec-path "~/dev/elixir-ls/release"))
+        lsp-file-watch-threshold 10000))
 
 (use-package lsp-ui
   :requires lsp-mode flycheck
@@ -445,7 +454,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(scroll-bar-mode nil)
