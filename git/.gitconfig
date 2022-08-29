@@ -21,3 +21,5 @@
 	gpgsign = true
 [gpg "ssh"]
 	allowedSignersFile = /Users/ryoung/.ssh/allowed_signers
+[init]
+	defaultBranch = main
