@@ -23,3 +23,5 @@
 	allowedSignersFile = /Users/ryoung/.ssh/allowed_signers
 [init]
 	defaultBranch = main
+[push]
+	autoSetupRemote = true
