@@ -103,3 +103,6 @@ unsetopt share_history
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# for GPG signing of git commits
+export GPG_TTY=$(tty)

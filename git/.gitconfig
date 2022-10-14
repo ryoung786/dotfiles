@@ -1,7 +1,7 @@
 [user]
 	email = ryoung786@gmail.com
 	name = Ryan Young
-	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIXJS9XCU2c6zb7Us3lSNbupvc0+E740SGJ+1/lrh7Ki ryoung786@gmail.com
+	signingkey = C6B947B43F8E3A92
 
 [core]
 	editor = emacs -q -nw
@@ -15,8 +15,6 @@
 	ci = commit
 	lg = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
 	up = pull --rebase
-[gpg]
-	format = ssh
 [commit]
 	gpgsign = true
 [gpg "ssh"]
