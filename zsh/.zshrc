@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git asdf)
+plugins=(git asdf direnv)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -103,6 +103,8 @@ unsetopt share_history
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias -g di='echo dotenv > .envrc && touch .env && direnv allow'
 
 # for GPG signing of git commits
 export GPG_TTY=$(tty)
+export DIRENV_LOG_FORMAT=
