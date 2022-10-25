@@ -102,6 +102,12 @@
   :bind (:map markdown-mode-command-map
               ("g" . grip-mode)))
 
+(use-package auto-dim-other-buffers
+  :hook (after-init . (lambda () (auto-dim-other-buffers-mode t))))
+
+(use-package magit
+  :bind ("s-i" . magit-blame))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Language configuration
 
@@ -147,6 +153,23 @@
 
 (use-package all-the-icons-ivy
   :init (add-hook 'after-init-hook 'all-the-icons-ivy-setup))
+
+(use-package treemacs
+  :bind (:map global-map ([f8] . treemacs-select-window))
+  :config
+  (treemacs-resize-icons 12)
+  (setq treemacs-indentation 1)
+  (setq treemacs-is-never-other-window t))
+
+(use-package dashboard
+  :init
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-items '((recents  . 5)
+                          ;; (bookmarks . 5)
+                          (projects . 2)))
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  :config (dashboard-setup-startup-hook))
 
 (use-package orderless
   :custom (completion-styles '(orderless)))
@@ -199,6 +222,7 @@
 (use-package web-mode
   :mode
   (("\\html\\.[hl]?eex$" . web-mode)
+   ("\\html\\.erb$" . web-mode)
    ("\\.html$" . web-mode))
   :config
   (setq web-mode-engines-alist '(("elixir" . "\\.html\\.[lh]?.eex\\'"))
@@ -483,7 +507,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(tree-sitter typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(dashboard magit blamer auto-dim-other-buffers docker-compose-mode tree-sitter typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(scroll-bar-mode nil)
@@ -519,6 +543,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
  '(diff-hl-insert ((t (:background "DarkSeaGreen4" :foreground "DarkSeaGreen4"))))
  '(header-line ((t (:inherit nil :background "#000629"))))
  '(hl-line ((t (:extend t :background "gray5"))))
@@ -530,7 +555,6 @@
  '(mode-line ((t (:background "dim gray" :foreground "gray90" :box (:line-width 3 :color "light coral")))))
  '(mode-line-inactive ((t (:background "dim gray" :foreground "gray90" :box nil))))
  '(shadow ((t (:foreground "gray40"))))
- '(tree-sitter-hl-face:function\.method\.call ((t)) t)
  '(tree-sitter-hl-face:method\.call ((t)))
  '(tree-sitter-hl-face:operator ((t)))
  '(tree-sitter-hl-face:property ((t)))
