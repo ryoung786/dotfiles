@@ -460,7 +460,7 @@
 (global-set-key (kbd "<down>") 'scroll-up-one)
 (global-set-key (kbd "C-M-<up>") 'scroll-other-window-down-one)
 (global-set-key (kbd "C-M-<down>") 'scroll-other-window-up-one)
-(global-set-key (kbd "C-x i") 'previous-multiframe-window)
+(global-set-key (kbd "C-x i") '(lambda () (interactive) (other-window -1)))
 (global-set-key (kbd "ESC <right>") 'indent-rigid-by-4)
 (global-set-key (kbd "ESC <left>") 'unindent-rigid-by-4)
 
@@ -471,6 +471,9 @@
 (use-package doom-themes
   :config
   (load-theme 'doom-monokai-pro t))
+
+(use-package doom-modeline
+  :hook (after-init . doom-modeline-mode))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
