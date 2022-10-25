@@ -158,6 +158,7 @@
   :bind (:map global-map ([f8] . treemacs-select-window))
   :config
   (treemacs-resize-icons 12)
+  (treemacs-project-follow-mode 1)
   (setq treemacs-indentation 1)
   (setq treemacs-is-never-other-window t))
 
@@ -471,9 +472,6 @@
 (use-package doom-themes
   :config
   (load-theme 'doom-monokai-pro t))
-
-(use-package doom-modeline
-  :hook (after-init . doom-modeline-mode))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
