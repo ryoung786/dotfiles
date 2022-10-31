@@ -31,6 +31,8 @@
 
 (add-to-list 'default-frame-alist '(font . "Inconsolata-18"))
 
+(global-hl-line-mode 1)
+
 ;; osx specific things
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'super) ; make opt key do Super
@@ -40,8 +42,6 @@
 
 (unless (display-graphic-p)
   (menu-bar-mode -1))
-
-
 
 (use-package default-text-scale
   :init (default-text-scale-mode 1))
@@ -101,9 +101,6 @@
 (use-package grip-mode
   :bind (:map markdown-mode-command-map
               ("g" . grip-mode)))
-
-(use-package auto-dim-other-buffers
-  :hook (after-init . (lambda () (auto-dim-other-buffers-mode t))))
 
 (use-package magit
   :bind ("s-i" . magit-blame))
@@ -219,6 +216,9 @@
 (use-package projectile-rails
   :config (projectile-rails-global-mode)
   :bind-keymap ("C-c r" . projectile-rails-command-map))
+
+(use-package ruby-mode
+  :hook (ruby-mode . (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
 
 (use-package web-mode
   :mode
@@ -469,9 +469,7 @@
 (set-terminal-coding-system 'utf-8)
 (put 'upcase-region 'disabled nil)
 
-(use-package doom-themes
-  :config
-  (load-theme 'doom-monokai-pro t))
+(load-theme 'nord t)
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
@@ -490,16 +488,7 @@
  '(column-number-mode t)
  '(compilation-message-face 'default)
  '(fci-rule-color "#3C3D37")
- '(highlight-changes-colors '("#FD5FF0" "#AE81FF"))
- '(highlight-tail-colors
-   '(("#3C3D37" . 0)
-     ("#679A01" . 20)
-     ("#4BBEAE" . 30)
-     ("#1DB4D0" . 50)
-     ("#9A8F21" . 60)
-     ("#A75B00" . 70)
-     ("#F309DF" . 85)
-     ("#3C3D37" . 100)))
+
  '(ido-mode 'both nil (ido))
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
@@ -508,35 +497,14 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(dashboard magit blamer auto-dim-other-buffers docker-compose-mode tree-sitter typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
- '(pos-tip-background-color "#FFFACE")
- '(pos-tip-foreground-color "#272822")
+   '(nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode tree-sitter typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
+ ;; '(pos-tip-background-color "#FFFACE")
+ ;; '(pos-tip-foreground-color "#272822")
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   '((20 . "#F92672")
-     (40 . "#CF4F1F")
-     (60 . "#C26C0F")
-     (80 . "#E6DB74")
-     (100 . "#AB8C00")
-     (120 . "#A18F00")
-     (140 . "#989200")
-     (160 . "#8E9500")
-     (180 . "#A6E22E")
-     (200 . "#729A1E")
-     (220 . "#609C3C")
-     (240 . "#4E9D5B")
-     (260 . "#3C9F79")
-     (280 . "#A1EFE4")
-     (300 . "#299BA6")
-     (320 . "#2896B5")
-     (340 . "#2790C3")
-     (360 . "#66D9EF")))
- '(vc-annotate-very-old-color nil)
+
  '(warning-suppress-types '((comp)))
- '(weechat-color-list
-   '(unspecified "#272822" "#3C3D37" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
+
  '(ws-butler-global-mode t)
  '(yas-global-mode t))
 (custom-set-faces
@@ -546,15 +514,10 @@
  ;; If there is more than one, they won't work right.
  '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
  '(diff-hl-insert ((t (:background "DarkSeaGreen4" :foreground "DarkSeaGreen4"))))
+ ;; '(header-line ((t (:inherit nil :background "#4C566A"))))
  '(header-line ((t (:inherit nil :background "#000629"))))
- '(hl-line ((t (:extend t :background "gray5"))))
- '(isearch ((t (:inherit match :background "NavajoWhite3" :foreground "windowBackgroundColor" :box nil :underline t))))
- '(line-number ((t (:inherit default :foreground "gray40" :strike-through nil :underline nil :slant normal :weight normal))))
- '(line-number-current-line ((t (:inherit (hl-line default) :foreground "maroon1" :strike-through nil :underline nil :slant normal :weight normal))))
- '(linum ((t (:inherit default :foreground "gray40" :strike-through nil :underline nil :slant normal :weight normal))))
- '(lsp-face-highlight-textual ((t (:background "CadetBlue4" :foreground "#FCFCFA" :weight normal))))
- '(mode-line ((t (:background "dim gray" :foreground "gray90" :box (:line-width 3 :color "light coral")))))
- '(mode-line-inactive ((t (:background "dim gray" :foreground "gray90" :box nil))))
+ '(line-number-current-line ((t (:inherit (hl-line default) :foreground "#ECEFF4" ))))
+
  '(shadow ((t (:foreground "gray40"))))
  '(tree-sitter-hl-face:method\.call ((t)))
  '(tree-sitter-hl-face:operator ((t)))
