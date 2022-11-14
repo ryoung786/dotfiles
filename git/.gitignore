@@ -45,3 +45,6 @@ yarn.lock
 node_modules/
 
 .docker.env
+
+.env
+.envrc
