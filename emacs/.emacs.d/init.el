@@ -31,8 +31,6 @@
 
 (add-to-list 'default-frame-alist '(font . "Inconsolata-18"))
 
-(global-hl-line-mode 1)
-
 ;; osx specific things
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'super) ; make opt key do Super
@@ -154,8 +152,10 @@
 
 (use-package treemacs
   :bind (:map global-map ([f8] . treemacs-select-window))
+  :hook (treemacs-mode . (lambda () (text-scale-decrease 2)))
   :config
   (treemacs-resize-icons 12)
+  (setq treemacs-width 25)
   (treemacs-project-follow-mode 1)
   (setq treemacs-indentation 1)
   (setq treemacs-is-never-other-window t))
@@ -513,12 +513,14 @@
  '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
  '(diff-hl-insert ((t (:background "DarkSeaGreen4" :foreground "DarkSeaGreen4"))))
  '(header-line ((t (:inherit nil :background "#000629"))))
- '(line-number-current-line ((t (:inherit (hl-line default) :foreground "#ECEFF4"))))
+ '(line-number-current-line ((t (:inherit (hl-line default) :background "DarkSlateGray4" :foreground "snow1"))))
  '(mode-line ((t (:background "DarkSlateGray4" :foreground "snow1" :box nil))))
  '(shadow ((t (:foreground "gray40"))))
  '(tree-sitter-hl-face:method\.call ((t)))
  '(tree-sitter-hl-face:operator ((t)))
  '(tree-sitter-hl-face:property ((t)))
  '(tree-sitter-hl-face:variable ((t)))
+ '(treemacs-fringe-indicator-face ((t (:foreground "#88C0D0"))))
+ '(treemacs-root-face ((t (:inherit font-lock-constant-face :underline t :weight bold))))
  '(vterm-color-black ((t (:background "MediumPurple1" :foreground "#19181A"))))
  '(web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum")))))
