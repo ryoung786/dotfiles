@@ -79,7 +79,7 @@
 (use-package multi-vterm
   :bind (("M-C-8" . multi-vterm-project)))
 (use-package vterm-toggle
-  :bind (("M-C-9" . vterm-toggle)))
+  :bind (("M-C-9" . multi-vterm-dedicated-toggle)))
 
 (use-package ws-butler :diminish)
 
@@ -87,6 +87,7 @@
 
 (use-package lsp-origami
   :diminish
+  :bind (("C-c C-f" . origami-toggle-node))
   :hook (lsp-after-open . lsp-origami-try-enable))
 
 (use-package markdown-mode
@@ -197,6 +198,7 @@
   :requires lsp-mode flycheck
   :config
   (setq lsp-ui-doc-enable nil
+        lsp-ui-sideline-show-diagnostics nil
         lsp-ui-flycheck-enable t
         lsp-ui-flycheck-list-position 'right
         lsp-ui-flycheck-live-reporting t)
@@ -254,6 +256,7 @@
 (use-package elixir-mode
   :bind (("C-c C-n" . flycheck-next-error)
          ("C-c C-p" . flycheck-previous-error))
+  :config (setq lsp-lens-enable nil)
   :hook (elixir-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t))))
 
 (use-package org
@@ -488,7 +491,6 @@
  '(column-number-mode t)
  '(compilation-message-face 'default)
  '(fci-rule-color "#3C3D37")
-
  '(ido-mode 'both nil (ido))
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
@@ -497,14 +499,10 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode tree-sitter typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
- ;; '(pos-tip-background-color "#FFFACE")
- ;; '(pos-tip-foreground-color "#272822")
+   '(haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode tree-sitter typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
-
  '(warning-suppress-types '((comp)))
-
  '(ws-butler-global-mode t)
  '(yas-global-mode t))
 (custom-set-faces
@@ -514,10 +512,9 @@
  ;; If there is more than one, they won't work right.
  '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
  '(diff-hl-insert ((t (:background "DarkSeaGreen4" :foreground "DarkSeaGreen4"))))
- ;; '(header-line ((t (:inherit nil :background "#4C566A"))))
  '(header-line ((t (:inherit nil :background "#000629"))))
- '(line-number-current-line ((t (:inherit (hl-line default) :foreground "#ECEFF4" ))))
-
+ '(line-number-current-line ((t (:inherit (hl-line default) :foreground "#ECEFF4"))))
+ '(mode-line ((t (:background "DarkSlateGray4" :foreground "snow1" :box nil))))
  '(shadow ((t (:foreground "gray40"))))
  '(tree-sitter-hl-face:method\.call ((t)))
  '(tree-sitter-hl-face:operator ((t)))
