@@ -91,14 +91,13 @@
 (use-package markdown-mode
   :mode ("\\.\\(live\\)?md\\'" . gfm-mode)
   :commands (markdown-mode gfm-mode)
-  :bind ("C-c C-c l" . my-markdown-preview)
+  :bind (("C-c C-c l" . my-markdown-preview)
+         ("C-c C-c g" . grip-mode))
   :config
   (add-to-list 'markdown-code-lang-modes '("json" . js-mode))
   (setq markdown-command "pandoc -t html5"
         markdown-fontify-code-blocks-natively t))
-(use-package grip-mode
-  :bind (:map markdown-mode-command-map
-              ("g" . grip-mode)))
+(use-package grip-mode)
 
 (use-package magit
   :bind ("s-i" . magit-blame))
@@ -346,7 +345,6 @@
    'minibuffer-complete-word
    'self-insert-command
    minibuffer-local-completion-map))
-(use-package lsp-metals)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Custom Functions
@@ -498,7 +496,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode tree-sitter typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(markdown-mode haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode tree-sitter typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
  '(warning-suppress-types '((comp)))
