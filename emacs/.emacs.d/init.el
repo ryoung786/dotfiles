@@ -95,8 +95,7 @@
   :config
   (add-to-list 'markdown-code-lang-modes '("json" . js-mode))
   (setq markdown-command "pandoc -t html5"
-        markdown-fontify-code-blocks-natively t
-        markdown-css-paths '("~/.emacs.d/markdown.css")))
+        markdown-fontify-code-blocks-natively t))
 (use-package grip-mode
   :bind (:map markdown-mode-command-map
               ("g" . grip-mode)))
@@ -512,11 +511,12 @@
  ;; If there is more than one, they won't work right.
  '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
  '(diff-hl-insert ((t (:background "DarkSeaGreen4" :foreground "DarkSeaGreen4"))))
+ '(fixed-pitch ((t (:family "Inconsolata"))))
  '(header-line ((t (:inherit nil :background "#000629"))))
  '(line-number-current-line ((t (:inherit (hl-line default) :background "DarkSlateGray4" :foreground "snow1"))))
  '(mode-line ((t (:background "DarkSlateGray4" :foreground "snow1" :box nil))))
  '(shadow ((t (:foreground "gray40"))))
- '(tree-sitter-hl-face:method\.call ((t)))
+ '(tree-sitter-hl-face:method.call ((t)))
  '(tree-sitter-hl-face:operator ((t)))
  '(tree-sitter-hl-face:property ((t)))
  '(tree-sitter-hl-face:variable ((t)))
