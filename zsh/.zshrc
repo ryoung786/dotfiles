@@ -70,9 +70,11 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git asdf direnv)
+plugins=(git asdf direnv brew colored-man-pages)
 
 source $ZSH/oh-my-zsh.sh
+
+PROMPT=$'\n%{$fg_bold[green]%}➜%{$fg_bold[green]%}%p %{$reset_color%}%{%F{230}%~ %{$fg_bold[blue]%}$(git_prompt_info)\n%{%F{230}%}[%*] %{$fg_bold[blue]%}$ % %{$reset_color%}'
 
 # User configuration
 
