@@ -8,7 +8,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# ZSH_THEME="spaceship"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -70,11 +70,13 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git asdf direnv brew colored-man-pages)
+plugins=(git asdf direnv brew colored-man-pages zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
-PROMPT=$'\n%{$fg_bold[green]%}➜%{$fg_bold[green]%}%p %{$reset_color%}%{%F{230}%~ %{$fg_bold[blue]%}$(git_prompt_info)\n%{%F{230}%}[%*] %{$fg_bold[blue]%}$ % %{$reset_color%}'
+# PROMPT=$'\n%{$fg_bold[green]%}➜%{$fg_bold[green]%}%p %{$reset_color%}%{%F{230}%~ %{$fg_bold[blue]%}$(git_prompt_info)\n%{%F{230}%}[%*] %{$fg_bold[blue]%}$ % %{$reset_color%}'
+export STARSHIP_CONFIG=~/.starship.toml
+eval "$(starship init zsh)"
 
 # User configuration
 
