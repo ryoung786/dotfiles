@@ -108,6 +108,7 @@ unsetopt share_history
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias -g di='echo dotenv > .envrc && touch .env && direnv allow'
+alias -g tree='tree -C'
 
 # for GPG signing of git commits
 export GPG_TTY=$(tty)
