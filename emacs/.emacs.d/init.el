@@ -117,7 +117,10 @@
 
 (use-package projectile
   :diminish projectile-mode
-  :config (projectile-mode)
+  :config
+  (projectile-mode)
+  (setq projectile-project-root-files-bottom-up
+        (cons "mix.exs" projectile-project-root-files-bottom-up))
   :bind-keymap ("C-c p" . projectile-command-map)
   :init (setq projectile-switch-project-action #'projectile-dired))
 
@@ -222,15 +225,27 @@
 
 (use-package web-mode
   :mode
-  (("\\html\\.[hl]?eex$" . web-mode)
+  (
+   ;; ("\\html\\.[hl]?eex$" . web-mode)
    ("\\html\\.erb$" . web-mode)
    ("\\.html$" . web-mode))
+  ;; :hook (web-mode . (lambda () (add-hook 'before-save-hook
+  ;;                                        (lambda () (message web-mode-engine)
+  ;;                                          (if (string= web-mode-engine "elixir") (elixir-format)))
+  ;;                                        nil t)))
   :config
   (setq web-mode-engines-alist '(("elixir" . "\\.html\\.[lh]?.eex\\'"))
         web-mode-extra-auto-pairs '(("elixir" . (("{{ " . " }}"))))
         web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2))
+
+(define-derived-mode heex-mode mhtml-mode "HEEx"
+                     "Major mode for editing HEEx files")
+(add-to-list 'auto-mode-alist '("\\.heex?\\'" . heex-mode))
+(add-hook 'heex-mode-hook
+          (lambda ()
+             (add-hook 'after-save-hook 'elixir-format nil t)))
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'yaml-mode-hook 'display-line-numbers-mode)
