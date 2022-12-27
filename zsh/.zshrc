@@ -74,7 +74,6 @@ plugins=(git asdf direnv brew colored-man-pages zsh-autosuggestions zsh-syntax-h
 
 source $ZSH/oh-my-zsh.sh
 
-# PROMPT=$'\n%{$fg_bold[green]%}➜%{$fg_bold[green]%}%p %{$reset_color%}%{%F{230}%~ %{$fg_bold[blue]%}$(git_prompt_info)\n%{%F{230}%}[%*] %{$fg_bold[blue]%}$ % %{$reset_color%}'
 export STARSHIP_CONFIG=~/.starship.toml
 eval "$(starship init zsh)"
 
@@ -95,6 +94,7 @@ unsetopt share_history
 # else
 #   export EDITOR='mvim'
 # fi
+export EDITOR='emacs -nw -Q'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -113,3 +113,4 @@ alias -g tree='tree -C'
 # for GPG signing of git commits
 export GPG_TTY=$(tty)
 export DIRENV_LOG_FORMAT=
+export ERL_AFLAGS="-kernel shell_history enabled"
