@@ -105,15 +105,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Language configuration
 
-(use-package tree-sitter
+(use-package elixir-ts-mode
+  :bind (("C-c C-n" . flycheck-next-error)
+         ("C-c C-p" . flycheck-previous-error))
+  :hook (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t)))
   :config
-  ;; activate tree-sitter on any buffer containing code for which it has a parser available
-  (global-tree-sitter-mode)
-  ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
-  ;; by switching on and off
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+  (setq lsp-lens-enable nil)
+  (global-subword-mode t))
 
-(use-package tree-sitter-langs :after tree-sitter)
+(use-package heex-ts-mode
+  :hook (heex-ts-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t))))
 
 (use-package projectile
   :diminish projectile-mode
@@ -184,16 +185,19 @@
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :diminish lsp-mode
-  ;; :custom (setq lsp-enable-links nil)
   :hook ((go-mode . lsp)
          (ruby-mode . lsp)
          (java-mode . lsp)
-         (elixir-mode . lsp)
+         (elixir-ts-mode . lsp)
+         (heex-ts-mode . lsp)
          (typescriptreact-mode . lsp)
          (scala-mode . lsp))
   :config
   (setq lsp-ui-doc-enable nil
-        lsp-file-watch-threshold 10000))
+        lsp-file-watch-threshold 10000
+        lsp-language-id-configuration (append lsp-language-id-configuration
+                                              '((elixir-ts-mode . "elixir")
+                                                (heex-ts-mode . "elixir")))))
 
 (use-package lsp-ui
   :requires lsp-mode flycheck
@@ -226,26 +230,14 @@
 (use-package web-mode
   :mode
   (
-   ;; ("\\html\\.[hl]?eex$" . web-mode)
    ("\\html\\.erb$" . web-mode)
    ("\\.html$" . web-mode))
-  ;; :hook (web-mode . (lambda () (add-hook 'before-save-hook
-  ;;                                        (lambda () (message web-mode-engine)
-  ;;                                          (if (string= web-mode-engine "elixir") (elixir-format)))
-  ;;                                        nil t)))
   :config
   (setq web-mode-engines-alist '(("elixir" . "\\.html\\.[lh]?.eex\\'"))
         web-mode-extra-auto-pairs '(("elixir" . (("{{ " . " }}"))))
         web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2))
-
-(define-derived-mode heex-mode mhtml-mode "HEEx"
-                     "Major mode for editing HEEx files")
-(add-to-list 'auto-mode-alist '("\\.heex?\\'" . heex-mode))
-(add-hook 'heex-mode-hook
-          (lambda ()
-             (add-hook 'after-save-hook 'elixir-format nil t)))
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'yaml-mode-hook 'display-line-numbers-mode)
@@ -254,7 +246,7 @@
   :hook (prog-mode . diff-hl-mode))
 
 (use-package typescript-mode
-  :after tree-sitter
+  ;; :after tree-sitter
   :config
   (setq typescript-indent-level 2)
   ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
@@ -264,35 +256,11 @@
   (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
   ;; by default, typescript-mode is mapped to the treesitter typescript parser
   ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
-  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
-
-(use-package elixir-mode
-  :bind (("C-c C-n" . flycheck-next-error)
-         ("C-c C-p" . flycheck-previous-error))
-  :config (setq lsp-lens-enable nil)
-  :hook (elixir-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t))))
+  ;; (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
+  )
 
 (use-package org
   :bind (("C-c j l" . insert-jira-link)))
-
-(use-package mmm-mode
-  :config
-  (setq mmm-global-mode 'maybe
-        mmm-parse-when-idle 't
-        mmm-set-file-name-for-modes '(web-mode))
-  (let ((class 'elixir-eex)
-        (submode 'web-mode)
-        (front "^[ ]+~[H|L]\"\"\"")
-        (back "^[ ]+\"\"\""))
-    (mmm-add-classes (list (list class :submode submode :front front :back back)))
-    (mmm-add-mode-ext-class 'elixir-mode nil class)))
-
-(define-advice web-mode-guess-engine-and-content-type (:around (f &rest r) guess-engine-by-extension)
-  (if (and buffer-file-name (equal "ex" (file-name-extension buffer-file-name)))
-      (progn (setq web-mode-content-type "html")
-             (setq web-mode-engine "elixir")
-             (web-mode-on-engine-setted))
-    (apply f r)))
 
 (use-package yasnippet
   :diminish
@@ -337,29 +305,7 @@
   :hook (go-mode . (lambda () (add-hook 'before-save-hook 'gofmt nil t)))
   )
 
-(use-package lsp-java
-  :hook (java-mode . (lambda ()
-                       (setq tab-width 2)
-                       (setq c-basic-offset 2)))
-  :config
-  (setq lsp-java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml")
-  (setq lsp-java-format-settings-profile "GoogleStyle"))
-(use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
-
 (setq ruby-insert-encoding-magic-comment nil)
-
-(use-package scala-mode
-  :mode "\\.s\\(cala\\|bt\\)$")
-(use-package sbt-mode
-  :commands sbt-start sbt-command
-  :custom (sbt:default-command "testQuick")
-  :config
-  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
-  ;; allows using SPACE when in the minibuffer
-  (substitute-key-definition
-   'minibuffer-complete-word
-   'self-insert-command
-   minibuffer-local-completion-map))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Custom Functions
@@ -511,7 +457,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(markdown-mode haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode tree-sitter typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell elixir-mode doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(markdown-mode haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
  '(warning-suppress-types '((comp)))
