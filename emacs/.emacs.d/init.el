@@ -138,8 +138,7 @@
   :config
   (setq ivy-use-virtual-buffers t)
   (setq ivy-height 7)
-  (setq ivy-count-format "%d/%d ")
-  (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder))))
+  (setq ivy-count-format "%d/%d "))
 
 (use-package ivy-rich
   :hook (ivy-mode . ivy-rich-mode)
@@ -152,8 +151,20 @@
 (use-package all-the-icons-ivy
   :init (add-hook 'after-init-hook 'all-the-icons-ivy-setup))
 
+(use-package prescient
+  :config
+  (prescient-persist-mode))
+(use-package ivy-prescient
+  :after (prescient counsel)
+  :custom (ivy-prescient-retain-classic-highlighting t)
+  :hook (after-init . ivy-prescient-mode))
+(use-package company-prescient
+  :after company
+  :config (company-prescient-mode 1))
+
 (use-package treemacs
-  :bind (:map global-map ([f8] . treemacs-select-window))
+  ;; :bind (:map global-map ([f8] . treemacs-select-window))
+  :bind (:map global-map ([f8] . window-toggle-side-windows))
   :hook (treemacs-mode . (lambda () (text-scale-decrease 2)))
   :config
   (treemacs-resize-icons 12)
@@ -166,14 +177,10 @@
   :init
   (setq dashboard-startup-banner 'logo)
   (setq dashboard-items '((recents  . 5)
-                          ;; (bookmarks . 5)
-                          (projects . 2)))
+                          (projects . 4)))
   (setq dashboard-set-heading-icons t)
   (setq dashboard-set-file-icons t)
   :config (dashboard-setup-startup-hook))
-
-(use-package orderless
-  :custom (completion-styles '(orderless)))
 
 (use-package which-key
   :diminish which-key-mode
@@ -431,6 +438,8 @@
 (put 'upcase-region 'disabled nil)
 
 (load-theme 'doom-monokai-machine t)
+(use-package doom-modeline
+  :init (doom-modeline-mode 1))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
@@ -457,7 +466,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(markdown-mode haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(company-prescient ivy-prescient prescient doom-modeline markdown-mode haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
  '(warning-suppress-types '((comp)))
@@ -470,16 +479,21 @@
  ;; If there is more than one, they won't work right.
  '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
  '(elixir-ts-font-comment-doc-attribute-face ((t (:inherit font-lock-doc-face :slant normal))))
+ '(elixir-ts-font-comment-doc-face ((t (:inherit font-lock-doc-face :height 1.1))))
  '(elixir-ts-font-comment-doc-identifier-face ((t (:inherit font-lock-doc-face :slant normal))))
+ '(elixir-ts-font-comment-unused-face ((t (:foreground "bisque3"))))
  '(fixed-pitch ((t (:family "Inconsolata"))))
  '(font-lock-comment-face ((t (:foreground "bisque3" :slant italic :family "Fira Code iScript"))))
  '(font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "bisque3"))))
- '(header-line ((t (:inherit nil :background "#000629"))))
+ '(header-line ((t (:inherit nil :background "DarkOrchid4"))))
+ '(heex-ts-font-attribute-face ((t (:inherit font-lock-variable-name-face :foreground "LightSalmon1" :slant italic :family "Fira Code iScript"))))
+ '(hl-line ((t (:extend t :background "gray35"))))
  '(isearch ((t (:background "hotpink" :foreground "white" :box nil))))
  '(lazy-highlight ((t (:inherit match :background "LightCyan4"))))
  '(line-number ((t (:inherit default :foreground "gray60" :slant italic :weight normal))))
  '(line-number-current-line ((t (:inherit (hl-line default) :background "DarkSlateGray4" :foreground "snow1"))))
- '(mode-line ((t (:background "DarkSlateGray4" :foreground "snow1" :box (:line-width (4 . 4) :color "DarkSlateGray4" :style flat-button)))))
- '(mode-line-inactive ((t (:background "gray30" :foreground "#f2fffc" :box (:line-width (4 . 4) :color "grey30" :style flat-button)))))
+ '(mode-line ((t (:background "DarkSlateGray4" :foreground "snow1" :box (:line-width (2 . 2) :color "DarkSlateGray4" :style flat-button)))))
+ '(mode-line-inactive ((t (:background "gray30" :foreground "#f2fffc" :box (:line-width (2 . 2) :color "grey30" :style flat-button)))))
+ '(shadow ((t (:foreground "gray50"))))
  '(vterm-color-black ((t (:background "MediumPurple1" :foreground "#19181A"))))
  '(web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum")))))
