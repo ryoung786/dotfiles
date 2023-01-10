@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Logger.error
+# key: lerror
+# --
+Logger.error("[xxx] $1 #{inspect($0)}")
