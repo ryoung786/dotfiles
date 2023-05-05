@@ -102,19 +102,30 @@
 (use-package magit
   :bind ("s-i" . magit-blame))
 
+(require 'quelpa-use-package)
+(use-package copilot
+  :quelpa (copilot :fetcher github
+                   :repo "zerolfx/copilot.el"
+                   :branch "main"
+                   :files ("dist" "*.el"))
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("C-<return>" . copilot-accept-completion)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Language configuration
 
 (use-package elixir-ts-mode
   :bind (("C-c C-n" . flycheck-next-error)
          ("C-c C-p" . flycheck-previous-error))
-  :hook (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t)))
+  :hook (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil t)))
+  ;; :hook (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t)))
   :config
   (setq lsp-lens-enable nil)
   (global-subword-mode t))
 
 (use-package heex-ts-mode
-  :hook (heex-ts-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t))))
+  :hook (heex-ts-mode . (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
 
 (use-package projectile
   :diminish projectile-mode
@@ -439,7 +450,10 @@
 
 (load-theme 'doom-monokai-machine t)
 (use-package doom-modeline
-  :init (doom-modeline-mode 1))
+  :init (doom-modeline-mode 1)
+  :config
+  (setq doom-modeline-height 20
+        doom-modeline-icon nil))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
@@ -466,7 +480,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(company-prescient ivy-prescient prescient doom-modeline markdown-mode haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package tree-sitter-langs rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(copilot quelpa-use-package quelpa multiple-cursors company-prescient ivy-prescient prescient doom-modeline haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
  '(warning-suppress-types '((comp)))
@@ -492,8 +506,8 @@
  '(lazy-highlight ((t (:inherit match :background "LightCyan4"))))
  '(line-number ((t (:inherit default :foreground "gray60" :slant italic :weight normal))))
  '(line-number-current-line ((t (:inherit (hl-line default) :background "DarkSlateGray4" :foreground "snow1"))))
- '(mode-line ((t (:background "DarkSlateGray4" :foreground "snow1" :box (:line-width (2 . 2) :color "DarkSlateGray4" :style flat-button)))))
- '(mode-line-inactive ((t (:background "gray30" :foreground "#f2fffc" :box (:line-width (2 . 2) :color "grey30" :style flat-button)))))
+ '(mode-line ((t (:background "DarkSlateGray4" :foreground "snow1"))))
+ '(mode-line-inactive ((t (:background "gray30" :foreground "#f2fffc"))))
  '(shadow ((t (:foreground "gray50"))))
  '(vterm-color-black ((t (:background "MediumPurple1" :foreground "#19181A"))))
  '(web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum")))))
