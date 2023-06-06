@@ -118,14 +118,13 @@
 (use-package elixir-ts-mode
   :bind (("C-c C-n" . flycheck-next-error)
          ("C-c C-p" . flycheck-previous-error))
-  :hook (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil t)))
-  ;; :hook (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil t)))
+  :hook (before-save . lsp-format-buffer)
   :config
   (setq lsp-lens-enable nil)
   (global-subword-mode t))
 
 (use-package heex-ts-mode
-  :hook (heex-ts-mode . (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
+  :hook (before-save . lsp-format-buffer))
 
 (use-package projectile
   :diminish projectile-mode
@@ -243,7 +242,7 @@
   :bind-keymap ("C-c r" . projectile-rails-command-map))
 
 (use-package ruby-mode
-  :hook (ruby-mode . (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil t))))
+  :hook (before-save . lsp-format-buffer))
 
 (use-package web-mode
   :mode
@@ -320,8 +319,7 @@
                       '(("gopls.completeUnimported" t t)
                         ("gopls.staticcheck" t t)))
                      ))
-  :hook (go-mode . (lambda () (add-hook 'before-save-hook 'gofmt nil t)))
-  )
+  :hook (before-save . gofmt))
 
 (setq ruby-insert-encoding-magic-comment nil)
 
@@ -480,7 +478,7 @@
  '(lsp-ui-doc-mode nil t)
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
-   '(copilot quelpa-use-package quelpa multiple-cursors company-prescient ivy-prescient prescient doom-modeline haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode use-package rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell doom-themes diminish diff-hl default-text-scale counsel company-box))
+   '(copilot quelpa multiple-cursors company-prescient ivy-prescient prescient doom-modeline haml-mode nord-theme dashboard magit blamer auto-dim-other-buffers docker-compose-mode typescript-mode dotenv-mode window vterm-toggle direnv dockerfile-mode all-the-icons-completion sbt-mode yaml-mode ein csv-mode orderless ripgrep olivetti scala-mode grip-mode all-the-icons-ivy all-the-icons-ivy-rich erlang lfe-mode yasnippet-snippets ws-butler which-key web-mode rjsx-mode projectile-rails prettier-js multi-vterm mmm-mode lsp-ui lsp-origami lsp-java ivy-rich hungry-delete go-mode flycheck exec-path-from-shell doom-themes diminish diff-hl default-text-scale counsel company-box))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
  '(warning-suppress-types '((comp)))
