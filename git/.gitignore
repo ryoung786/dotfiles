@@ -37,6 +37,8 @@ flycheck_*.el
 *-emacs-elixir-format*
 .adserver.secrets
 
+/.elixir-tools/
+
 # scala lsp
 .bloop
 .metals
