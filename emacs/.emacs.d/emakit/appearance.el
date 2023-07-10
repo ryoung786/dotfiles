@@ -15,7 +15,8 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-monokai-machine t))
+  (load-theme 'doom-monokai-machine t)
+  )
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
@@ -32,6 +33,7 @@
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'yaml-mode-hook 'display-line-numbers-mode)
+(setq column-number-mode t)
 
 (use-package nerd-icons-dired
   :hook (dired-mode . nerd-icons-dired-mode))
