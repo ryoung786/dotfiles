@@ -19,7 +19,7 @@
    (elixir-ts-mode . smartparens-mode)
    (elixir-ts-mode . mix-minor-mode)
    (elixir-ts-mode . exunit-mode)
-   (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil 'local)))
+   (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil 'local)))
    )
   :config
   (global-subword-mode t))

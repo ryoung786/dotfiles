@@ -54,7 +54,7 @@
 
 (use-package corfu
   ;; Optional customizations
-  ;; :custom
+  :custom
   ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   (corfu-auto t)                 ;; Enable auto completion
   ;; (corfu-separator ?\s)          ;; Orderless field separator
@@ -69,12 +69,17 @@
   ;; :hook ((prog-mode . corfu-mode)
   ;;        (shell-mode . corfu-mode)
   ;;        (eshell-mode . corfu-mode))
+  :bind
+  (:map corfu-map ("s-SPC" . corfu-insert-separator))
+  :config
+  (setq corfu-popupinfo-delay 0)
 
   ;; Recommended: Enable Corfu globally.
   ;; This is recommended since Dabbrev can be used globally (M-/).
   ;; See also `corfu-exclude-modes'.
   :init
-  (global-corfu-mode))
+  (global-corfu-mode)
+  (corfu-popupinfo-mode))
 
 (use-package kind-icon
   :after corfu
