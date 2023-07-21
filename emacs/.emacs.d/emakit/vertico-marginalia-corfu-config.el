@@ -79,6 +79,8 @@
   ;; See also `corfu-exclude-modes'.
   :init
   (global-corfu-mode)
+  (corfu-history-mode t)
+  (add-to-list 'savehist-additional-variables 'corfu-history)
   (corfu-popupinfo-mode))
 
 (use-package kind-icon

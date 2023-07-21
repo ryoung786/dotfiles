@@ -59,6 +59,7 @@
 (require 'vertico-marginalia-corfu-config)
 (require 'consult-embark-config)
 (require 'markdown-config)
+(require 'imenu-config)
 
 (nerd-icons-completion-mode t)
 
