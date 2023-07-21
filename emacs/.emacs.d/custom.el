@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(lsp-credo-version "0.2.0")
  '(package-selected-packages
-   '(diminish moody imenu-list nerd-icons-completion nerd-icons-dired all-the-icons-dired embark-consult consult kind-icon orderless corfu corfu-prescient embark marginalia vertico vertico-posframe vertico-prescient ripgrep hungry-delete vterm-toggle multi-vterm vterm projectile default-text-scale doom-modeline doom-themes elixir-ts-mode elixir-mode yaml-mode rainbow-delimiters gh-md forge flx-ido company web-mode inf-elixir mix flycheck lsp-treemacs lsp-ui lsp-mode exunit load-env-vars which-key smartparens yasnippet-snippets yasnippet magit exec-path-from-shell treesit-auto)))
+   '(moody imenu-list nerd-icons-completion nerd-icons-dired all-the-icons-dired embark-consult consult kind-icon orderless corfu corfu-prescient embark marginalia vertico vertico-posframe vertico-prescient ripgrep hungry-delete vterm-toggle multi-vterm vterm projectile default-text-scale doom-modeline doom-themes elixir-ts-mode elixir-mode yaml-mode rainbow-delimiters gh-md forge flx-ido company web-mode inf-elixir mix flycheck lsp-treemacs lsp-ui lsp-mode exunit load-env-vars which-key smartparens yasnippet-snippets yasnippet magit exec-path-from-shell treesit-auto)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -16,6 +16,7 @@
  '(ansi-color-bright-magenta ((t (:background "orchid1" :foreground "orchid1"))))
  '(ansi-color-magenta ((t (:background "magenta" :foreground "magenta"))))
  '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
+ '(eglot-mode-line ((t (:inherit font-lock-constant-face))))
  '(elixir-ts-font-comment-doc-attribute-face ((t (:inherit font-lock-doc-face :slant normal))))
  '(elixir-ts-font-comment-doc-face ((t (:inherit font-lock-doc-face :height 1.1))))
  '(elixir-ts-font-comment-doc-identifier-face ((t (:inherit font-lock-doc-face :slant normal))))

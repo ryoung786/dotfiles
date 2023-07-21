@@ -9,7 +9,7 @@
 ;; useful blog post as reference: https://jdhao.github.io/2021/10/06/yasnippet_setup_emacs/
 ;; and http://joaotavora.github.io/yasnippet/snippet-reference.html
 (use-package yasnippet
-  :diminish yas-minor-mode)
+  :delight yas-minor-mode)
 ;; https://github.com/AndreaCrotti/yasnippet-snippets
 (use-package yasnippet-snippets)
 

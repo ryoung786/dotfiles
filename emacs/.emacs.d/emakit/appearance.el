@@ -12,6 +12,9 @@
 (scroll-bar-mode -1)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+(use-package autorevert :delight auto-revert-mode)
+(use-package eldoc :delight eldoc-mode)
+
 (setq help-window-select t)
 
 (use-package doom-themes
@@ -19,6 +22,9 @@
   (load-theme 'doom-monokai-machine t))
 
 (use-package moody
+  :custom
+  (mode-line-percent-position nil)
+  (flymake-mode-line-lighter "")
   :config
   (setq x-underline-at-descent-line t)
   (moody-replace-mode-line-buffer-identification)

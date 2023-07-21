@@ -21,6 +21,7 @@
    (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil 'local)))
    )
   :config
-  (global-subword-mode t))
+  (global-subword-mode t)
+  :delight subword-mode)
 
 (provide 'elixir-ts-mode-config)
