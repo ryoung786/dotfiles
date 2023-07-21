@@ -4,9 +4,9 @@
 ;;
 ;; Ryan Young, 2023-07-05
 
-
-(setq mac-command-modifier 'meta)
-(setq mac-option-modifier 'super) ; make opt key do Super
-
+(when (eq system-type 'darwin)
+  (setq mac-command-modifier 'meta)
+  (setq mac-option-modifier 'super) ; make opt key do Super
+  (setq ns-pop-up-frames nil))
 
 (provide 'osx)

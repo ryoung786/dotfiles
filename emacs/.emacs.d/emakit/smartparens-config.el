@@ -7,7 +7,7 @@
 ;; http://github.com/walter/emakit
 
 (use-package smartparens
-  :ensure t
+  :diminish smartparens-mode
   :hook (prog-mode . smartparens-mode)
   :config
   (require 'smartparens-config))

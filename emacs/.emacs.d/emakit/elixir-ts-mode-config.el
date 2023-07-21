@@ -15,7 +15,6 @@
 (use-package elixir-ts-mode
   :hook
   (
-   (elixir-ts-mode . flycheck-mode)
    (elixir-ts-mode . smartparens-mode)
    (elixir-ts-mode . mix-minor-mode)
    (elixir-ts-mode . exunit-mode)

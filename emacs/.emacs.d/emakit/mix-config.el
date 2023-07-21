@@ -8,7 +8,7 @@
 
 ;; https://github.com/ayrat555/mix.el
 (use-package mix
-  :ensure t
+  :diminish mix-minor-mode
   :after elixir-ts-mode
   :config
   (add-hook 'elixir-ts-mode-hook 'mix-minor-mode))

@@ -8,7 +8,7 @@
 
 ;; https://github.com/ananthakumaran/exunit.el
 (use-package exunit
-  :ensure t
+  :diminish exunit-mode
   :after elixir-ts-mode
   :bind
   (:map elixir-ts-mode-map

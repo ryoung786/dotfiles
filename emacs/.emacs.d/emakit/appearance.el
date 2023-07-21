@@ -12,17 +12,17 @@
 (scroll-bar-mode -1)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(use-package doom-themes
-  :ensure t
-  :config
-  (load-theme 'doom-monokai-machine t)
-  )
+(setq help-window-select t)
 
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
+(use-package doom-themes
   :config
-  (setq doom-modeline-height 20
-        doom-modeline-icon nil))
+  (load-theme 'doom-monokai-machine t))
+
+(use-package moody
+  :config
+  (setq x-underline-at-descent-line t)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
