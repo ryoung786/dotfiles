@@ -16,7 +16,6 @@
  '(ansi-color-bright-magenta ((t (:background "orchid1" :foreground "orchid1"))))
  '(ansi-color-magenta ((t (:background "magenta" :foreground "magenta"))))
  '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
- '(eglot-mode-line ((t (:inherit font-lock-constant-face))))
  '(elixir-ts-font-comment-doc-attribute-face ((t (:inherit font-lock-doc-face :slant normal))))
  '(elixir-ts-font-comment-doc-face ((t (:inherit font-lock-doc-face :height 1.1))))
  '(elixir-ts-font-comment-doc-identifier-face ((t (:inherit font-lock-doc-face :slant normal))))

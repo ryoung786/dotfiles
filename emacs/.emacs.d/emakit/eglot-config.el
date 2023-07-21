@@ -10,7 +10,9 @@
     (with-current-buffer eldoc--doc-buffer (display-buffer (current-buffer)))))
 
 (use-package eglot
-  :config (add-to-list 'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
+  :config
+  (add-to-list 'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
+  (set-face-attribute 'eglot-mode-line nil :foreground "PeachPuff1" :weight 'normal)
   :bind (:map eglot-mode-map ("C-h ." . toggle-eldoc-doc-buffer))
   :hook (elixir-ts-mode . eglot-ensure)
   )
