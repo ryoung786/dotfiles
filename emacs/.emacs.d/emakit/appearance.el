@@ -16,7 +16,7 @@
   (fixed-pitch ((t (:family "Inconsolata"))))
   (font-lock-comment-face ((t (:foreground "bisque3" :slant italic :family "Fira Code iScript"))))
   (font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "bisque3"))))
-  (flymake-error-echo ((t :foreground "IndianRed1" :weight normal)))
+  (flymake-error-echo ((t :foreground "LightCoral" :weight normal)))
   (header-line ((t (:inherit nil :background "DarkOrchid4"))))
   (hl-line ((t (:extend t :background "gray35"))))
   (isearch ((t (:background "hotpink" :foreground "white"))))
