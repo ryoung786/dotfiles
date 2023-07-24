@@ -6,6 +6,30 @@
 ;;
 ;; http://github.com/walter/emakit
 
+(use-package emacs
+  :custom-face
+  (ansi-color-black ((t (:background "dark orchid" :foreground "dark orchid"))))
+  (ansi-color-bright-black ((t (:background "MediumPurple1" :foreground "MediumPurple1"))))
+  (ansi-color-bright-magenta ((t (:background "orchid1" :foreground "orchid1"))))
+  (ansi-color-magenta ((t (:background "magenta" :foreground "magenta"))))
+  (blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
+  (fixed-pitch ((t (:family "Inconsolata"))))
+  (font-lock-comment-face ((t (:foreground "bisque3" :slant italic :family "Fira Code iScript"))))
+  (font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "bisque3"))))
+  (flymake-error-echo ((t :foreground "IndianRed1" :weight normal)))
+  (header-line ((t (:inherit nil :background "DarkOrchid4"))))
+  (hl-line ((t (:extend t :background "gray35"))))
+  (isearch ((t (:background "hotpink" :foreground "white"))))
+  (lazy-highlight ((t (:inherit match :background "LightCyan4"))))
+  (line-number ((t (:inherit default :foreground "gray60" :slant italic :weight normal))))
+  (line-number-current-line ((t (:inherit (hl-line default) :background "DarkSlateGray4" :foreground "snow1"))))
+  (mode-line ((t (:background "DarkSlateGray4" :foreground "snow1"))))
+  (mode-line-inactive ((t (:background "gray30" :foreground "#f2fffc"))))
+  (shadow ((t (:foreground "gray50"))))
+  (vterm-color-black ((t (:background "MediumPurple1" :foreground "#19181A"))))
+  (web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum"))))
+  )
+
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
@@ -18,17 +42,7 @@
 (setq help-window-select t)
 
 (use-package doom-themes
-  :config
-  (load-theme 'doom-monokai-machine t))
-
-(use-package moody
-  :custom
-  (mode-line-percent-position nil)
-  (flymake-mode-line-lighter "")
-  :config
-  (setq x-underline-at-descent-line t)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode))
+  :config (load-theme 'doom-material t))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
@@ -43,5 +57,14 @@
 
 (use-package nerd-icons-dired
   :hook (dired-mode . nerd-icons-dired-mode))
+
+(use-package highlight-indent-guides
+  :delight
+  :hook (prog-mode . highlight-indent-guides-mode)
+  :custom
+  (highlight-indent-guides-auto-enabled nil)
+  (highlight-indent-guides-method 'character)
+  :custom-face
+  (highlight-indent-guides-character-face ((t (:foreground "gray40")))))
 
 (provide 'appearance)

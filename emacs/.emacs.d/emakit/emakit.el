@@ -33,7 +33,6 @@
 
 ;; Additional packages and configuration
 
-(require 'appearance)
 (require 'adjust-shell)
 (require 'magit-config)
 (require 'yasnippet-config)
@@ -62,6 +61,7 @@
 (require 'consult-embark-config)
 (require 'markdown-config)
 (require 'imenu-config)
+(require 'appearance)
 
 (nerd-icons-completion-mode t)
 

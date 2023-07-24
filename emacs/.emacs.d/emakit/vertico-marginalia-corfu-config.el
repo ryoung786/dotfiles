@@ -71,6 +71,9 @@
   ;;        (eshell-mode . corfu-mode))
   :bind
   (:map corfu-map ("s-SPC" . corfu-insert-separator))
+  :custom-face
+  (corfu-border ((t (:background "gray60"))))
+  (corfu-current ((t (:background "DarkSlateGray4" :foreground "#f2fffc"))))
   :config
   (setq corfu-popupinfo-delay 0)
 
