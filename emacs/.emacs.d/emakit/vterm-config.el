@@ -2,7 +2,9 @@
   "Open a vterm or switch focus to it if it's already visible"
   (interactive)
   (if-let ((window (get-buffer-window "*vterm*")))
-      (select-window window)
+      (if (string= (buffer-name (current-buffer)) "*vterm*")
+	  (ry/switch-to-mru-window)
+	(select-window window))
     (vterm)))
 
 (defun ry/toggle-project-vterm ()
@@ -10,7 +12,9 @@
   (interactive)
   (if-let* ((buf-name (concat "*vterm " (projectile-project-name) "*"))
 	    (window (get-buffer-window buf-name)))
-      (select-window window)
+      (if (string= (buffer-name (current-buffer)) buf-name)
+	  (ry/switch-to-mru-window)
+	(select-window window))
     (if (buffer-live-p (get-buffer buf-name))
 	(pop-to-buffer buf-name)
       (projectile-run-vterm-other-window))))
@@ -25,10 +29,7 @@
   :commands vterm
   :hook (vterm-mode . (lambda () (setq term-prompt-regexp "^\\([0-9][0-9]:[0-9][0-9] \$ \\|iex([0-9]+)> \\)")))
   :bind (("C-M-8" . ry/toggle-project-vterm)
-	 ("C-M-9" . ry/toggle-dedicated-vterm)
-	 :map vterm-mode-map
-	                     ("C-M-8" . ry/switch-to-mru-window)
-	                     ("C-M-9" . ry/switch-to-mru-window))
+	 ("C-M-9" . ry/toggle-dedicated-vterm))
   :config
   (setq vterm-max-scrollback 10000)
   (add-to-list 'display-buffer-alist
