@@ -17,7 +17,7 @@
   ((elixir-ts-mode . smartparens-mode)
    (elixir-ts-mode . mix-minor-mode)
    (elixir-ts-mode . exunit-mode)
-   (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil 'local))))
+   (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'elixir-format nil 'local))))
   :custom-face
   (elixir-ts-font-comment-doc-attribute-face ((t (:inherit font-lock-doc-face :slant normal))))
   (elixir-ts-font-comment-doc-face ((t (:inherit font-lock-doc-face :height 1.1))))

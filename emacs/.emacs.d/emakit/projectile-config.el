@@ -1,5 +1,6 @@
 (use-package projectile
   :delight projectile-mode
+  :commands (projectile-project-name)
   :config
   (projectile-mode)
   (setq projectile-project-root-files-bottom-up
