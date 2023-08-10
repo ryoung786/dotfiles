@@ -70,4 +70,6 @@
   :custom-face
   (highlight-indent-guides-character-face ((t (:foreground "gray40")))))
 
+(setq flymake-mode-line-lighter "") ; Don't display "Flymake[0 0]", instead just "[0 0]"
+
 (provide 'appearance)
