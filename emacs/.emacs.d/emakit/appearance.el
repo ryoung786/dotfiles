@@ -23,6 +23,7 @@
   (lazy-highlight ((t (:inherit match :background "LightCyan4"))))
   (line-number ((t (:inherit default :foreground "gray60" :slant italic :weight normal))))
   (line-number-current-line ((t (:inherit (hl-line default) :background "DarkSlateGray" :foreground "snow1"))))
+  (markdown-blockquote-face ((t (:foreground "dark gray"))))
   (mode-line ((t (:background "DarkSlateGray" :foreground "snow1" :box (:line-width (1 . 1) :color "snow" :style flat-button)))))
   (mode-line-inactive ((t (:background "gray30" :foreground "#f2fffc" :box (:line-width (1 . 1) :color "gray30" :style released-button)))))
   (region ((t (:background "DarkSlateGray"))))
