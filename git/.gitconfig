@@ -1,7 +1,7 @@
 [user]
 	email = ryoung786@gmail.com
 	name = Ryan Young
-	signingkey = C6B947B43F8E3A92
+	signingkey = ~/.ssh/id_ed25519.pub
 
 [core]
 	editor = emacs -q -nw
@@ -23,3 +23,7 @@
 	defaultBranch = main
 [push]
 	autoSetupRemote = true
+[tag]
+	gpgsign = true
+[gpg]
+	format = ssh
