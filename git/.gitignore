@@ -38,6 +38,7 @@ flycheck_*.el
 .adserver.secrets
 
 /.elixir-tools/
+.mix_tasks
 
 # scala lsp
 .bloop
