@@ -114,3 +114,5 @@ alias -g tree='tree -C'
 export GPG_TTY=$(tty)
 export DIRENV_LOG_FORMAT=
 export ERL_AFLAGS="-kernel shell_history enabled"
+
+export BAT_THEME="Coldark-Dark"
