@@ -67,6 +67,7 @@
   :custom
   (highlight-indent-guides-auto-enabled nil)
   (highlight-indent-guides-method 'character)
+  (highlight-indent-guides-responsive 'top)
   :custom-face
   (highlight-indent-guides-character-face ((t (:foreground "gray40")))))
 
