@@ -116,3 +116,6 @@ export DIRENV_LOG_FORMAT=
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 export BAT_THEME="Coldark-Dark"
+
+F=~/.zsh_private
+test -f $F && source $F
