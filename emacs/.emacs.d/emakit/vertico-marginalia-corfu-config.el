@@ -71,9 +71,6 @@
   ;;        (eshell-mode . corfu-mode))
   :bind
   (:map corfu-map ("s-SPC" . corfu-insert-separator))
-  :custom-face
-  (corfu-border ((t (:background "gray60"))))
-  (corfu-current ((t (:background "DarkSlateGray4" :foreground "#f2fffc"))))
   :config
   (setq corfu-popupinfo-delay 0)
 
@@ -92,6 +89,15 @@
   (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+;; (use-package quelpa
+;;   :init
+;;   (quelpa '(corfu-terminal
+;;           :fetcher git
+;;           :url "https://codeberg.org/akib/emacs-corfu-terminal.git"))
+;;   (unless (display-graphic-p)
+;;     (corfu-terminal-mode +1)))
+
 
 ;; A few more useful configurations...
 (use-package emacs

@@ -41,11 +41,12 @@
   :custom-face
   (highlight-indent-guides-character-face ((t (:foreground "gray40")))))
 
-; Don't display "Flymake[0 0]", instead just "[0 0]"
+;; Don't display "Flymake[0 0]", instead just "[0 0]"
 (setq flymake-mode-line-lighter "")
 
 (use-package doom-themes
   :config
+  (load-library "eglot")
   (load-theme 'doom-material t)
   (custom-theme-set-faces
    'doom-material
@@ -72,7 +73,13 @@
    '(shadow ((t (:foreground "gray50"))))
    '(vertico-current ((t (:background "DarkSlateGray"))))
    '(vterm-color-black ((t (:background "MediumPurple1" :foreground "#19181A"))))
-   '(web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum")))))
+   '(eglot-mode-line ((t (:foreground "PeachPuff1" :weight normal))))
+   '(web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum"))))
+   '(elixir-ts-font-comment-doc-attribute-face ((t (:inherit font-lock-preprocessor-face))))
+   '(elixir-ts-font-comment-doc-face ((t (:inherit font-lock-doc-face :height 1.1))))
+   '(elixir-ts-font-comment-doc-identifier-face ((t (:inherit font-lock-preprocessor-face :slant normal))))
+   '(corfu-border ((t (:background "gray60"))))
+   '(corfu-current ((t (:background "DarkSlateGray4" :foreground "#f2fffc")))))
   (enable-theme 'doom-material)
   )
 
