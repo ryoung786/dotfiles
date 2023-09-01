@@ -13,4 +13,12 @@
   (global-set-key (kbd "C-x g") 'magit-status)
   :bind ("s-i" . magit-blame))
 
+(use-package git-gutter-fringe
+  :hook (prog-mode . git-gutter-mode)
+  :bind ("C-c s" . git-gutter:stage-hunk)
+  :config
+  (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
+
 (provide 'magit-config)
