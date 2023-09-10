@@ -28,16 +28,6 @@
 (use-package nerd-icons-dired
   :hook (dired-mode . nerd-icons-dired-mode))
 
-(use-package highlight-indent-guides
-  :delight
-  :hook (prog-mode . highlight-indent-guides-mode)
-  :custom
-  (highlight-indent-guides-auto-enabled nil)
-  (highlight-indent-guides-method 'character)
-  ;; (highlight-indent-guides-responsive 'top)
-  :custom-face
-  (highlight-indent-guides-character-face ((t (:foreground "gray40")))))
-
 ;; Don't display "Flymake[0 0]", instead just "[0 0]"
 (setq flymake-mode-line-lighter "")
 
