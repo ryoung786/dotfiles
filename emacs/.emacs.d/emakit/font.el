@@ -6,6 +6,7 @@
 
 ;; Improved Spell Checker (depends on enchant system library)
 (use-package jinx
+  :delight
   :hook (emacs-startup . global-jinx-mode)
   :bind (("C-M-$" . jinx-correct)))
 
