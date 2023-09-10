@@ -53,35 +53,27 @@
 ;; Corfu
 
 (use-package corfu
-  ;; Optional customizations
   :custom
-  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ;; Enable auto completion
-  ;; (corfu-separator ?\s)          ;; Orderless field separator
-  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
-  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-  ;; (corfu-scroll-margin 5)        ;; Use scroll margin
-
-  ;; Enable Corfu only for certain modes.
-  ;; :hook ((prog-mode . corfu-mode)
-  ;;        (shell-mode . corfu-mode)
-  ;;        (eshell-mode . corfu-mode))
+  (corfu-auto t)  ;; Enable auto completion
   :bind
   (:map corfu-map ("s-SPC" . corfu-insert-separator))
-  :config
-  (setq corfu-popupinfo-delay 0)
-
-  ;; Recommended: Enable Corfu globally.
-  ;; This is recommended since Dabbrev can be used globally (M-/).
-  ;; See also `corfu-exclude-modes'.
   :init
   (global-corfu-mode)
   (corfu-history-mode t)
-  (add-to-list 'savehist-additional-variables 'corfu-history)
-  (corfu-popupinfo-mode))
+  (add-to-list 'savehist-additional-variables 'corfu-history))
+
+;; Part of corfu
+(use-package corfu-popupinfo
+  :ensure nil ; this module is an extension within corfu, not its own package
+  :after corfu
+  :hook (corfu-mode . corfu-popupinfo-mode)
+  :custom (corfu-popupinfo-delay 0)
+  :config (corfu-popupinfo-mode))
+
+;; Make corfu popup come up in terminal overlay
+(use-package corfu-terminal
+  :if (not (display-graphic-p))
+  :config (corfu-terminal-mode))
 
 (use-package kind-icon
   :after corfu
@@ -89,15 +81,6 @@
   (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-
-;; (use-package quelpa
-;;   :init
-;;   (quelpa '(corfu-terminal
-;;           :fetcher git
-;;           :url "https://codeberg.org/akib/emacs-corfu-terminal.git"))
-;;   (unless (display-graphic-p)
-;;     (corfu-terminal-mode +1)))
-
 
 ;; A few more useful configurations...
 (use-package emacs
