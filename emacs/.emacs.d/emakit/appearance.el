@@ -13,6 +13,7 @@
 (use-package eldoc :delight eldoc-mode)
 
 (setq help-window-select t)
+(pixel-scroll-precision-mode)
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
