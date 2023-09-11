@@ -14,18 +14,10 @@
   (add-to-list 'eglot-server-programs '(elixir-ts-mode "~/dev/lsps/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh"))
   ;; (add-to-list 'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
   ;; (add-to-list 'eglot-server-programs `((elixir-ts-mode heex-ts-mode elixir-mode) . ("~/dev/lsps/elixir/nextls" "--stdio=true")))
-  :bind (:map eglot-mode-map ("C-h ." . toggle-eldoc-doc-buffer))
   :hook (elixir-ts-mode . eglot-ensure)
   )
 
-
-;; (use-package quelpa
-;;   :init
-;;   (quelpa '(ghelp
-;; 	    :fetcher git
-;; 	    :url "https://github.com/casouri/ghelp.git")))
-
-;; (use-package ghelp
-;;   :bind (:map prog-mode-map ("C-h ." . ghelp-describe)))
+(use-package ghelp
+  :bind (:map prog-mode-map ("C-h ." . ghelp-describe)))
 
 (provide 'eglot-config)
