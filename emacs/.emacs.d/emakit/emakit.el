@@ -52,7 +52,6 @@
 (require 'osx)
 (require 'font)
 (require 'vterm-config)
-(require 'projectile-config)
 (require 'ryoung-functions)
 (require 'vertico-marginalia-corfu-config)
 (require 'consult-embark-config)
