@@ -10,7 +10,7 @@
 (defun ry/toggle-project-vterm ()
   "Open a project's vterm or switch focusto it if it's already visible"
   (interactive)
-  (if-let* ((buf-name (concat "*vterm " (projectile-project-name) "*"))
+  (if-let* ((buf-name (concat "*vterm " (project-name (project-current)) "*"))
 	    (window (get-buffer-window buf-name)))
       (if (string= (buffer-name (current-buffer)) buf-name)
 	  (ry/switch-to-mru-window)
