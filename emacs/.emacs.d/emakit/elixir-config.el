@@ -16,6 +16,7 @@
 (use-package heex-ts-mode
   :hook ((heex-ts-mode . display-line-numbers-mode)
 	 (heex-ts-mode . git-gutter-mode)
+	 (heex-ts-mode . (lambda () (indent-tabs-mode 0)))
 	 (heex-ts-mode . (lambda () (add-hook 'before-save-hook 'eglot-format nil 'local))))
   :init (add-to-list 'auto-mode-alist '("\\.[hl]?eex\\'" . heex-ts-mode)))
 
