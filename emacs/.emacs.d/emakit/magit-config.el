@@ -28,4 +28,7 @@
 (use-package browse-at-remote
   :bind ("C-c g g" . 'browse-at-remote))
 
+(use-package diff-mode
+  :custom (diff-refine nil))
+
 (provide 'magit-config)

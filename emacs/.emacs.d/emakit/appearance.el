@@ -66,6 +66,7 @@
    '(elixir-ts-font-comment-doc-attribute-face ((t (:inherit font-lock-preprocessor-face))))
    '(elixir-ts-font-comment-doc-face ((t (:inherit font-lock-doc-face :height 1.1))))
    '(elixir-ts-font-comment-doc-identifier-face ((t (:inherit font-lock-preprocessor-face :slant normal))))
+   '(diff-added ((t (:foreground "#9cb970" :background "#354440"))))
    '(corfu-border ((t (:background "gray60"))))
    '(corfu-current ((t (:background "DarkSlateGray4" :foreground "#f2fffc")))))
   (enable-theme 'doom-material)
