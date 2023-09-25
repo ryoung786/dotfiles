@@ -33,11 +33,13 @@
   :config
   (setq vterm-max-scrollback 10000)
   (add-to-list 'display-buffer-alist
-             '("\\*vterm\\*"
-                (display-buffer-in-side-window)
-                (window-height . 0.25)
-                (slot . -1)
-                (side . bottom)
-                (window-parameters . ((no-delete-other-windows . t))))))
+               '("\\*vterm\\*"
+                 (display-buffer-in-side-window)
+                 (window-height . 0.25)
+                 (slot . -1)
+                 (side . bottom)
+                 (window-parameters . ((no-delete-other-windows . t)))))
+  (if (display-graphic-p)
+      (set-fontset-font nil 'symbol (font-spec :script 'symbol))))
 
 (provide 'vterm-config)
