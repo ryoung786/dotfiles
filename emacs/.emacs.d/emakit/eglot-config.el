@@ -11,12 +11,13 @@
 
 (use-package eglot
   :config
-  (add-to-list 'eglot-server-programs `((elixir-ts-mode heex-ts-mode elixir-mode) . ("~/dev/language_servers/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh")))
+  ;; (add-to-list 'eglot-server-programs `((elixir-ts-mode heex-ts-mode elixir-mode) . ("~/dev/language_servers/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh")))
   ;; (add-to-list 'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
-  ;; (add-to-list 'eglot-server-programs `((elixir-ts-mode heex-ts-mode elixir-mode) . ("nextls" "--stdio=true")))
+  (add-to-list 'eglot-server-programs `((elixir-ts-mode heex-ts-mode elixir-mode) . "elixir-ls"))
+  ;; (add-to-list 'eglot-server-programs `((elixir-ts-mode heex-ts-mode elixir-mode) . ("~/dev/language_servers/elixir/next-ls/bin/start" "--stdio=true")))
   :hook ((elixir-ts-mode . eglot-ensure) (heex-ts-mode . eglot-ensure)))
 
-(use-package ghelp
-  :bind (:map prog-mode-map ("C-h ." . ghelp-describe)))
+;; (use-package ghelp
+;;   :bind (:map prog-mode-map ("C-h ." . ghelp-describe)))
 
 (provide 'eglot-config)
