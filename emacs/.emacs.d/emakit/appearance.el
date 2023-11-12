@@ -22,9 +22,12 @@
     ))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'yaml-mode-hook 'display-line-numbers-mode)
 (setq column-number-mode t)
+(use-package prog-mode
+  :ensure nil
+  :hook ((prog-mode . display-line-numbers-mode)
+	 (prog-mode . (lambda () (indent-tabs-mode -1)))))
 
 (use-package nerd-icons-dired
   :hook (dired-mode . nerd-icons-dired-mode))

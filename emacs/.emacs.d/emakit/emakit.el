@@ -59,6 +59,7 @@
 (require 'markdown-config)
 (require 'imenu-config)
 (require 'appearance)
+(require 'css-js-config)
 
 (nerd-icons-completion-mode t)
 
