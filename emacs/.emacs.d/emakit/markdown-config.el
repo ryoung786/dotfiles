@@ -1,6 +1,6 @@
 (use-package olivetti
   :delight
-  :custom olivetti-body-width 120)
+  :custom (olivetti-body-width 105))
 
 (use-package markdown-mode
   :mode
@@ -8,6 +8,8 @@
    ("\\.livemd\\'" . gfm-mode))
   :init
   (require 'org)
+  :custom
+  (markdown-fontify-code-blocks-natively t)
   :hook
   ((markdown-mode . olivetti-mode)
    (markdown-mode . variable-pitch-mode)
