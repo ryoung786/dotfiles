@@ -39,7 +39,6 @@
 (require 'which-key-config)
 (require 'load-env-vars-config)
 (require 'elixir-config)
-(require 'eglot-config)
 (require 'flymake-config)
 (require 'web-config)
 (require 'whitespace-config)
@@ -58,6 +57,7 @@
 (require 'consult-embark-config)
 (require 'markdown-config)
 (require 'imenu-config)
+(require 'lsp-config)
 (require 'appearance)
 (require 'css-js-config)
 
