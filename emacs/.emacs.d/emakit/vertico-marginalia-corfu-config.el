@@ -66,7 +66,7 @@
 (use-package corfu-popupinfo
   :ensure nil ; this module is an extension within corfu, not its own package
   :after corfu
-  :hook (corfu-mode . corfu-popupinfo-mode)
+  :hook corfu-mode
   :custom (corfu-popupinfo-delay 0)
   :config (corfu-popupinfo-mode))
 

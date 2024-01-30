@@ -14,8 +14,9 @@
 				    '(("~/dev/language_servers/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh") ; lexical
 				      ("elixir-ls")                                                                             ; elixir-ls
                                       ("~/dev/language_servers/elixir/next-ls/bin/start" "--stdio=true")))))                    ; next-ls
-  :hook ((elixir-ts-mode . eglot-ensure) (heex-ts-mode . eglot-ensure))
-  )
+  :hook
+  (elixir-ts-mode . eglot-ensure)
+  (heex-ts-mode . eglot-ensure))
 
 (use-package lsp-mode
   :custom

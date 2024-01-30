@@ -15,7 +15,7 @@
 
 (use-package git-gutter
   :delight
-  :hook (prog-mode . git-gutter-mode)
+  :hook prog-mode
   :bind ("C-c s" . git-gutter:stage-hunk)
   :config (setq git-gutter:update-interval 0.02))
 

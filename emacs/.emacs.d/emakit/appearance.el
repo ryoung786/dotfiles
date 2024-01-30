@@ -27,11 +27,12 @@
 
 (use-package prog-mode
   :ensure nil
-  :hook ((prog-mode . display-line-numbers-mode)
-	 (prog-mode . (lambda () (indent-tabs-mode -1)))))
+  :hook
+  (prog-mode . display-line-numbers-mode)
+  (prog-mode . (lambda () (indent-tabs-mode -1))))
 
 (use-package nerd-icons-dired
-  :hook (dired-mode . nerd-icons-dired-mode))
+  :hook dired-mode)
 
 ;; Don't display "Flymake[0 0]", instead just "[0 0]"
 (setq flymake-mode-line-lighter "")

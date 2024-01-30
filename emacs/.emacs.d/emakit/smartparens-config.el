@@ -8,8 +8,6 @@
 
 (use-package smartparens
   :delight smartparens-mode
-  :hook (prog-mode . smartparens-mode)
-  :config
-  (require 'smartparens-config))
+  :hook prog-mode)
 
 (provide 'smartparens-config)

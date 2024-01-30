@@ -10,7 +10,6 @@
 (use-package forge)
 (use-package gh-md)
 (use-package yaml-mode)
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
+(use-package rainbow-delimiters :hook prog-mode)
 
 (provide 'more-packages)

@@ -11,9 +11,9 @@
   :custom
   (markdown-fontify-code-blocks-natively t)
   :hook
-  ((markdown-mode . olivetti-mode)
-   (markdown-mode . variable-pitch-mode)
-   (markdown-mode . (lambda () (set-face-attribute 'markdown-code-face nil :inherit 'fixed-pitch))))
+  (markdown-mode . olivetti-mode)
+  (markdown-mode . variable-pitch-mode)
+  (markdown-mode . (lambda () (set-face-attribute 'markdown-code-face nil :inherit 'fixed-pitch)))
   :custom-face
   (markdown-header-face-1 ((t (:height 1.8 :inherit org-level-1))))
   (markdown-header-face-2 ((t (:height 1.6 :inherit org-level-2))))
