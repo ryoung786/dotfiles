@@ -13,12 +13,19 @@
   :hook
   (markdown-mode . olivetti-mode)
   (markdown-mode . variable-pitch-mode)
-  (markdown-mode . (lambda () (set-face-attribute 'markdown-code-face nil :inherit 'fixed-pitch)))
   :custom-face
+  (markdown-code-face ((t (:inherit 'fixed-pitch))))
   (markdown-header-face-1 ((t (:height 1.8 :inherit org-level-1))))
   (markdown-header-face-2 ((t (:height 1.6 :inherit org-level-2))))
   (markdown-header-face-3 ((t (:height 1.4 :inherit org-level-3))))
   (markdown-header-face-4 ((t (:height 1.2 :inherit org-level-4))))
   (markdown-header-face-5 ((t (:height 1.1 :inherit org-level-5)))))
+
+;; There isn't an eldoc-mode hook, so we have to use special-mode instead.
+(add-hook 'special-mode-hook
+          (lambda ()
+            (set-face-attribute 'markdown-code-face nil :inherit 'fixed-pitch)
+            (set-face-attribute 'markdown-pre-face nil :inherit 'fixed-pitch)
+            (if (string-match-p "\\*eldoc\\*" (buffer-name)) (variable-pitch-mode t))))
 
 (provide 'markdown-config)
