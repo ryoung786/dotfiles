@@ -32,6 +32,14 @@
   :after elixir-ts-mode
   :config
   ;; overwrite exunit's definition to prefer running tests from umbrella root
+  (defun exunit-test-for-file (file)
+    "Return the test file for FILE."
+    (replace-regexp-in-string "^\\(apps/.*/\\)?lib/\\(.*\\)\.ex$" "\\1test/\\2_test.exs" file))
+
+  (defun exunit-file-for-test (test-file)
+    "Return the file which is tested by TEST-FILE."
+    (replace-regexp-in-string "^\\(apps/.*/\\)?test/\\(.*\\)_test\.exs$" "\\1lib/\\2.ex" test-file))
+
   (defun exunit-project-root ()
   "Return the current project root.
 
