@@ -30,6 +30,19 @@
 (use-package exunit
   :delight exunit-mode
   :after elixir-ts-mode
+  :config
+  ;; overwrite exunit's definition to prefer running tests from umbrella root
+  (defun exunit-project-root ()
+  "Return the current project root.
+
+This value is cached in a buffer local to avoid filesytem access
+on every call."
+  (or
+   exunit-project-root
+   (let ((root (or (locate-dominating-file default-directory "apps") (locate-dominating-file default-directory "mix.exs"))))
+     (unless root
+       (error "Couldn't locate project root folder.  Make sure the current file is inside a project"))
+     (setq exunit-project-root (expand-file-name root)))))
   :bind
   (:map elixir-ts-mode-map
         ("C-c , a" . exunit-verify-all)
