@@ -13,7 +13,8 @@
 	br = branch
 	st = status
 	ci = commit
-	lg = log --pretty=format:"%C(yellow)%h\\ %C(green)%cs%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
+	lg = log --pretty=format:"%C(yellow)%h\\ %C(green)%cs\\ %Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
+	lga = log --pretty=format:"%C(yellow)%h\\ %C(green)%cs\\ %Cred%d\\ %Creset%s%Cblue\\ [%cn]\\ %C(yellow)%an" --decorate
 	up = pull --rebase
 [commit]
 	gpgsign = true
