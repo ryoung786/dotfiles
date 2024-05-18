@@ -5,15 +5,10 @@
 (use-package eglot
   :config
   (add-to-list 'eglot-server-programs
-               `(elixir-ts-mode . ,(eglot-alternatives
+               `((elixir-ts-mode heex-ts-mode elixir-mode) . ,(eglot-alternatives
 				    '(("~/dev/language_servers/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh") ; lexical
 				      ("elixir-ls")                                                                             ; elixir-ls
-                                      ("~/dev/language_servers/elixir/next-ls/bin/start" "--stdio=true")))))                    ; next-ls
-  (add-to-list 'eglot-server-programs
-               `(heex-ts-mode . ,(eglot-alternatives
-				    '(("~/dev/language_servers/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh") ; lexical
-				      ("elixir-ls")                                                                             ; elixir-ls
-                                      ("~/dev/language_servers/elixir/next-ls/bin/start" "--stdio=true")))))                    ; next-ls
+                                      ("/opt/homebrew/Cellar/next-ls/0.20.2/bin/nextls" "--stdio=true" :initializationOptions (:experimental (:completions (:enable t))))))))
   :hook
   (elixir-ts-mode . eglot-ensure)
   (heex-ts-mode . eglot-ensure))
