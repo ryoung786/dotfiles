@@ -6,7 +6,8 @@
 [core]
 	editor = emacs -q -nw
 	excludesfile = /Users/ryoung/.gitignore
-	pager = less -FX
+	# pager = less -FX
+	pager = delta
 
 [alias]
 	co = checkout
@@ -32,3 +33,82 @@
 	insteadOf = https://github.com/
 [github]
 	user = ryoung786
+
+[interactive]
+    diffFilter = delta --color-only --features=interactive
+
+[delta]
+    features = decorations chameleon
+
+    # line-numbers-left-format = "{nm:>1}┊"
+    # line-numbers-left-style = red
+    # line-numbers-minus-style = red bold
+    # line-numbers-plus-style = green bold
+    # line-numbers-right-format = " {np:>1}┊"
+    # line-numbers-right-style = green
+    # line-numbers-zero-style = "#999999" italic
+
+[delta "interactive"]
+    keep-plus-minus-markers = false
+
+[delta "decorations"]
+    commit-decoration-style = blue ol
+    commit-style = raw
+    file-style = omit
+    hunk-header-decoration-style = blue ul
+    hunk-header-file-style = red
+    hunk-header-line-number-style = "lightgray"
+    hunk-header-style = file line-number syntax
+
+[delta "chameleon"]
+    # features
+    dark = true
+    line-numbers = true
+    # side-by-side = true
+    keep-plus-minus-markers = false
+    syntax-theme = Nord
+
+    # file style
+    file-style = "lightgray" bold
+    file-decoration-style = "purple" box
+    file-added-label = [+]
+    file-copied-label = [==]
+    file-modified-label = [*]
+    file-removed-label = [-]
+    file-renamed-label = [->]
+
+    # hunk header style
+    # hunk-header-style = omit
+
+    # line numbers style
+    line-numbers-left-format = " {nm:>3} │"
+    line-numbers-left-style = red
+    line-numbers-right-format = " {np:>3} │"
+    line-numbers-right-style = green
+    line-numbers-minus-style = red italic black
+    line-numbers-plus-style = green italic black
+    line-numbers-zero-style = "#434C5E" italic
+
+    # diff style
+    minus-style = bold red # line removed
+    minus-emph-style = bold "#202020" "#FF5555" # changed part of line
+    minus-non-emph-style = bold # changed line backdrop
+    plus-style = bold green # line added
+    plus-emph-style = bold "#202020" "#50FA7B" # changed part of line
+    plus-non-emph-style = bold # changed line backdrop
+
+    # unchanged lines style
+    zero-style = syntax
+
+    # style for git blame (Nord theme colors)
+    blame-code-style = syntax
+    blame-format = "{author:<18} ({commit:>9}) {timestamp:^16}"
+    blame-palette = "#2E3440" "#3B4252" "#434C5E" "#4C566A"
+
+    # merge conflict style (Nord theme colors)
+    merge-conflict-begin-symbol = ~
+    merge-conflict-end-symbol = ~
+    merge-conflict-ours-diff-header-style = "#F1FA8C" bold
+    merge-conflict-ours-diff-header-decoration-style = "#434C5E" box
+    merge-conflict-theirs-diff-header-style = "#F1FA8C" bold
+    merge-conflict-theirs-diff-header-decoration-style = "#434C5E" box

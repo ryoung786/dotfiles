@@ -21,4 +21,7 @@
   :init
   (progn (exec-path-from-shell-initialize)))
 
+(use-package mise
+  :hook global-mise-mode)
+
 (provide 'adjust-shell)
