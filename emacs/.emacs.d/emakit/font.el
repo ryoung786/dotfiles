@@ -1,7 +1,8 @@
-(add-to-list 'default-frame-alist '(font . "VictorMono Nerd Font-14"))
+(setq my-font-s "IosevkaTerm Nerd Font Mono")
+(add-to-list 'default-frame-alist '(font . "IosevkaTerm Nerd Font Mono-16"))
 
-(set-face-attribute 'default nil :font "VictorMono Nerd Font" :weight 'light :height 140)
-(set-face-attribute 'fixed-pitch nil :font "VictorMono Nerd Font" :weight 'light :height 140)
+(set-face-attribute 'default nil :font my-font-s :weight 'light :height 160)
+(set-face-attribute 'fixed-pitch nil :font my-font-s :weight 'light :height 160)
 (set-face-attribute 'variable-pitch nil :font "IBM Plex Sans-16" :weight 'light)
 
 (setq-default line-spacing .2)

@@ -16,7 +16,12 @@ IEx.configure(
     doc_inline_code: :magenta,
     doc_headings: [:cyan, :underline],
     doc_title: [:cyan, :bright, :underline]
-  ]
+  ],
+  inspect: [
+    pretty: true,
+    limit: :infinity,
+    custom_options: [sort_maps: true]
+  ],
 )
 
 if :mix not in Enum.map(Application.started_applications(), &elem(&1, 0)) do

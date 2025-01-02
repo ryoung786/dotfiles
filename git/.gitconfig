@@ -38,15 +38,7 @@
     diffFilter = delta --color-only --features=interactive
 
 [delta]
-    features = decorations chameleon
-
-    # line-numbers-left-format = "{nm:>1}┊"
-    # line-numbers-left-style = red
-    # line-numbers-minus-style = red bold
-    # line-numbers-plus-style = green bold
-    # line-numbers-right-format = " {np:>1}┊"
-    # line-numbers-right-style = green
-    # line-numbers-zero-style = "#999999" italic
+    features = decorations ryan-theme
 
 [delta "interactive"]
     keep-plus-minus-markers = false
@@ -60,16 +52,15 @@
     hunk-header-line-number-style = "lightgray"
     hunk-header-style = file line-number syntax
 
-[delta "chameleon"]
+[delta "ryan-theme"]
     # features
-    dark = true
     line-numbers = true
     # side-by-side = true
     keep-plus-minus-markers = false
-    syntax-theme = Nord
+    syntax-theme = ansi
 
     # file style
-    file-style = "lightgray" bold
+    file-style = bold
     file-decoration-style = "purple" box
     file-added-label = [+]
     file-copied-label = [==]
@@ -85,9 +76,9 @@
     line-numbers-left-style = red
     line-numbers-right-format = " {np:>3} │"
     line-numbers-right-style = green
-    line-numbers-minus-style = red italic black
-    line-numbers-plus-style = green italic black
-    line-numbers-zero-style = "#434C5E" italic
+    line-numbers-minus-style = red italic #black
+    line-numbers-plus-style = green italic #black
+    line-numbers-zero-style = italic
 
     # diff style
     minus-style = bold red # line removed
@@ -103,7 +94,6 @@
     # style for git blame (Nord theme colors)
     blame-code-style = syntax
     blame-format = "{author:<18} ({commit:>9}) {timestamp:^16}"
-    blame-palette = "#2E3440" "#3B4252" "#434C5E" "#4C566A"
 
     # merge conflict style (Nord theme colors)
     merge-conflict-begin-symbol = ~

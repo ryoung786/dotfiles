@@ -115,7 +115,7 @@ export GPG_TTY=$(tty)
 export DIRENV_LOG_FORMAT=
 export ERL_AFLAGS="-kernel shell_history enabled"
 
-export BAT_THEME="Coldark-Dark"
+export BAT_THEME="ansi"
 
 F=~/.zsh_private
 test -f $F && source $F
