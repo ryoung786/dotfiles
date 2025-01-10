@@ -64,7 +64,7 @@
    '(region ((t (:background "DarkSlateGray"))))
    '(shadow ((t (:foreground "gray50"))))
    '(vertico-current ((t (:background "DarkSlateGray"))))
-   '(vterm-color-black ((t (:background "MediumPurple1" :foreground "#19181A"))))
+   '(vterm-color-black ((t (:foreground "gray55"))))
    '(eglot-mode-line ((t (:foreground "PeachPuff1" :weight normal))))
    '(web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum"))))
    '(elixir-ts-font-comment-doc-attribute-face ((t (:inherit font-lock-preprocessor-face))))
