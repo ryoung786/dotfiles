@@ -9,4 +9,8 @@
   (setq mac-option-modifier 'super) ; make opt key do Super
   (setq ns-pop-up-frames nil))
 
+(use-package kkp
+  :config
+  (global-kkp-mode 1))
+
 (provide 'osx)

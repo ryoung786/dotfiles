@@ -6,10 +6,11 @@
   :config
   (add-to-list 'eglot-server-programs
                `((elixir-ts-mode heex-ts-mode elixir-mode) . ,(eglot-alternatives
-				    '(("~/dev/language_servers/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh") ; lexical
-				      ("elixir-ls")                                                                             ; elixir-ls
-                                      ("/opt/homebrew/Cellar/next-ls/0.20.2/bin/nextls" "--stdio=true" :initializationOptions (:experimental (:completions (:enable t))))))))
+				                               '(("~/dev/language_servers/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh") ; lexical
+				                                 ("elixir-ls") ; elixir-ls
+                                                                 ))))
   :hook
+  (js-ts-mode . eglot-ensure)
   (elixir-ts-mode . eglot-ensure)
   (heex-ts-mode . eglot-ensure))
 
@@ -35,5 +36,8 @@
   (if (get-buffer-window eldoc--doc-buffer)
       (quit-windows-on eldoc--doc-buffer)
     (with-current-buffer eldoc--doc-buffer (display-buffer (current-buffer)))))
+
+(use-package apheleia
+  :init (apheleia-global-mode +1))
 
 (provide 'lsp-config)

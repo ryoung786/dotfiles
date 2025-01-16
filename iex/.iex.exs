@@ -20,8 +20,9 @@ IEx.configure(
   inspect: [
     pretty: true,
     limit: :infinity,
+    charlists: :as_lists,
     custom_options: [sort_maps: true]
-  ],
+  ]
 )
 
 if :mix not in Enum.map(Application.started_applications(), &elem(&1, 0)) do
