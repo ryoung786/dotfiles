@@ -89,7 +89,9 @@
   ;; If eglot has no suggestions, then by default it stops.  Instead
   ;; I want it to continue through the `completion-at-point-functions` until
   ;; it finds matches
-  (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive))
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
+  ;; No need for ispell completions in html-mode, but leave them in for text-mode
+  :hook (html-mode . (lambda () (delete 'ispell-completion-at-point completion-at-point-functions))))
 
 ;; A few more useful configurations...
 (use-package emacs
