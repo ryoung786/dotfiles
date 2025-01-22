@@ -38,6 +38,7 @@
     (with-current-buffer eldoc--doc-buffer (display-buffer (current-buffer)))))
 
 (use-package apheleia
+  :delight apheleia-mode
   :init (apheleia-global-mode +1)
   :config (add-to-list 'apheleia-mode-alist '(heex-ts-mode . mix-format)))
 

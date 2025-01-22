@@ -8,7 +8,6 @@
   :hook
   (elixir-ts-mode . mix-minor-mode)
   (elixir-ts-mode . exunit-mode)
-  ;; (elixir-ts-mode . (lambda () (add-hook 'before-save-hook 'eglot-format nil 'local)))
   :config (global-subword-mode t)
   :delight subword-mode)
 
@@ -17,7 +16,6 @@
   (heex-ts-mode . display-line-numbers-mode)
   (heex-ts-mode . git-gutter-mode)
   (heex-ts-mode . (lambda () (indent-tabs-mode -1)))
-  ;; (heex-ts-mode . (lambda () (add-hook 'before-save-hook 'eglot-format nil 'local)))
   :init (add-to-list 'auto-mode-alist '("\\.[hl]?eex\\'" . heex-ts-mode)))
 
 (use-package mix
