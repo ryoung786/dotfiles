@@ -60,6 +60,7 @@
 (require 'lsp-config)
 (require 'appearance)
 (require 'css-js-config)
+(require 'sql-config)
 
 (nerd-icons-completion-mode t)
 
