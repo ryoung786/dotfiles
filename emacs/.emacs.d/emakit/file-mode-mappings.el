@@ -23,7 +23,6 @@
 
 ;; use web-mode rather than html, nxml modes --keep
 (add-to-list 'auto-mode-alist '("\\.html.eex\\'" . web-mode))
-(add-to-list 'magic-mode-alist '("^<!DOCTYPE html" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.handlebars\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
@@ -35,8 +34,5 @@
 (add-to-list 'auto-mode-alist '("\\.rhtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-
-;; (setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))
-;; (setq web-mode-engines-alist '(("elixir" . "\\.heex\\'")))
 
 (provide 'file-mode-mappings)

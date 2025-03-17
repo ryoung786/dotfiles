@@ -10,6 +10,8 @@
 				                                 ("elixir-ls") ; elixir-ls
                                                                  ))))
   :hook
+  (typescript-ts-mode . eglot-ensure)
+  (tsx-ts-mode . eglot-ensure)
   (js-ts-mode . eglot-ensure)
   (elixir-ts-mode . eglot-ensure)
   (heex-ts-mode . eglot-ensure))
