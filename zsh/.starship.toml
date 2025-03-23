@@ -7,46 +7,9 @@ add_newline = true
 # Replace the "❯" symbol in the prompt with "➜"
 [character] # The name of the module we are configuring is "character"
 success_symbol = "[➜](bold green)" # The "success_symbol" segment is being set to "➜" with the color "bold green"
-
-# Disable the package module, hiding it from the prompt completely
-[package]
-disabled = true
-
-[battery]
-disabled = true
-
-[elixir]
-disabled = true
-
-[ruby]
-disabled = true
-
-[nodejs]
-disabled = true
-
-[python]
-disabled = true
-
-[golang]
-disabled = true
-
-[docker_context]
-disabled = true
-
 [time]
 disabled = false
 format = "[$time]($style) "
-
-[aws]
-disabled = false
-format = 'on [$symbol($profile )(\($region\) )]($style)'
-style = 'bold blue'
-symbol = '🅰 '
-[aws.region_aliases]
-ap-southeast-2 = 'au'
-us-east-1 = 'va'
-[aws.profile_aliases]
-CompanyGroupFrobozzOnCallAccess = 'Frobozz'
 
 [git_status]
 staged = "[+](green)"
@@ -56,3 +19,9 @@ conflicted = "[≠](red)"
 untracked = "[?](purple)"
 ahead = "[⇡](bold cyan)"
 behind = "[⇣](bold orange)"
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
