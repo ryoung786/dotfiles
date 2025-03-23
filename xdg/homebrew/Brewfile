@@ -49,7 +49,7 @@ brew "starship"
 brew "subversion"
 brew "tree"
 brew "tree-sitter"
-brew "d12frosted/emacs-plus/emacs-plus@30", args: ["with-imagemagick", "with-modern-papirus-icon", "with-native-comp", "with-xwidgets"]
+brew "d12frosted/emacs-plus/emacs-plus@30", args: ["with-imagemagick", "with-modern-papirus-icon", "with-xwidgets"]
 brew "elixir-tools/tap/next-ls"
 brew "frameio/tools/devops-cli"
 cask "adobe-creative-cloud"

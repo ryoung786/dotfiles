@@ -1,7 +1,5 @@
 (require 'treesit)
 
-(add-to-list 'major-mode-remap-alist '(elixir-mode . elixir-ts-mode))
-
 (use-package elixir-mode)
 
 (use-package elixir-ts-mode
@@ -10,6 +8,8 @@
   (elixir-ts-mode . exunit-mode)
   :config (global-subword-mode t)
   :delight subword-mode)
+
+(add-to-list 'major-mode-remap-alist '(elixir-mode . elixir-ts-mode))
 
 (use-package heex-ts-mode
   :hook

@@ -22,3 +22,6 @@
                             (ns-appearance . dark)
                             (ns-transparent-titlebar . t)
 			    ))
+
+;; test
+(setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/14:/opt/homebrew/lib/gcc/14/gcc/aarch64-apple-darwin24/14")

@@ -74,7 +74,7 @@ plugins=(git mise direnv brew mix-fast colored-man-pages zsh-autosuggestions zsh
 
 source $ZSH/oh-my-zsh.sh
 
-export STARSHIP_CONFIG=~/.starship.toml
+export STARSHIP_CONFIG=~/.config/starship/starship.toml
 eval "$(starship init zsh)"
 
 # User configuration

@@ -23,7 +23,7 @@
 
 ;; we depend on treesit-auto to load grammers on first use of a mode
 ;; https://github.com/renzmann/treesit-auto
-;;   (setq treesit-auto-install 't)
+(setq treesit-auto-install 't)
 (use-package treesit-auto
   :demand t
   :config

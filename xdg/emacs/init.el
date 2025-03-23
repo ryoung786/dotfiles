@@ -11,14 +11,14 @@
 (load custom-file 'noerror)
 
 ;; backup file de-clutter
-(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
+(setq backup-directory-alist '(("." . "~/.config/emacs/backup"))
       backup-by-copying t    ; Don't delink hardlinks
       version-control t      ; Use version numbers on backups
       delete-old-versions t  ; Automatically delete excess backups
       kept-new-versions 20   ; how many of the newest versions to keep
       kept-old-versions 5    ; and how many of the old
       )
-(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/autosave/" t)))
+(setq auto-save-file-name-transforms '((".*" "~/.config/emacs/autosave/" t)))
 (setq create-lockfiles nil)
 
 (require 'emakit)

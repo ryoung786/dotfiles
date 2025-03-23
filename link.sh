@@ -4,15 +4,22 @@
 # grab every file and create a symlink to it from the home dir
 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-cd $SCRIPT_DIR
 
-for dir in $(ls -d "$SCRIPT_DIR"/*/ | sed 's:/*$::')
+mkdir -p ~/.config
+
+echo "Setting up .config"
+cd $SCRIPT_DIR/xdg
+for dir in $(ls | sed 's:/*$::')
 do
-    echo "Processing $dir"
-    for file in $(ls -A "$dir")
-    do
-        echo "  Linking $file"
-        rm ~/$file
-        ln -s ${dir}/${file} ~/$file
-    done
+    echo "  Linking $dir to ~/.config/"
+    ln -sf $SCRIPT_DIR/xdg/${dir} ~/.config/
+done
+
+
+echo "Setting up home"
+cd $SCRIPT_DIR/home
+for file in $(ls -A | sed 's:/*$::')
+do
+    echo "  Linking $file to ~/"
+    ln -sf $SCRIPT_DIR/home/${file} ~/
 done
