@@ -25,3 +25,9 @@ disabled = true
 
 [gcloud]
 disabled = true
+
+[elixir]
+disabled = true
+
+[package]
+disabled = true
