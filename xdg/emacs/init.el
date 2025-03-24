@@ -1,8 +1,9 @@
-;; emakit
-;; http://github.com/walter/emakit
-;; set the dotfiles-dir variable to this directory
+;; First time installation notes:
+;; If on Mac Sequoia 15.3 or higher, you may have to install
+;; some of the packages via package-install rather than use-package
+
 (setq kitfiles-dir (concat (file-name-directory
-                    (or (buffer-file-name) load-file-name)) "/emakit"))
+                            (or (buffer-file-name) load-file-name)) "/emakit"))
 
 ;; set up our various directories to load
 (add-to-list 'load-path kitfiles-dir)

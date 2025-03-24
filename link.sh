@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# For each directory in this directory,
-# grab every file and create a symlink to it from the home dir
-
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 XDG_CONFIG_HOME=${XDG_CONFIG_HOME:="~/.config"}
