@@ -5,16 +5,16 @@
 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-mkdir -p ~/.config
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:="~/.config"}
+mkdir -p $XDG_CONFIG_HOME
 
 echo "Setting up .config"
 cd $SCRIPT_DIR/xdg
 for dir in $(ls | sed 's:/*$::')
 do
-    echo "  Linking $dir to ~/.config/"
-    ln -sf $SCRIPT_DIR/xdg/${dir} ~/.config/
+    echo "  Linking $dir to $XDG_CONFIG_HOME/"
+    ln -sf $SCRIPT_DIR/xdg/${dir} $XDG_CONFIG_HOME/
 done
-
 
 echo "Setting up home"
 cd $SCRIPT_DIR/home

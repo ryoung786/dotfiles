@@ -6,3 +6,7 @@ xdg/emacs/autosave/*
 !xdg/emacs/emakit
 
 xdg/homebrew/Brewfile.lock.json
+
+xdg/zsh/*
+!xdg/zsh/.zshrc
+!xdg/zsh/.zprofile
