@@ -37,6 +37,10 @@
 ;; Don't display "Flymake[0 0]", instead just "[0 0]"
 (setq flymake-mode-line-lighter "")
 
+;; beacon flashes the cursor on scroll or buffer/window change
+(use-package beacon
+  :custom (beacon-color "Magenta"))
+
 (use-package doom-themes
   :config
   (load-library "eglot")

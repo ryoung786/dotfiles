@@ -62,6 +62,9 @@
 (require 'css-js-config)
 (require 'sql-config)
 
+;; private, for config that should live outside of source control
+(require 'ryoung-private-config nil t)
+
 (nerd-icons-completion-mode t)
 
 (provide 'emakit)
