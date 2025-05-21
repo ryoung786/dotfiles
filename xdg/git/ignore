@@ -54,3 +54,4 @@ node_modules/
 .envrc
 
 restclient_playground/
+config_private

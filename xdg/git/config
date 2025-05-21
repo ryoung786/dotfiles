@@ -102,3 +102,14 @@
     merge-conflict-ours-diff-header-decoration-style = "#434C5E" box
     merge-conflict-theirs-diff-header-style = "#F1FA8C" bold
     merge-conflict-theirs-diff-header-decoration-style = "#434C5E" box
+
+# Separate personal and work git configs
+# Create a `config_private` file with contents:
+#   [includeIf "gitdir:~/path/to/my/work/dir/"]
+#     path = ~/path/to/my/work/dir/.gitconfig
+# Then that new `.gitconfig` can contain the correct user.email and user.signingkey
+# so that commits in any project under that dir will be signed by the work user details
+#
+# If `config_private` doesn't exist, this is ignored
+[include]
+  path = config_private
