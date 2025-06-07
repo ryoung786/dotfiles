@@ -1,0 +1,8 @@
+[tools]
+elixir = "1.18.4-otp-27"
+erlang = "27.2.4"
+node = "23.6.0"
+sqlite = "3.44.1"
+
+[env]
+MISE_ENV_FILE = '.env'
