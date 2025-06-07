@@ -2,7 +2,8 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="$HOME/.config/zsh/oh-my-zsh"
+# XDG_CONFIG_HOME is defined in ~/.zshenv
+export ZSH="$XDG_CONFIG_HOME/zsh/oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
