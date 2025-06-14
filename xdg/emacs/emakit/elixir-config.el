@@ -2,6 +2,54 @@
 
 (use-package elixir-mode)
 
+(defun ry/elixir-module-at-point ()
+  "Return the full nested Elixir module name at point by checking enclosing `defmodule` blocks."
+  (interactive)
+  (save-excursion
+    (let ((modules '())
+          (point-pos (point)))
+      (goto-char (point-min))
+      (while (re-search-forward
+              "^\\s-*defmodule\\s-+\\([A-Z][A-Za-z0-9_\\.]*\\)\\s-+do\\b" nil t)
+        (let ((module-name (substring-no-properties (match-string 1)))
+              (start (match-beginning 0)))
+          (condition-case nil
+              (let ((end (save-excursion
+                           (goto-char start)
+                           (forward-sexp) ; move past the module's `do ... end`
+                           (point))))
+                (when (and (>= point-pos start)
+                           (<= point-pos end))
+                  (push module-name modules)))
+            (error nil)))) ; skip malformed blocks safely
+      (let ((full-name (string-join (reverse modules) ".")))
+        (if (called-interactively-p 'interactive)
+            (message "%s" full-name)
+          (unless (string-empty-p full-name)
+            full-name))))))
+
+(defun ry/iex-reload-module-at-point ()
+  "Reload the Elixir module at point in an IEx session using vterm.
+If no IEx session is detected, restore the previous window configuration."
+  (interactive)
+  (let ((mod (ry/elixir-module-at-point)))
+    (if (not mod)
+        (message "No Elixir module found at point.")
+      (let ((window-config (current-window-configuration)))
+        (ry/toggle-project-vterm)
+        (with-current-buffer (window-buffer)
+          (vterm--goto-line -1)
+          (let* ((inhibit-read-only t)
+                 (last-line (save-excursion
+                              (buffer-substring-no-properties (point) (line-end-position)))))
+            (if (string-match "^iex" last-line)
+                (progn
+                  (vterm-send-string (format "r %s" mod) t)
+                  (vterm-send-return))
+              (progn
+                (message "No IEx session running")
+                (set-window-configuration window-config)))))))))
+
 (use-package elixir-ts-mode
   :hook
   (elixir-ts-mode . mix-minor-mode)

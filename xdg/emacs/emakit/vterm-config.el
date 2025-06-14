@@ -8,7 +8,7 @@
     (vterm)))
 
 (defun ry/toggle-project-vterm ()
-  "Open a project's vterm or switch focusto it if it's already visible"
+  "Open a project's vterm or switch focus to it if it's already visible"
   (interactive)
   (if-let* ((buf-name (concat "*vterm " (project-name (project-current)) "*"))
 	    (window (get-buffer-window buf-name)))
