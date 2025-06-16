@@ -2,6 +2,24 @@
 
 (use-package elixir-mode)
 
+(defun ry/iex-send-string (str)
+  "Sends the str to the project's IEx session and executes it."
+  (let ((window-config (current-window-configuration)))
+    (ry/toggle-project-vterm)
+    (with-current-buffer (window-buffer)
+      (vterm-reset-cursor-point)
+      (let* ((inhibit-read-only t)
+             (line-num (line-number-at-pos))
+             (last-line (save-excursion
+                          (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
+        (if (string-match "^iex" last-line)
+            (progn
+              (vterm-send-string str t)
+              (vterm-send-return))
+          (progn
+            (message (concat "No IEx session running: " last-line))
+            (set-window-configuration window-config)))))))
+
 (defun ry/elixir-module-at-point ()
   "Return the full nested Elixir module name at point by checking enclosing `defmodule` blocks."
   (interactive)
@@ -35,20 +53,24 @@ If no IEx session is detected, restore the previous window configuration."
   (let ((mod (ry/elixir-module-at-point)))
     (if (not mod)
         (message "No Elixir module found at point.")
-      (let ((window-config (current-window-configuration)))
-        (ry/toggle-project-vterm)
-        (with-current-buffer (window-buffer)
-          (vterm--goto-line -1)
-          (let* ((inhibit-read-only t)
-                 (last-line (save-excursion
-                              (buffer-substring-no-properties (point) (line-end-position)))))
-            (if (string-match "^iex" last-line)
-                (progn
-                  (vterm-send-string (format "r %s" mod) t)
-                  (vterm-send-return))
-              (progn
-                (message "No IEx session running")
-                (set-window-configuration window-config)))))))))
+      (ry/iex-send-string (format "r %s" mod)))))
+
+(defun ry/iex-send-current-line-or-region ()
+  "Insert text of current line or region in IEx and execute."
+  (interactive)
+  (let* ((current-line (buffer-substring
+                        (save-excursion
+                          (beginning-of-line)
+                          (point))
+                        (save-excursion
+                          (end-of-line)
+                          (point))))
+         (buf (current-buffer))
+         (command (string-trim
+                   (if (use-region-p)
+                       (buffer-substring (region-beginning) (region-end))
+                     current-line))))
+    (ry/iex-send-string command)))
 
 (use-package elixir-ts-mode
   :hook
