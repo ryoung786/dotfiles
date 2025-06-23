@@ -5,6 +5,8 @@ xdg/emacs/autosave/*
 !xdg/emacs/emakit
 xdg/emacs/emakit/ryoung-private-config.el
 
+config_private
+
 xdg/homebrew/Brewfile.lock.json
 
 xdg/zsh/*
