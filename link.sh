@@ -20,3 +20,8 @@ do
     echo "  Linking $file to ~/"
     ln -sf $SCRIPT_DIR/home/${file} ~/
 done
+
+cd $SCRIPT_DIR/xdg/emacs
+emacs init.org --batch \
+  --eval '(require '\''org)' \
+  --eval '(org-babel-tangle-file "init.org")'

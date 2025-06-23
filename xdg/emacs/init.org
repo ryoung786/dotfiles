@@ -1,5 +1,5 @@
 #+title: GNU Emacs Configuration
-#+startup: content indent
+#+startup: fold indent
 #+property: header-args:emacs-lisp :tangle init.el
 
 * Early Init
@@ -55,13 +55,13 @@ This is great for new setups so you don't have to =package-install= each package
 
 Delight allows you to hide or minimize all the minor modes in the modeline.  I add it to =use-package= declarations so that it's always hidden, like so:
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package delight)
 #+end_src
 
 ** Autorevert
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package autorevert :delight auto-revert-mode)
 #+end_src
 
@@ -69,7 +69,7 @@ Delight allows you to hide or minimize all the minor modes in the modeline.  I a
 
 Instead of typing out "yes" or "no" when prompted, "y" or "n" does just fine.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (defalias 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
@@ -77,17 +77,17 @@ Instead of typing out "yes" or "no" when prompted, "y" or "n" does just fine.
 
 Shows (line number, column-number) in the modeline.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (setq column-number-mode t)
 #+end_src
 
 ** Dired
-#+begin_src elisp
+#+begin_src emacs-lisp
   (put 'dired-find-alternate-file 'disabled nil)
 #+end_src
 
 *** Nerd icons dired
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package nerd-icons-dired :hook dired-mode)
 #+end_src
 
@@ -101,14 +101,14 @@ The custom file is where Emacs saves any setting that's been =Customized=.  By d
 
 I find it's easier to put it in its own dedicated file.  Here we tell it where it lives, then load it.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (setq custom-file (concat user-emacs-directory "custom.el"))
   (load custom-file 'noerror)
 #+end_src
 
 ** Backup files
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (setq backup-directory-alist '(("." . "~/.config/emacs/backup"))
         backup-by-copying t    ; Don't delink hardlinks
         version-control t      ; Use version numbers on backups
@@ -122,7 +122,7 @@ I find it's easier to put it in its own dedicated file.  Here we tell it where i
 
 Put autosave files in their own directory.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (setq auto-save-file-name-transforms '((".*" "~/.config/emacs/autosave/" t)))
 #+end_src
 
@@ -136,7 +136,7 @@ Lock files just get in the way, and I've found them pretty much useless.
 
 * Programming Languages
 ** Flymake
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package flymake
     :custom
     (flymake-mode-line-lighter "")
@@ -151,7 +151,7 @@ Lock files just get in the way, and I've found them pretty much useless.
 
 Treesitter is the modern way to get fast universal syntax highlighting, instead of relying on major modes to define their own insane regexes.  However, we have to tell Emacs that when we encounter a major mode that doesn't have the treesitter grammer already installed, it should automatically find, download, and install it for us.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (setq treesit-auto-install 't)
   (use-package treesit-auto
     :demand t
@@ -163,7 +163,7 @@ Treesitter is the modern way to get fast universal syntax highlighting, instead 
 ** Org Mode
 Lots going on here, but we want prose to be =variable pitch= and the code blocks to be =fixed pitch=.  The headings also should be larger the more prominent they are.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package org-mode
     :ensure nil
     :no-require t
@@ -196,7 +196,7 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
     ;; (org-level-5 ((t (:height 1.1))))
 
     :init
-    ;; quickly insert code blocks
+    (require 'org)
     (dolist (item '(("sh" . "src sh")
                     ("bsh" . "src bash")
                     ("el" . "src emacs-lisp")
@@ -210,7 +210,7 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
 #+end_src
 
 *** Org-appear
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package org-appear
     :hook (org-mode . org-appear-mode)
     :config
@@ -224,7 +224,7 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
 
 Prettier bullets for headings and lists
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package org-superstar
     :after org
     :hook (org-mode . org-superstar-mode)
@@ -233,7 +233,7 @@ Prettier bullets for headings and lists
 
 ** Markdown
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package markdown-mode
     :mode
     (("README\\.md\\'" . gfm-mode)
@@ -259,7 +259,7 @@ Prettier bullets for headings and lists
 Eldoc is a help buffer that shows documentation about a piece of code.  I like to style it so that prose is variable pitch and code is fixed pitch.
 There isn't an eldoc-mode hook, so we have to use special-mode instead.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (add-hook
    'special-mode-hook
    (lambda ()
@@ -268,29 +268,29 @@ There isn't an eldoc-mode hook, so we have to use special-mode instead.
      (if (string-match-p "\\*eldoc\\*" (buffer-name)) (variable-pitch-mode t))))
 #+end_src
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package eldoc :delight eldoc-mode :custom (help-window-select t))
 #+end_src
 
-#+begin_src elisp
+#+begin_src emacs-lisp
 (setq help-window-select t)
 #+end_src
 
 *** Olivetti
 Olivetti is usually used for a distraction free writing environment.  But I use it to center the buffer content in markdown files.
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package olivetti
     :delight
     :custom (olivetti-body-width 105))
 #+end_src
 
 *** gh-md
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package gh-md)
 #+end_src
 
 ** Prog mode
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package prog-mode
     :ensure nil
     :hook
@@ -302,7 +302,7 @@ Olivetti is usually used for a distraction free writing environment.  But I use 
 
 Apheleia handles formatting on save across the board.  I've had some trouble with it in the past, so I'm not sold.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package apheleia
     :delight apheleia-mode
     :init (apheleia-global-mode +1)
@@ -310,7 +310,7 @@ Apheleia handles formatting on save across the board.  I've had some trouble wit
 #+end_src
 
 *** Rainbow delimiters
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package rainbow-delimiters :hook prog-mode)
 #+end_src
 
@@ -320,7 +320,7 @@ useful blog post as reference:
  - https://jdhao.github.io/2021/10/06/yasnippet_setup_emacs/
  - http://joaotavora.github.io/yasnippet/snippet-reference.html
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package yasnippet
     :delight yas-minor-mode)
 
@@ -335,14 +335,14 @@ useful blog post as reference:
 
 I mainly only use this for the auto insert of pairs.  Prefer it over paredit.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package smartparens
     :delight smartparens-mode
     :hook prog-mode)
 #+end_src
 
 *** Imenu
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package imenu-list
     :bind ("<f2>" . imenu-list-smart-toggle)
     :custom
@@ -353,7 +353,7 @@ I mainly only use this for the auto insert of pairs.  Prefer it over paredit.
 #+end_src
 
 ** YAML
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package yaml-mode
     :hook (yaml-mode . display-line-numbers-mode))
 #+end_src
@@ -362,7 +362,7 @@ I mainly only use this for the auto insert of pairs.  Prefer it over paredit.
 
 To start, we need treesitter and elixir mode so that we can build on top of them.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (require 'treesit)
   (use-package elixir-mode)
 #+end_src
@@ -371,7 +371,7 @@ To start, we need treesitter and elixir mode so that we can build on top of them
 
 Usually, I will have a vterm buffer for my project, and usually it will be running some variation of =iex -S mix=.  When editing an elixir file, it's helpful to be able to send a snippet over to the dedicated iex process and evaluate it.  These custom helper files enable that workflow.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (defun ry/iex-send-string (str)
     "Sends the str to the project's IEx session and executes it."
     (let ((window-config (current-window-configuration)))
@@ -446,7 +446,7 @@ Usually, I will have a vterm buffer for my project, and usually it will be runni
 #+end_src
 
 *** Elixir-ts-mode
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package elixir-ts-mode
     :hook
     (elixir-ts-mode . mix-minor-mode)
@@ -457,12 +457,12 @@ Usually, I will have a vterm buffer for my project, and usually it will be runni
 
 Since the new elixir-ts-mode builds on top of the old elixir-mode, some packages haven't updated yet.  This makes sure everything that elixir-mode did, elixir-ts-mode just inherits.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (add-to-list 'major-mode-remap-alist '(elixir-mode . elixir-ts-mode))
 #+end_src
 
 *** Heex-ts-mode
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package heex-ts-mode
     :hook
     (heex-ts-mode . display-line-numbers-mode)
@@ -472,7 +472,7 @@ Since the new elixir-ts-mode builds on top of the old elixir-mode, some packages
 #+end_src
 
 *** Mix
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package mix
     :delight mix-minor-mode
     :after elixir-ts-mode
@@ -481,7 +481,7 @@ Since the new elixir-ts-mode builds on top of the old elixir-mode, some packages
 
 I use mix to run mix tasks, and the output is put in a compilation buffer.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (setq compilation-scroll-output t)
 #+end_src
 
@@ -489,7 +489,7 @@ I use mix to run mix tasks, and the output is put in a compilation buffer.
 
 Run tests!
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package exunit
     :delight exunit-mode
     :after elixir-ts-mode
@@ -527,7 +527,7 @@ Run tests!
 #+end_src
 
 ** CSS and Javascript
-#+begin_src elisp
+#+begin_src emacs-lisp
   (progn
     (setq-default js-indent-level 2)
     (setq-default css-indent-offset 2)
@@ -538,7 +538,7 @@ Run tests!
 #+end_src
 
 ** Web
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package web-mode)
 
   ;; web-mode specific overrides of tab settings
@@ -554,7 +554,7 @@ Run tests!
 
 Open these file types in web mode automatically
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (add-to-list 'auto-mode-alist '("\\.html.eex\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.handlebars\\'" . web-mode))
@@ -570,7 +570,7 @@ Open these file types in web mode automatically
 #+end_src
 
 ** SQL
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package sql
     :ensure nil
     :no-require t
@@ -581,7 +581,7 @@ Open these file types in web mode automatically
 
 I prefer Eglot over LSP-mode. I find it is more emacs-native and less intrusive.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package eglot
     :config
     (add-to-list 'eglot-server-programs
@@ -602,7 +602,7 @@ I prefer Eglot over LSP-mode. I find it is more emacs-native and less intrusive.
 ** ZSH
 
 Set the default shell to =zsh=
-#+begin_src elisp
+#+begin_src emacs-lisp
   (setenv "ESHELL" "/bin/zsh")
   (setenv "SHELL" "/bin/zsh")
 #+end_src
@@ -611,7 +611,7 @@ Set the default shell to =zsh=
 
 I'm not sure this is needed anymore.  Maybe delete this.  Possibly the =exunit= package depends on it?
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package load-env-vars)
 #+end_src
 
@@ -621,7 +621,7 @@ Emacs doesn't always inherit the =$PATH= that's configured in the =.zshrc= and f
 
 Note: this may be redundant since I'm using emacs-plus osx - it might already bake that in.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package exec-path-from-shell
     :if (memq window-system '(mac ns))
     :init (progn (exec-path-from-shell-initialize)))
@@ -633,7 +633,7 @@ When opening a file or changing directory, mise mode keeps the versions in place
 
 See https://mise.jdx.dev/ide-integration.html#emacs
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package mise
     :delight mise-mode
     :init (add-hook 'after-init-hook #'global-mise-mode))
@@ -698,7 +698,7 @@ VTerm is like a real terminal inside of Emacs.  I've tried shell, eshell, term, 
 
 Kitty Keyboard Protocol provides an alternative, improved way to transmit keyboard input from a terminal to Emacs running in that terminal.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package kkp :config (global-kkp-mode 1))
 #+end_src
 
@@ -708,7 +708,7 @@ Kitty Keyboard Protocol provides an alternative, improved way to transmit keyboa
 
 I mainly only use magit for quickly opening its blame mode.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package magit
     :ensure t
     :pin melpa
@@ -721,7 +721,7 @@ I mainly only use magit for quickly opening its blame mode.
 
 I think this allows magit to work with github.  Not sure.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package forge)
 #+end_src
 
@@ -729,7 +729,7 @@ I think this allows magit to work with github.  Not sure.
 
 Configure the gutter/fringe to show which lines are added/changed/deleted, and stage just that section - very handy when you only want to commit a piece of a file and not the whole thing.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package git-gutter
     :delight
     :hook prog-mode
@@ -747,7 +747,7 @@ Configure the gutter/fringe to show which lines are added/changed/deleted, and s
 
 I use browse-at-remote to quickly open github urls.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package browse-at-remote
     :bind ("C-c g g" . 'browse-at-remote))
 #+end_src
@@ -756,7 +756,7 @@ I use browse-at-remote to quickly open github urls.
 
 I'm not sure why i've added this.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package diff-mode
     :custom (diff-font-lock-syntax nil))
 #+end_src
@@ -766,7 +766,7 @@ I'm not sure why i've added this.
 Discover key bindings
 https://github.com/justbur/emacs-which-key
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package which-key
     :delight which-key-mode
     :config
@@ -778,7 +778,7 @@ https://github.com/justbur/emacs-which-key
 
 Improved Spell Checker (depends on enchant system library)
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package jinx
     :delight
     :bind (("C-M-$" . jinx-correct))
@@ -788,19 +788,19 @@ Improved Spell Checker (depends on enchant system library)
 
 Always delete trailing whitespace.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (require 'whitespace)
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+end_src
 
 Extra settings
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (setq whitespace-action '(auto-cleanup)) ;; automatically clean up bad whitespace
   (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab)) ;; only show bad whitespace
 #+end_src
 
-#+begin_src elisp
+#+begin_src emacs-lisp
 (defun align-whitespace (start end)
   "Align columns by whitespace"
   (interactive "r")
@@ -809,7 +809,7 @@ Extra settings
 #+end_src
 
 ** Commenting
-#+begin_src elisp
+#+begin_src emacs-lisp
   (defun comment-dwim-line (&optional arg)
     "Replacement for the comment-dwim command.
      If no region is selected and current line is not blank and we are not at
@@ -833,7 +833,7 @@ Extra settings
 
 ** Swap windows
 This can probably be replaced now that emacs has this functionality built in.
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package ry/swap-windows
     :ensure nil
     :no-require t
@@ -865,7 +865,7 @@ This can probably be replaced now that emacs has this functionality built in.
 #+end_src
 
 ** Smarter Beginning / End of line
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package ry/line-dwim
     :ensure nil
     :no-require t
@@ -888,7 +888,7 @@ This can probably be replaced now that emacs has this functionality built in.
 #+end_src
 
 ** Scrolling
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package ry/scrolling
     :ensure nil
     :no-require t
@@ -925,7 +925,7 @@ This can probably be replaced now that emacs has this functionality built in.
 #+end_src
 
 ** Hungry delete
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package hungry-delete
     :delight
     :config (setq global-hungry-delete-mode t)
@@ -939,7 +939,7 @@ This can probably be replaced now that emacs has this functionality built in.
 
 =what-face= can probably be deleted in favor of describe-face.  Maybe?
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (defun what-face (pos)
     (interactive "d")
     (let ((face (or (get-char-property (point) 'read-face-name)
@@ -951,7 +951,7 @@ This can probably be replaced now that emacs has this functionality built in.
 
 Set up the default fonts and sizes.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (setq my-font-s "IosevkaTerm Nerd Font Mono")
   (add-to-list 'default-frame-alist '(font . "IosevkaTerm Nerd Font Mono-16"))
 
@@ -967,7 +967,7 @@ Set up the default fonts and sizes.
 
 ** Compilation buffer
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (require 'ansi-color)
 
   (use-package compilation-buffer-appearance
@@ -980,13 +980,13 @@ Set up the default fonts and sizes.
 
 ** Beacon
 beacon flashes the cursor on scroll or buffer/window change
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package beacon :custom (beacon-color "Magenta"))
 #+end_src
 
 ** Doom themes
 I use doom-material with a lot of customizations.
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package doom-themes
     :config
     (load-library "eglot")
@@ -1031,7 +1031,7 @@ I use doom-material with a lot of customizations.
 
 Option key is super.  Command key is meta.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (when (eq system-type 'darwin)
     (setq mac-command-modifier 'meta)
     (setq mac-option-modifier 'super) ; make opt key do Super
@@ -1044,7 +1044,7 @@ Option key is super.  Command key is meta.
 
 I prefer project, but I still need a few specific functions projectile defines.  So we must still install it.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package projectile
     :delight projectile-mode
     :commands (projectile-project-name)
@@ -1056,7 +1056,7 @@ I prefer project, but I still need a few specific functions projectile defines. 
 
 =C-x p= to get to the project functions
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package project
     :custom
     (project-prompter 'project-prompt-project-name)
@@ -1074,7 +1074,7 @@ I prefer project, but I still need a few specific functions projectile defines. 
 
 Some of the project search functions need ripgrep
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package ripgrep)
 #+end_src
 
@@ -1082,7 +1082,7 @@ Some of the project search functions need ripgrep
 
 Set a few defaults for a better auto-complete experience.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
     ;; TAB cycle if there are only few candidates
   (setq completion-cycle-threshold 3)
 
@@ -1092,7 +1092,7 @@ Set a few defaults for a better auto-complete experience.
 #+end_src
 
 ** Vertico
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package vertico
     :init
     (vertico-mode)
@@ -1108,13 +1108,13 @@ Set a few defaults for a better auto-complete experience.
 
 *** Savehist
 Persist history over Emacs restarts. Vertico sorts by history position.
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package savehist :init (savehist-mode))
 #+end_src
 
 ** Orderless
 Better, customizable fuzzy finding
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package orderless
     :init
     (setq completion-styles '(orderless basic)
@@ -1125,7 +1125,7 @@ Better, customizable fuzzy finding
 ** Marginalia
 Enable rich annotations, usually right-aligned for a list item.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package marginalia
     ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
     ;; available in the *Completions* buffer, add it to the
@@ -1138,7 +1138,7 @@ Enable rich annotations, usually right-aligned for a list item.
 
 *** Nerd-icons-completion
 Nerd icons shows the icon for a file type to the left of the file name.  It pairs well with =marginalia=.
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package nerd-icons-completion
     :after marginalia
     :config
@@ -1149,7 +1149,7 @@ Nerd icons shows the icon for a file type to the left of the file name.  It pair
 ** Corfu
 Corfu is the autocompletion popup.  It does _not_ compute or provide the actual completion candidates, it only displays them.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package corfu
     :custom
     (corfu-auto t)  ;; Enable auto completion
@@ -1162,7 +1162,7 @@ Corfu is the autocompletion popup.  It does _not_ compute or provide the actual 
 #+end_src
 
 *** corfu-popupinfo
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package corfu-popupinfo
     :ensure nil ; this module is an extension within corfu, not its own package
     :after corfu
@@ -1173,7 +1173,7 @@ Corfu is the autocompletion popup.  It does _not_ compute or provide the actual 
 
 *** Corfu-terminal
 Make corfu popup come up in terminal overlay
-#+begin_src elisp
+#+begin_src emacs-lisp
 (use-package corfu-terminal
   :if (not (display-graphic-p))
   :config (corfu-terminal-mode))
@@ -1181,7 +1181,7 @@ Make corfu popup come up in terminal overlay
 
 *** Kind-icon
 Shows the icon to the left of the completion candidate. Similar to =nerd-icons-completion-mode= but for the corfu completion popup.
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package kind-icon
     :after corfu
     :custom
@@ -1192,7 +1192,7 @@ Shows the icon to the left of the completion candidate. Similar to =nerd-icons-c
 
 ** Cape
 Cape allows for customization of completion at point functions (capf-s).
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package cape
     :after (corfu eglot)
     :config
@@ -1211,7 +1211,7 @@ Cape allows for customization of completion at point functions (capf-s).
 
 Consult is a package that wraps lots of core emacs functions and makes them better.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package consult
     ;; Replace bindings. Lazily loaded due by `use-package'.
     :bind (;; C-c bindings in `mode-specific-map'
@@ -1334,7 +1334,7 @@ Consult is a package that wraps lots of core emacs functions and makes them bett
 ** Embark
 Embark is used in conjunction with Consult, often to dump the results of a consult function into a new buffer that can independently be searched and provide previews into the list items.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package embark
     :ensure t
 
@@ -1356,7 +1356,7 @@ Embark is used in conjunction with Consult, often to dump the results of a consu
 #+end_src
 
 *** Embark-consult
-#+begin_src elisp
+#+begin_src emacs-lisp
   (use-package embark-consult
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
@@ -1366,7 +1366,7 @@ Embark is used in conjunction with Consult, often to dump the results of a consu
 
 If I have any emacs config that is private (usually work related) that I don't want to check in to my public repo, put them in a private file.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (load (expand-file-name "private.el" user-emacs-directory) 'noerror)
 #+end_src
 
