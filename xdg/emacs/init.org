@@ -1,0 +1,1380 @@
+#+title: GNU Emacs Configuration
+#+startup: fold indent
+#+property: header-args:emacs-lisp :tangle init.el
+
+* Early Init
+The early init config should be extremely fast and tiny, with only absolutely necessary config.
+#+begin_src emacs-lisp :tangle early-init.el
+  ;; Startup speed, annoyance suppression
+  (setq gc-cons-threshold 10000000)
+  (setq byte-compile-warnings '(not obsolete))
+  (setq warning-suppress-log-types '((comp) (bytecomp)))
+  (setq native-comp-async-report-warnings-errors 'silent)
+
+  ;; Silence stupid startup message
+  (setq inhibit-startup-echo-area-message (user-login-name))
+  (setq inhibit-startup-message t)
+
+  ;; Default frame configuration: full screen, good-looking title bar on macOS
+  (setq frame-resize-pixelwise t)
+  (setq frame-inhibit-implied-resize t)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (setq default-frame-alist '((fullscreen . maximized)
+                              ;; Setting the face in here prevents flashes of
+                              ;; color as the theme gets activated
+                              (background-color . "#263238")
+  			    (foreground-color . "white")
+                              (ns-appearance . dark)
+                              (ns-transparent-titlebar . t)
+  			    ))
+
+  ;; test
+  (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/14:/opt/homebrew/lib/gcc/14/gcc/aarch64-apple-darwin24/14")
+#+end_src
+
+* General Emacs behaviour
+** Package Repository
+Tell emacs where to look to find packages. By default it only knows about the official GNU repository, but nowadays most packages are hosted on MELPA.
+
+#+begin_src emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize)
+#+end_src
+
+Always ensure effectively inserts =:ensure t= into every =use-package= stanza.  This means that if the package isn't already installed, it will automatically download and install it.
+This is great for new setups so you don't have to =package-install= each package manually.
+
+#+begin_src emacs-lisp
+  (setq use-package-always-ensure 't)
+#+end_src
+
+** Delight
+
+Delight allows you to hide or minimize all the minor modes in the modeline.  I add it to =use-package= declarations so that it's always hidden, like so:
+
+#+begin_src emacs-lisp
+  (use-package delight)
+#+end_src
+
+** Autorevert
+
+#+begin_src emacs-lisp
+  (use-package autorevert :delight auto-revert-mode)
+#+end_src
+
+** Yes or no prompt
+
+Instead of typing out "yes" or "no" when prompted, "y" or "n" does just fine.
+
+#+begin_src emacs-lisp
+  (defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+** Display column number
+
+Shows (line number, column-number) in the modeline.
+
+#+begin_src emacs-lisp
+  (setq column-number-mode t)
+#+end_src
+
+** Dired
+#+begin_src emacs-lisp
+  (put 'dired-find-alternate-file 'disabled nil)
+#+end_src
+
+*** Nerd icons dired
+#+begin_src emacs-lisp
+  (use-package nerd-icons-dired :hook dired-mode)
+#+end_src
+
+* Clean up littering
+
+By default Emacs likes to leave random files in places like the home directory or in the top level of your config.
+
+** Custom file
+
+The custom file is where Emacs saves any setting that's been =Customized=.  By default it puts it at the end of your config file, but that can easily mess up version control with its constant changes.
+
+I find it's easier to put it in its own dedicated file.  Here we tell it where it lives, then load it.
+
+#+begin_src emacs-lisp
+  (setq custom-file (concat user-emacs-directory "custom.el"))
+  (load custom-file 'noerror)
+#+end_src
+
+** Backup files
+
+#+begin_src emacs-lisp
+  (setq backup-directory-alist '(("." . "~/.config/emacs/backup"))
+        backup-by-copying t    ; Don't delink hardlinks
+        version-control t      ; Use version numbers on backups
+        delete-old-versions t  ; Automatically delete excess backups
+        kept-new-versions 20   ; how many of the newest versions to keep
+        kept-old-versions 5    ; and how many of the old
+        )
+#+end_src
+
+** Auto-save
+
+Put autosave files in their own directory.
+
+#+begin_src emacs-lisp
+  (setq auto-save-file-name-transforms '((".*" "~/.config/emacs/autosave/" t)))
+#+end_src
+
+** Lock files
+
+Lock files just get in the way, and I've found them pretty much useless.
+
+#+begin_src emacs-lisp
+  (setq create-lockfiles nil)
+#+end_src
+
+* Programming Languages
+** Flymake
+#+begin_src emacs-lisp
+  (use-package flymake
+    :custom
+    (flymake-mode-line-lighter "")
+
+    :bind
+    (:map flymake-mode-map
+          ("C-c C-n" . flymake-goto-next-error)
+  	("C-c C-p" . flymake-goto-prev-error)))
+#+end_src
+
+** Treesitter
+
+Treesitter is the modern way to get fast universal syntax highlighting, instead of relying on major modes to define their own insane regexes.  However, we have to tell Emacs that when we encounter a major mode that doesn't have the treesitter grammer already installed, it should automatically find, download, and install it for us.
+
+#+begin_src emacs-lisp
+  (setq treesit-auto-install 't)
+  (use-package treesit-auto
+    :demand t
+    :config
+    (setq treesit-auto-install 'prompt)
+    (global-treesit-auto-mode))
+#+end_src
+
+** Org Mode
+Lots going on here, but we want prose to be =variable pitch= and the code blocks to be =fixed pitch=.  The headings also should be larger the more prominent they are.
+
+#+begin_src emacs-lisp
+  (use-package org-mode
+    :ensure nil
+    :no-require t
+    :hook
+    (org-mode . variable-pitch-mode)
+    (org-mode . visual-line-mode)
+
+    :custom
+    (org-hide-emphasis-markers t)
+
+    :custom-face
+    ;; fixed pitch (aka monospace)
+    (org-block ((t (:inherit 'fixed-pitch))))
+    (org-code ((t (:inherit (shadow fixed-pitch)))))
+    (org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+    (org-indent ((t (:inherit (org-hide fixed-pitch)))))
+    (org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+    (org-property-value ((t (:inherit fixed-pitch))) t)
+    (org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+    (org-table ((t (:inherit fixed-pitch))))
+    (org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+    (org-verbatim ((t (:inherit (shadow fixed-pitch)))))
+
+    ;; size for headings
+    (org-document-title ((t (:height 2.0 :weight normal))))
+    ;; (org-level-1 ((t (:height 1.8))))
+    ;; (org-level-2 ((t (:height 1.6))))
+    ;; (org-level-3 ((t (:height 1.4))))
+    ;; (org-level-4 ((t (:height 1.2))))
+    ;; (org-level-5 ((t (:height 1.1))))
+
+    :init
+    (require 'org)
+    (dolist (item '(("sh" . "src sh")
+                    ("bsh" . "src bash")
+                    ("el" . "src emacs-lisp")
+                    ("li" . "src lisp")
+                    ("ex" . "src elixir")
+                    ("ts" . "src typescript")
+                    ("py" . "src python")
+                    ("yaml" . "src yaml")
+                    ("json" . "src json")))
+      (add-to-list 'org-structure-template-alist item)))
+#+end_src
+
+*** Org-appear
+#+begin_src emacs-lisp
+  (use-package org-appear
+    :hook (org-mode . org-appear-mode)
+    :config
+    (setq org-appear-autosubmarkers t
+          org-appear-autoentities t
+          org-appear-autolinks t
+          org-appear-inside-latex t))
+#+end_src
+
+*** Org-superstar
+
+Prettier bullets for headings and lists
+
+#+begin_src emacs-lisp
+  (use-package org-superstar
+    :after org
+    :hook (org-mode . org-superstar-mode)
+    :config (setq org-hide-leading-stars t))
+#+end_src
+
+** Markdown
+
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :mode
+    (("README\\.md\\'" . gfm-mode)
+     ("\\.livemd\\'" . gfm-mode))
+    :init
+    (require 'org)
+    :custom
+    (markdown-fontify-code-blocks-natively t)
+    :hook
+    (markdown-mode . olivetti-mode)
+    (markdown-mode . variable-pitch-mode)
+    :custom-face
+    (markdown-code-face ((t (:inherit 'fixed-pitch))))
+    (markdown-header-face-1 ((t (:height 1.8 :inherit org-level-1))))
+    (markdown-header-face-2 ((t (:height 1.6 :inherit org-level-2))))
+    (markdown-header-face-3 ((t (:height 1.4 :inherit org-level-3))))
+    (markdown-header-face-4 ((t (:height 1.2 :inherit org-level-4))))
+    (markdown-header-face-5 ((t (:height 1.1 :inherit org-level-5)))))
+#+end_src
+
+*** Eldoc
+
+Eldoc is a help buffer that shows documentation about a piece of code.  I like to style it so that prose is variable pitch and code is fixed pitch.
+There isn't an eldoc-mode hook, so we have to use special-mode instead.
+
+#+begin_src emacs-lisp
+  (add-hook
+   'special-mode-hook
+   (lambda ()
+     (set-face-attribute 'markdown-code-face nil :inherit 'fixed-pitch)
+     (set-face-attribute 'markdown-pre-face nil :inherit 'fixed-pitch)
+     (if (string-match-p "\\*eldoc\\*" (buffer-name)) (variable-pitch-mode t))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package eldoc :delight eldoc-mode :custom (help-window-select t))
+#+end_src
+
+#+begin_src emacs-lisp
+(setq help-window-select t)
+#+end_src
+
+*** Olivetti
+Olivetti is usually used for a distraction free writing environment.  But I use it to center the buffer content in markdown files.
+#+begin_src emacs-lisp
+  (use-package olivetti
+    :delight
+    :custom (olivetti-body-width 105))
+#+end_src
+
+*** gh-md
+#+begin_src emacs-lisp
+  (use-package gh-md)
+#+end_src
+
+** Prog mode
+#+begin_src emacs-lisp
+  (use-package prog-mode
+    :ensure nil
+    :hook
+    (prog-mode . display-line-numbers-mode)
+    (prog-mode . (lambda () (indent-tabs-mode -1))))
+#+end_src
+
+*** Apheleia
+
+Apheleia handles formatting on save across the board.  I've had some trouble with it in the past, so I'm not sold.
+
+#+begin_src emacs-lisp
+  (use-package apheleia
+    :delight apheleia-mode
+    :init (apheleia-global-mode +1)
+    :config (add-to-list 'apheleia-mode-alist '(heex-ts-mode . mix-format)))
+#+end_src
+
+*** Rainbow delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters :hook prog-mode)
+#+end_src
+
+*** Yasnippet
+
+useful blog post as reference:
+ - https://jdhao.github.io/2021/10/06/yasnippet_setup_emacs/
+ - http://joaotavora.github.io/yasnippet/snippet-reference.html
+
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :delight yas-minor-mode)
+
+  ;; https://github.com/AndreaCrotti/yasnippet-snippets
+  (use-package yasnippet-snippets)
+
+  (yas-reload-all)
+  (add-hook 'prog-mode-hook #'yas-minor-mode)
+#+end_src
+
+*** Smartparens
+
+I mainly only use this for the auto insert of pairs.  Prefer it over paredit.
+
+#+begin_src emacs-lisp
+  (use-package smartparens
+    :delight smartparens-mode
+    :hook prog-mode)
+#+end_src
+
+*** Imenu
+#+begin_src emacs-lisp
+  (use-package imenu-list
+    :bind ("<f2>" . imenu-list-smart-toggle)
+    :custom
+    (imenu-list-focus-after-activation t)
+    (imenu-max-items nil)          ;; no limit on items
+    (imenu-auto-rescan t)          ;; always rescan on buffer change
+    (imenu-auto-rescan-maxout 1000000)) ;; allow large buffers
+#+end_src
+
+** YAML
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :hook (yaml-mode . display-line-numbers-mode))
+#+end_src
+
+** Elixir
+
+To start, we need treesitter and elixir mode so that we can build on top of them.
+
+#+begin_src emacs-lisp
+  (require 'treesit)
+  (use-package elixir-mode)
+#+end_src
+
+*** IEx helper functions
+
+Usually, I will have a vterm buffer for my project, and usually it will be running some variation of =iex -S mix=.  When editing an elixir file, it's helpful to be able to send a snippet over to the dedicated iex process and evaluate it.  These custom helper files enable that workflow.
+
+#+begin_src emacs-lisp
+  (defun ry/iex-send-string (str)
+    "Sends the str to the project's IEx session and executes it."
+    (let ((window-config (current-window-configuration)))
+      (ry/toggle-project-vterm)
+      (with-current-buffer (window-buffer)
+        (vterm-reset-cursor-point)
+        (let* ((inhibit-read-only t)
+               (line-num (line-number-at-pos))
+               (last-line (save-excursion
+                            (buffer-substring-no-properties
+                             (line-beginning-position)
+                             (line-end-position)))))
+          (if (string-match "^iex" last-line)
+              (progn
+                (vterm-send-string str t)
+                (vterm-send-return))
+            (progn
+              (message (concat "No IEx session running: " last-line))
+              (set-window-configuration window-config)))))))
+
+  (defun ry/elixir-module-at-point ()
+    "Return the full nested Elixir module name at point by checking enclosing `defmodule` blocks."
+    (interactive)
+    (save-excursion
+      (let ((modules '())
+            (point-pos (point)))
+        (goto-char (point-min))
+        (while (re-search-forward
+                "^\\s-*defmodule\\s-+\\([A-Z][A-Za-z0-9_\\.]*\\)\\s-+do\\b" nil t)
+          (let ((module-name (substring-no-properties (match-string 1)))
+                (start (match-beginning 0)))
+            (condition-case nil
+                (let ((end (save-excursion
+                             (goto-char start)
+                             (forward-sexp) ; move past the module's `do ... end`
+                             (point))))
+                  (when (and (>= point-pos start)
+                             (<= point-pos end))
+                    (push module-name modules)))
+              (error nil)))) ; skip malformed blocks safely
+        (let ((full-name (string-join (reverse modules) ".")))
+          (if (called-interactively-p 'interactive)
+              (message "%s" full-name)
+            (unless (string-empty-p full-name)
+              full-name))))))
+
+  (defun ry/iex-reload-module-at-point ()
+    "Reload the Elixir module at point in an IEx session using vterm.
+  If no IEx session is detected, restore the previous window configuration."
+    (interactive)
+    (let ((mod (ry/elixir-module-at-point)))
+      (if (not mod)
+          (message "No Elixir module found at point.")
+        (ry/iex-send-string (format "r %s" mod)))))
+
+  (defun ry/iex-send-current-line-or-region ()
+    "Insert text of current line or region in IEx and execute."
+    (interactive)
+    (let* ((current-line (buffer-substring
+                          (save-excursion
+                            (beginning-of-line)
+                            (point))
+                          (save-excursion
+                            (end-of-line)
+                            (point))))
+           (buf (current-buffer))
+           (command (string-trim
+                     (if (use-region-p)
+                         (buffer-substring (region-beginning) (region-end))
+                       current-line))))
+      (ry/iex-send-string command)))
+#+end_src
+
+*** Elixir-ts-mode
+#+begin_src emacs-lisp
+  (use-package elixir-ts-mode
+    :hook
+    (elixir-ts-mode . mix-minor-mode)
+    (elixir-ts-mode . exunit-mode)
+    :config (global-subword-mode t)
+    :delight subword-mode)
+#+end_src
+
+Since the new elixir-ts-mode builds on top of the old elixir-mode, some packages haven't updated yet.  This makes sure everything that elixir-mode did, elixir-ts-mode just inherits.
+
+#+begin_src emacs-lisp
+  (add-to-list 'major-mode-remap-alist '(elixir-mode . elixir-ts-mode))
+#+end_src
+
+*** Heex-ts-mode
+#+begin_src emacs-lisp
+  (use-package heex-ts-mode
+    :hook
+    (heex-ts-mode . display-line-numbers-mode)
+    (heex-ts-mode . git-gutter-mode)
+    (heex-ts-mode . (lambda () (indent-tabs-mode -1)))
+    :init (add-to-list 'auto-mode-alist '("\\.[hl]?eex\\'" . heex-ts-mode)))
+#+end_src
+
+*** Mix
+#+begin_src emacs-lisp
+  (use-package mix
+    :delight mix-minor-mode
+    :after elixir-ts-mode
+    :config (add-hook 'elixir-ts-mode-hook 'mix-minor-mode))
+#+end_src
+
+I use mix to run mix tasks, and the output is put in a compilation buffer.
+
+#+begin_src emacs-lisp
+  (setq compilation-scroll-output t)
+#+end_src
+
+*** Exunit
+
+Run tests!
+
+#+begin_src emacs-lisp
+  (use-package exunit
+    :delight exunit-mode
+    :after elixir-ts-mode
+    :config
+    ;; overwrite exunit's definition to prefer running tests from umbrella root
+    (defun exunit-test-for-file (file)
+      "Return the test file for FILE."
+      (replace-regexp-in-string "^\\(apps/.*/\\)?lib/\\(.*\\)\.ex$" "\\1test/\\2_test.exs" file))
+
+    (defun exunit-file-for-test (test-file)
+      "Return the file which is tested by TEST-FILE."
+      (replace-regexp-in-string "^\\(apps/.*/\\)?test/\\(.*\\)_test\.exs$" "\\1lib/\\2.ex" test-file))
+
+    (defun exunit-project-root ()
+      "Return the current project root.
+
+  This value is cached in a buffer local to avoid filesytem access
+  on every call."
+      (or
+       exunit-project-root
+       (let ((root (or (locate-dominating-file default-directory "apps") (locate-dominating-file default-directory "mix.exs"))))
+         (unless root
+           (error "Couldn't locate project root folder.  Make sure the current file is inside a project"))
+         (setq exunit-project-root (expand-file-name root)))))
+    :bind
+    (:map elixir-ts-mode-map
+          ("C-c , a" . exunit-verify-all)
+          ("C-c , A" . exunit-verify-all-in-umbrella)
+          ("C-c , s" . exunit-verify-single)
+          ("C-c , v" . exunit-verify)
+          ("C-c , r" . exunit-rerun)
+          ("C-c , t" . exunit-toggle-file-and-test)
+          ("s-r" . exunit-rerun)
+          ))
+#+end_src
+
+** CSS and Javascript
+#+begin_src emacs-lisp
+  (progn
+    (setq-default js-indent-level 2)
+    (setq-default css-indent-offset 2)
+
+    (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+    (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+    (add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-ts-mode)))
+#+end_src
+
+** Web
+#+begin_src emacs-lisp
+  (use-package web-mode)
+
+  ;; web-mode specific overrides of tab settings
+  (defun web-mode-hook ()
+    "Hooks for Web mode."
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 2)
+    (setq web-mode-indent-style 2))
+
+  (add-hook 'web-mode-hook  'web-mode-hook)
+#+end_src
+
+Open these file types in web mode automatically
+
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.html.eex\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.handlebars\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.rhtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+#+end_src
+
+** SQL
+#+begin_src emacs-lisp
+  (use-package sql
+    :ensure nil
+    :no-require t
+    :hook (sql-mode . (lambda () (setq tab-width 2))))
+#+end_src
+
+** Eglot LSP
+
+I prefer Eglot over LSP-mode. I find it is more emacs-native and less intrusive.
+
+#+begin_src emacs-lisp
+  (use-package eglot
+    :config
+    (add-to-list 'eglot-server-programs
+                 `((elixir-ts-mode heex-ts-mode elixir-mode) . ,(eglot-alternatives
+  				                               '(("~/dev/language_servers/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh") ; lexical
+  				                                 ("elixir-ls") ; elixir-ls
+                                                                   ))))
+    :hook
+    (typescript-ts-mode . eglot-ensure)
+    (tsx-ts-mode . eglot-ensure)
+    (js-ts-mode . eglot-ensure)
+    (elixir-ts-mode . eglot-ensure)
+    (heex-ts-mode . eglot-ensure))
+#+end_src
+
+* Shells and Environment Variables
+
+** ZSH
+
+Set the default shell to =zsh=
+#+begin_src emacs-lisp
+  (setenv "ESHELL" "/bin/zsh")
+  (setenv "SHELL" "/bin/zsh")
+#+end_src
+
+** load-env-vars
+
+I'm not sure this is needed anymore.  Maybe delete this.  Possibly the =exunit= package depends on it?
+
+#+begin_src emacs-lisp
+  (use-package load-env-vars)
+#+end_src
+
+** exec-path-from-shell
+
+Emacs doesn't always inherit the =$PATH= that's configured in the =.zshrc= and friends.  Which can be problematic when you want it to run a program, and Emacs thinks it doesn't exist.  =exec-path-from-shell= copies over your path into Emacs from your shell configuration to fix the problem.
+
+Note: this may be redundant since I'm using emacs-plus osx - it might already bake that in.
+
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :if (memq window-system '(mac ns))
+    :init (progn (exec-path-from-shell-initialize)))
+#+end_src
+
+** Mise
+
+When opening a file or changing directory, mise mode keeps the versions in place.  This is useful in cases where you may have a command to run tests from a file, and mise can make sure that it's using elixir v17 or whatever.
+
+See https://mise.jdx.dev/ide-integration.html#emacs
+
+#+begin_src emacs-lisp
+  (use-package mise
+    :delight mise-mode
+    :init (add-hook 'after-init-hook #'global-mise-mode))
+#+end_src
+
+** VTerm
+
+VTerm is like a real terminal inside of Emacs.  I've tried shell, eshell, term, ansi-term and vterm is the best for my purposes.
+
+#+begin_src emacs-lisp
+    (defun ry/toggle-dedicated-vterm ()
+    "Open a vterm or switch focus to it if it's already visible"
+    (interactive)
+    (if-let ((window (get-buffer-window "*vterm*")))
+        (if (string= (buffer-name (current-buffer)) "*vterm*")
+  	  (ry/switch-to-mru-window)
+  	(select-window window))
+      (vterm)))
+
+  ;; A project vterm's buffer is *vterm <project-name.*
+  (defun ry/toggle-project-vterm ()
+    "Open a project's vterm or switch focus to it if it's already visible"
+    (interactive)
+    (if-let* ((buf-name (concat "*vterm " (project-name (project-current)) "*"))
+  	    (window (get-buffer-window buf-name)))
+        (if (string= (buffer-name (current-buffer)) buf-name)
+  	  (ry/switch-to-mru-window)
+  	(select-window window))
+      (if (buffer-live-p (get-buffer buf-name))
+  	(pop-to-buffer buf-name)
+        (projectile-run-vterm-other-window))))
+
+  ;; mru = Most Recently Used
+  (defun ry/switch-to-mru-window ()
+    (interactive)
+    (if-let ((mru-window (get-mru-window nil nil t)))
+        (select-window mru-window)
+      (quit-windows-on (window-buffer mru-window))))
+
+  (use-package vterm
+    :commands vterm
+    :hook
+    (vterm-mode . (lambda () (setq term-prompt-regexp "^\\([0-9][0-9]:[0-9][0-9] \$ \\|iex([0-9]+)> \\)")))
+    :bind
+    (("C-M-8" . ry/toggle-project-vterm)
+     ("C-M-9" . ry/toggle-dedicated-vterm))
+    :config
+    (setq vterm-max-scrollback 10000)
+    ;; Position the dedicated vterm buffer to be at the bottom
+    (add-to-list 'display-buffer-alist
+                 '("\\*vterm\\*"
+                   (display-buffer-in-side-window)
+                   (window-height . 0.25)
+                   (slot . -1)
+                   (side . bottom)
+                   (window-parameters . ((no-delete-other-windows . t)))))
+    (if (display-graphic-p)
+        (set-fontset-font nil 'symbol (font-spec :script 'symbol))))
+#+end_src
+
+** KKP
+
+Kitty Keyboard Protocol provides an alternative, improved way to transmit keyboard input from a terminal to Emacs running in that terminal.
+
+#+begin_src emacs-lisp
+  (use-package kkp :config (global-kkp-mode 1))
+#+end_src
+
+* Version Control
+
+** Magit
+
+I mainly only use magit for quickly opening its blame mode.
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t
+    :pin melpa
+    :config
+    (global-set-key (kbd "C-x g") 'magit-status)
+    :bind ("s-i" . magit-blame))
+#+end_src
+
+*** Forge
+
+I think this allows magit to work with github.  Not sure.
+
+#+begin_src emacs-lisp
+  (use-package forge)
+#+end_src
+
+** Git Gutter
+
+Configure the gutter/fringe to show which lines are added/changed/deleted, and stage just that section - very handy when you only want to commit a piece of a file and not the whole thing.
+
+#+begin_src emacs-lisp
+  (use-package git-gutter
+    :delight
+    :hook prog-mode
+    :bind ("C-c s" . git-gutter:stage-hunk)
+    :config (setq git-gutter:update-interval 0.02))
+
+  (use-package git-gutter-fringe
+    :config
+    (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
+    (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
+    (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
+#+end_src
+
+** Browse-at-remote
+
+I use browse-at-remote to quickly open github urls.
+
+#+begin_src emacs-lisp
+  (use-package browse-at-remote
+    :bind ("C-c g g" . 'browse-at-remote))
+#+end_src
+
+** Diff-mode
+
+I'm not sure why i've added this.
+
+#+begin_src emacs-lisp
+  (use-package diff-mode
+    :custom (diff-font-lock-syntax nil))
+#+end_src
+
+* Which-key
+
+Discover key bindings
+https://github.com/justbur/emacs-which-key
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :delight which-key-mode
+    :config
+    (which-key-mode))
+#+end_src
+
+* General editing
+** Spell Checker: Jinx
+
+Improved Spell Checker (depends on enchant system library)
+
+#+begin_src emacs-lisp
+  (use-package jinx
+    :delight
+    :bind (("C-M-$" . jinx-correct))
+    :config (global-jinx-mode nil))
+#+end_src
+** Whitespace
+
+Always delete trailing whitespace.
+
+#+begin_src emacs-lisp
+  (require 'whitespace)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+end_src
+
+Extra settings
+
+#+begin_src emacs-lisp
+  (setq whitespace-action '(auto-cleanup)) ;; automatically clean up bad whitespace
+  (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab)) ;; only show bad whitespace
+#+end_src
+
+#+begin_src emacs-lisp
+(defun align-whitespace (start end)
+  "Align columns by whitespace"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)\\s-" 1 0 t))
+#+end_src
+
+** Commenting
+#+begin_src emacs-lisp
+  (defun comment-dwim-line (&optional arg)
+    "Replacement for the comment-dwim command.
+     If no region is selected and current line is not blank and we are not at
+     the end of the line, then comment current line.
+     Replaces default behaviour of comment-dwim, when it inserts comment at
+     the end of the line."
+    (interactive "*P")
+    (comment-normalize-vars)
+    (if (region-active-p)
+        (let ((start (region-beginning))
+              (end (region-end)))
+          (goto-char start)
+          (let ((real-start (line-beginning-position)))
+            (goto-char end)
+            (comment-or-uncomment-region real-start (line-end-position))))
+      (comment-or-uncomment-region (line-beginning-position)
+  				 (line-end-position))))
+
+  (global-set-key "\M-;" 'comment-dwim-line)
+#+end_src
+
+** Swap windows
+This can probably be replaced now that emacs has this functionality built in.
+#+begin_src emacs-lisp
+  (use-package ry/swap-windows
+    :ensure nil
+    :no-require t
+    :init
+    (defun swap-windows ()
+      "If you have 2 windows, it swaps them."
+      (interactive)
+      (cond ((not (= (count-windows) 2))
+    	   (message "You need exactly 2 windows to do this."))
+            (t
+             (let* ((w1 (nth 1 (window-list)))
+                    (w2 (nth 2 (window-list)))
+                    (b1 (window-buffer w1))
+                    (b2 (window-buffer w2))
+                    (s1 (window-start w1))
+                    (s2 (window-start w2)))
+               (set-window-buffer w1 b2)
+               (set-window-buffer w2 b1)
+               (set-window-start w1 s2)
+               (set-window-start w2 s1)))))
+
+    (defun other-window-backwards ()
+      (interactive)
+      (other-window -1))
+
+    :bind
+    (("C-o" . swap-windows)
+     ("C-x i" . other-window-backwards)))
+#+end_src
+
+** Smarter Beginning / End of line
+#+begin_src emacs-lisp
+  (use-package ry/line-dwim
+    :ensure nil
+    :no-require t
+    :init
+    (defun beginning-of-line-dwim ()
+      (interactive)
+      (if (eq (current-column) 0)
+          (back-to-indentation)
+        (beginning-of-line)))
+
+    (defun end-of-line-dwim ()
+      (interactive)
+      (if (not (eq (point) (line-end-position)))
+          (end-of-line)
+        (progn
+          (search-backward-regexp "[^\t ]")
+          (forward-char))))
+    :bind (("C-a" . beginning-of-line-dwim)
+           ("C-e" . end-of-line-dwim)))
+#+end_src
+
+** Scrolling
+#+begin_src emacs-lisp
+  (use-package ry/scrolling
+    :ensure nil
+    :no-require t
+    :init
+    (pixel-scroll-precision-mode)
+
+    (defun scroll-up-one ()
+      (interactive)
+      (scroll-up 1))
+
+    (defun scroll-down-one ()
+      (interactive)
+      (scroll-up -1))
+
+    (defun scroll-other-window-up-one ()
+      (interactive)
+      (scroll-other-window 1))
+
+    (defun scroll-other-window-down-one ()
+      (interactive)
+      (scroll-other-window-down 1))
+
+    (defun scroll-right-one ()
+      (interactive)
+      (scroll-right 1))
+
+    (defun scroll-left-one ()
+      (interactive)
+      (scroll-left 1))
+    :bind (("<up>" . scroll-down-one)
+           ("<down>" . scroll-up-one)
+           ("C-M-<up>" . scroll-other-window-down-one)
+           ("C-M-<down>" . scroll-other-window-up-one)))
+#+end_src
+
+** Hungry delete
+#+begin_src emacs-lisp
+  (use-package hungry-delete
+    :delight
+    :config (setq global-hungry-delete-mode t)
+    :bind (("C-]" . hungry-delete-backward)
+           ("C-\\" . hungry-delete-forward)))
+#+end_src
+
+* Appearance
+
+** Faces
+
+=what-face= can probably be deleted in favor of describe-face.  Maybe?
+
+#+begin_src emacs-lisp
+  (defun what-face (pos)
+    (interactive "d")
+    (let ((face (or (get-char-property (point) 'read-face-name)
+                    (get-char-property (point) 'face))))
+      (if face (message "Face: %s" face) (message "No face at %d" pos))))
+#+end_src
+
+** Font
+
+Set up the default fonts and sizes.
+
+#+begin_src emacs-lisp
+  (setq my-font-s "IosevkaTerm Nerd Font Mono")
+  (add-to-list 'default-frame-alist '(font . "IosevkaTerm Nerd Font Mono-16"))
+
+  (set-face-attribute 'default nil :font my-font-s :weight 'light :height 160)
+  (set-face-attribute 'fixed-pitch nil :font my-font-s :weight 'light :height 160)
+  (set-face-attribute 'variable-pitch nil :font "IBM Plex Sans-16" :weight 'light)
+
+  (setq-default line-spacing .2)
+
+  (use-package default-text-scale
+    :init (default-text-scale-mode 1))
+#+end_src
+
+** Compilation buffer
+
+#+begin_src emacs-lisp
+  (require 'ansi-color)
+
+  (use-package compilation-buffer-appearance
+    :ensure nil
+    :no-require t
+    :hook
+    (compilation-filter-hook . (lambda () (let ((inhibit-read-only t))
+                                            (ansi-color-apply-on-region compilation-filter-start (point))))))
+#+end_src
+
+** Beacon
+beacon flashes the cursor on scroll or buffer/window change
+#+begin_src emacs-lisp
+  (use-package beacon :custom (beacon-color "Magenta"))
+#+end_src
+
+** Doom themes
+I use doom-material with a lot of customizations.
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :config
+    (load-library "eglot")
+    (load-theme 'doom-material t)
+    (custom-theme-set-faces
+     'doom-material
+     '(ansi-color-black ((t (:background "dark orchid" :foreground "dark orchid"))))
+     '(ansi-color-bright-black ((t (:background "MediumPurple1" :foreground "MediumPurple1"))))
+     '(ansi-color-bright-magenta ((t (:background "orchid1" :foreground "orchid1"))))
+     '(ansi-color-magenta ((t (:background "magenta" :foreground "magenta"))))
+     '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
+     '(font-lock-comment-face ((t (:foreground "bisque3" :slant italic))))
+     '(font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "bisque3"))))
+     '(flymake-error-echo ((t :foreground "LightCoral" :weight normal)))
+     '(header-line ((t (:inherit nil :background "DarkOrchid4"))))
+     '(hl-line ((t (:extend t :background "DarkSlateGray"))))
+     '(isearch ((t (:background "hotpink" :foreground "white"))))
+     '(lazy-highlight ((t (:inherit match :background "LightCyan4"))))
+     '(line-number ((t (:inherit default :foreground "gray60" :slant italic :weight normal))))
+     '(line-number-current-line ((t (:inherit (hl-line default) :background "DarkSlateGray" :foreground "snow1"))))
+     '(magit-hash ((t (:foreground "gray65"))))
+     '(markdown-blockquote-face ((t (:foreground "dark gray"))))
+     '(mode-line ((t (:background "DarkSlateGray" :foreground "snow1" :box (:line-width (1 . 1) :color "snow" :style flat-button)))))
+     '(mode-line-inactive ((t (:background "gray30" :foreground "#f2fffc" :box (:line-width (1 . 1) :color "gray30" :style released-button)))))
+     '(region ((t (:background "DarkSlateGray"))))
+     '(shadow ((t (:foreground "gray50"))))
+     '(vertico-current ((t (:background "DarkSlateGray"))))
+     '(vterm-color-black ((t (:foreground "gray55"))))
+     '(eglot-mode-line ((t (:foreground "PeachPuff1" :weight normal))))
+     '(web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum"))))
+     '(elixir-ts-font-comment-doc-attribute-face ((t (:inherit font-lock-preprocessor-face))))
+     '(elixir-ts-font-comment-doc-face ((t (:inherit font-lock-doc-face :height 1.1))))
+     '(elixir-ts-font-comment-doc-identifier-face ((t (:inherit font-lock-preprocessor-face :slant normal))))
+     '(diff-added ((t (:foreground "#9cb970" :background "#354440"))))
+     '(corfu-border ((t (:background "gray60"))))
+     '(corfu-current ((t (:background "DarkSlateGray4" :foreground "#f2fffc")))))
+    (enable-theme 'doom-material)
+    )
+#+end_src
+
+* OSX
+
+Option key is super.  Command key is meta.
+
+#+begin_src emacs-lisp
+  (when (eq system-type 'darwin)
+    (setq mac-command-modifier 'meta)
+    (setq mac-option-modifier 'super) ; make opt key do Super
+    (setq ns-pop-up-frames nil))
+#+end_src
+
+* Project and Projectile
+
+** Projectile
+
+I prefer project, but I still need a few specific functions projectile defines.  So we must still install it.
+
+#+begin_src emacs-lisp
+  (use-package projectile
+    :delight projectile-mode
+    :commands (projectile-project-name)
+    :bind-keymap ("C-c p" . projectile-command-map)
+    :init (setq projectile-switch-project-action #'projectile-dired))
+#+end_src
+
+** Project
+
+=C-x p= to get to the project functions
+
+#+begin_src emacs-lisp
+  (use-package project
+    :custom
+    (project-prompter 'project-prompt-project-name)
+    ;; (project-vc-extra-root-markers '("mix.exs"))
+    :config
+    (add-to-list 'project-switch-commands
+                 '(magit-project-status "Magit" 109) 'append)
+    :bind
+    (:map project-prefix-map
+          ("m" . magit-project-status)
+          ("v" . ry/toggle-project-vterm)))
+#+end_src
+
+** Ripgrep
+
+Some of the project search functions need ripgrep
+
+#+begin_src emacs-lisp
+  (use-package ripgrep)
+#+end_src
+
+* Completion
+
+Set a few defaults for a better auto-complete experience.
+
+#+begin_src emacs-lisp
+    ;; TAB cycle if there are only few candidates
+  (setq completion-cycle-threshold 3)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete)
+#+end_src
+
+** Vertico
+#+begin_src emacs-lisp
+  (use-package vertico
+    :init
+    (vertico-mode)
+
+    ;; Do not allow the cursor in the minibuffer prompt
+    (setq minibuffer-prompt-properties
+          '(read-only t cursor-intangible t face minibuffer-prompt))
+    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+    ;; Enable recursive minibuffers
+    (setq enable-recursive-minibuffers t))
+#+end_src
+
+*** Savehist
+Persist history over Emacs restarts. Vertico sorts by history position.
+#+begin_src emacs-lisp
+  (use-package savehist :init (savehist-mode))
+#+end_src
+
+** Orderless
+Better, customizable fuzzy finding
+#+begin_src emacs-lisp
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless basic)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+** Marginalia
+Enable rich annotations, usually right-aligned for a list item.
+
+#+begin_src emacs-lisp
+  (use-package marginalia
+    ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+    ;; available in the *Completions* buffer, add it to the
+    ;; `completion-list-mode-map'.
+    :bind (:map minibuffer-local-map ("M-A" . marginalia-cycle))
+    :custom (marginalia-align 'right)
+    :init (marginalia-mode t)
+    )
+#+end_src
+
+*** Nerd-icons-completion
+Nerd icons shows the icon for a file type to the left of the file name.  It pairs well with =marginalia=.
+#+begin_src emacs-lisp
+  (use-package nerd-icons-completion
+    :after marginalia
+    :config
+    (nerd-icons-completion-mode)
+    (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+#+end_src
+
+** Corfu
+Corfu is the autocompletion popup.  It does _not_ compute or provide the actual completion candidates, it only displays them.
+
+#+begin_src emacs-lisp
+  (use-package corfu
+    :custom
+    (corfu-auto t)  ;; Enable auto completion
+    :bind
+    (:map corfu-map ("s-SPC" . corfu-insert-separator))
+    :init
+    (global-corfu-mode)
+    (corfu-history-mode t)
+    (add-to-list 'savehist-additional-variables 'corfu-history))
+#+end_src
+
+*** corfu-popupinfo
+#+begin_src emacs-lisp
+  (use-package corfu-popupinfo
+    :ensure nil ; this module is an extension within corfu, not its own package
+    :after corfu
+    :hook corfu-mode
+    :custom (corfu-popupinfo-delay 0)
+    :config (corfu-popupinfo-mode))
+#+end_src
+
+*** Corfu-terminal
+Make corfu popup come up in terminal overlay
+#+begin_src emacs-lisp
+(use-package corfu-terminal
+  :if (not (display-graphic-p))
+  :config (corfu-terminal-mode))
+#+end_src
+
+*** Kind-icon
+Shows the icon to the left of the completion candidate. Similar to =nerd-icons-completion-mode= but for the corfu completion popup.
+#+begin_src emacs-lisp
+  (use-package kind-icon
+    :after corfu
+    :custom
+    (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+    :config
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+#+end_src
+
+** Cape
+Cape allows for customization of completion at point functions (capf-s).
+#+begin_src emacs-lisp
+  (use-package cape
+    :after (corfu eglot)
+    :config
+    ;; If eglot has no suggestions, then by default it stops.  Instead
+    ;; I want it to continue through the `completion-at-point-functions` until
+    ;; it finds matches
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
+    ;; No need for ispell completions in html-mode, but leave them in for text-mode
+    :hook
+    (html-mode . (lambda () (delete
+                             'ispell-completion-at-point
+                             completion-at-point-functions))))
+#+end_src
+
+* Consult
+
+Consult is a package that wraps lots of core emacs functions and makes them better.
+
+#+begin_src emacs-lisp
+  (use-package consult
+    ;; Replace bindings. Lazily loaded due by `use-package'.
+    :bind (;; C-c bindings in `mode-specific-map'
+           ("C-c M-x" . consult-mode-command)
+           ("C-c h" . consult-history)
+           ("C-c k" . consult-kmacro)
+           ("C-c m" . consult-man)
+           ("C-c i" . consult-info)
+           ([remap Info-search] . consult-info)
+           ;; C-x bindings in `ctl-x-map'
+           ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+           ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+           ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+           ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+           ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+           ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+           ;; Custom M-# bindings for fast register access
+           ("M-#" . consult-register-load)
+           ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+           ("C-M-#" . consult-register)
+           ;; Other custom bindings
+           ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+           ;; M-g bindings in `goto-map'
+           ("M-g e" . consult-compile-error)
+           ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+           ("M-g g" . consult-goto-line)             ;; orig. goto-line
+           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+           ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+           ("M-g m" . consult-mark)
+           ("M-g k" . consult-global-mark)
+           ("M-g i" . consult-imenu)
+           ("M-g I" . consult-imenu-multi)
+           ;; M-s bindings in `search-map'
+           ("M-s d" . consult-find)
+           ("M-s D" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s G" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)
+           ("M-s l" . consult-line)
+           ("M-s L" . consult-line-multi)
+           ("M-s k" . consult-keep-lines)
+           ("M-s u" . consult-focus-lines)
+           ;; Isearch integration
+           ("M-s e" . consult-isearch-history)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+           ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+           ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+           ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+           ;; Minibuffer history
+           :map minibuffer-local-map
+           ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+           ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+
+    ;; Enable automatic preview at point in the *Completions* buffer. This is
+    ;; relevant when you use the default completion UI.
+    :hook (completion-list-mode . consult-preview-at-point-mode)
+
+    ;; The :init configuration is always executed (Not lazy)
+    :init
+
+    ;; Optionally configure the register formatting. This improves the register
+    ;; preview for `consult-register', `consult-register-load',
+    ;; `consult-register-store' and the Emacs built-ins.
+    (setq register-preview-delay 0.5
+          register-preview-function #'consult-register-format)
+
+    ;; Optionally tweak the register preview window.
+    ;; This adds thin lines, sorting and hides the mode line of the window.
+    (advice-add #'register-preview :override #'consult-register-window)
+
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref)
+
+    ;; Configure other variables and modes in the :config section,
+    ;; after lazily loading the package.
+    :config
+
+    ;; Optionally configure preview. The default value
+    ;; is 'any, such that any key triggers the preview.
+    ;; (setq consult-preview-key 'any)
+    ;; (setq consult-preview-key "M-.")
+    ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+    ;; For some commands and buffer sources it is useful to configure the
+    ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    (consult-customize
+     consult-theme :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-bookmark consult--source-file-register
+     consult--source-recent-file consult--source-project-recent-file
+     ;; :preview-key "M-."
+     :preview-key '(:debounce 0.4 any))
+
+    ;; Optionally configure the narrowing key.
+    ;; Both < and C-+ work reasonably well.
+    (setq consult-narrow-key "<") ;; "C-+"
+
+    ;; Optionally make narrowing help available in the minibuffer.
+    ;; You may want to use `embark-prefix-help-command' or which-key instead.
+    ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+
+    ;; By default `consult-project-function' uses `project-root' from project.el.
+    ;; Optionally configure a different project root function.
+    ;;;; 1. project.el (the default)
+    ;; (setq consult-project-function #'consult--default-project--function)
+    ;;;; 2. vc.el (vc-root-dir)
+    ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
+    ;;;; 3. locate-dominating-file
+    ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
+    ;;;; 4. projectile.el (projectile-project-root)
+    ;; (autoload 'projectile-project-root "projectile")
+    ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
+    ;;;; 5. No project support
+    ;; (setq consult-project-function nil)
+    )
+#+end_src
+
+** Embark
+Embark is used in conjunction with Consult, often to dump the results of a consult function into a new buffer that can independently be searched and provide previews into the list items.
+
+#+begin_src emacs-lisp
+  (use-package embark
+    :ensure t
+
+    :bind
+    (("C-." . embark-act)         ;; pick some comfortable binding
+     ("C-;" . embark-dwim)        ;; good alternative: M-.
+     ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+    :init
+    ;; Optionally replace the key help with a completing-read interface
+    (setq prefix-help-command #'embark-prefix-help-command)
+
+    :config
+    ;; Hide the mode line of the Embark live/completions buffers
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none)))))
+#+end_src
+
+*** Embark-consult
+#+begin_src emacs-lisp
+  (use-package embark-consult
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode))
+#+end_src
+
+* Private config
+
+If I have any emacs config that is private (usually work related) that I don't want to check in to my public repo, put them in a private file.
+
+#+begin_src emacs-lisp
+  (load (expand-file-name "private.el" user-emacs-directory) 'noerror)
+#+end_src
+
+* Local Variables
+Every time I edit and save this file, it should tangle it into my =early-init.el= and =init.el= files.
+
+# Local Variables:
+# eval: (progn
+#             (add-hook 'after-save-hook #'org-babel-tangle nil t)
+#             (setq org-imenu-depth 3))
+# End:

@@ -1,7 +1,6 @@
 xdg/emacs/*
 xdg/emacs/autosave/*
-!xdg/emacs/early-init.el
-!xdg/emacs/init.el
+!xdg/emacs/init.org
 !xdg/emacs/snippets
 !xdg/emacs/emakit
 xdg/emacs/emakit/ryoung-private-config.el
