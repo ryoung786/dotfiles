@@ -1,5 +1,38 @@
 #+title: GNU Emacs Configuration
 #+startup: content indent
+#+property: header-args:emacs-lisp :tangle init.el
+
+* Early Init
+The early init config should be extremely fast and tiny, with only absolutely necessary config.
+#+begin_src emacs-lisp :tangle early-init.el
+  ;; Startup speed, annoyance suppression
+  (setq gc-cons-threshold 10000000)
+  (setq byte-compile-warnings '(not obsolete))
+  (setq warning-suppress-log-types '((comp) (bytecomp)))
+  (setq native-comp-async-report-warnings-errors 'silent)
+
+  ;; Silence stupid startup message
+  (setq inhibit-startup-echo-area-message (user-login-name))
+  (setq inhibit-startup-message t)
+
+  ;; Default frame configuration: full screen, good-looking title bar on macOS
+  (setq frame-resize-pixelwise t)
+  (setq frame-inhibit-implied-resize t)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (setq default-frame-alist '((fullscreen . maximized)
+                              ;; Setting the face in here prevents flashes of
+                              ;; color as the theme gets activated
+                              (background-color . "#263238")
+  			    (foreground-color . "white")
+                              (ns-appearance . dark)
+                              (ns-transparent-titlebar . t)
+  			    ))
+
+  ;; test
+  (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/14:/opt/homebrew/lib/gcc/14/gcc/aarch64-apple-darwin24/14")
+#+end_src
 
 * General Emacs behaviour
 ** Package Repository
@@ -21,12 +54,6 @@ This is great for new setups so you don't have to =package-install= each package
 ** Delight
 
 Delight allows you to hide or minimize all the minor modes in the modeline.  I add it to =use-package= declarations so that it's always hidden, like so:
-
-#+begin_src elisp
-  ;; (use-package mise
-  ;;   :delight mise-mode
-  ;;   ...)
-#+end_src
 
 #+begin_src elisp
   (use-package delight)
@@ -168,7 +195,7 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
     ;; (org-level-4 ((t (:height 1.2))))
     ;; (org-level-5 ((t (:height 1.1))))
 
-    :config
+    :init
     ;; quickly insert code blocks
     (dolist (item '(("sh" . "src sh")
                     ("bsh" . "src bash")
@@ -318,7 +345,11 @@ I mainly only use this for the auto insert of pairs.  Prefer it over paredit.
 #+begin_src elisp
   (use-package imenu-list
     :bind ("<f2>" . imenu-list-smart-toggle)
-    :custom (imenu-list-focus-after-activation t))
+    :custom
+    (imenu-list-focus-after-activation t)
+    (imenu-max-items nil)          ;; no limit on items
+    (imenu-auto-rescan t)          ;; always rescan on buffer change
+    (imenu-auto-rescan-maxout 1000000)) ;; allow large buffers
 #+end_src
 
 ** YAML
@@ -1338,3 +1369,12 @@ If I have any emacs config that is private (usually work related) that I don't w
 #+begin_src elisp
   (load (expand-file-name "private.el" user-emacs-directory) 'noerror)
 #+end_src
+
+* Local Variables
+Every time I edit and save this file, it should tangle it into my =early-init.el= and =init.el= files.
+
+# Local Variables:
+# eval: (progn
+#             (add-hook 'after-save-hook #'org-babel-tangle nil t)
+#             (setq org-imenu-depth 3))
+# End:
