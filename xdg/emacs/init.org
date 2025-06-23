@@ -586,7 +586,7 @@ I prefer Eglot over LSP-mode. I find it is more emacs-native and less intrusive.
     :config
     (add-to-list 'eglot-server-programs
                  `((elixir-ts-mode heex-ts-mode elixir-mode) . ,(eglot-alternatives
-  				                               '(("~/dev/language_servers/elixir/lexical/_build/dev/package/lexical/bin/start_lexical.sh") ; lexical
+  				                               '(("~/dev/language_servers/elixir/lexical/bin/start_lexical.sh") ; lexical
   				                                 ("elixir-ls") ; elixir-ls
                                                                    ))))
     :hook
@@ -634,9 +634,9 @@ When opening a file or changing directory, mise mode keeps the versions in place
 See https://mise.jdx.dev/ide-integration.html#emacs
 
 #+begin_src emacs-lisp
-  (use-package mise
-    :delight mise-mode
-    :init (add-hook 'after-init-hook #'global-mise-mode))
+  ;; (use-package mise
+  ;;   :delight mise-mode
+  ;;   :init (add-hook 'after-init-hook #'global-mise-mode))
 #+end_src
 
 ** VTerm
