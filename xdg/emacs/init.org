@@ -636,6 +636,14 @@ See https://mise.jdx.dev/ide-integration.html#emacs
   ;;   :init (add-hook 'after-init-hook #'global-mise-mode))
 #+end_src
 
+Mise mode doesn't work for me for some reason, so lets use a combination of shims and =mise x= to ensure exunit and mix can find the correct suite of elixir binaries.
+
+#+begin_src emacs-lisp
+  (setq exunit-comint-command '("mise" "x" "--" "iex" "-S" "mix" "test" "--trace"))
+  (setq exunit-mix-command '("mise" "x" "--" "mix" "test"))
+  (setq mix-path-to-bin (substitute-in-file-name "$HOME/.config/.local/share/mise/shims/mix"))
+#+end_src
+
 ** VTerm
 
 VTerm is like a real terminal inside of Emacs.  I've tried shell, eshell, term, ansi-term and vterm is the best for my purposes.
