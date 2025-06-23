@@ -257,19 +257,16 @@ Prettier bullets for headings and lists
 *** Eldoc
 
 Eldoc is a help buffer that shows documentation about a piece of code.  I like to style it so that prose is variable pitch and code is fixed pitch.
-There isn't an eldoc-mode hook, so we have to use special-mode instead.
 
 #+begin_src emacs-lisp
-  (add-hook
-   'special-mode-hook
-   (lambda ()
-     (set-face-attribute 'markdown-code-face nil :inherit 'fixed-pitch)
-     (set-face-attribute 'markdown-pre-face nil :inherit 'fixed-pitch)
-     (if (string-match-p "\\*eldoc\\*" (buffer-name)) (variable-pitch-mode t))))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package eldoc :delight eldoc-mode :custom (help-window-select t))
+  (use-package eldoc
+    :delight eldoc-mode
+    :custom (help-window-select t)
+    :hook
+    (eldoc-mode . (lambda ()
+                    (set-face-attribute 'markdown-code-face nil :inherit 'fixed-pitch)
+                    (set-face-attribute 'markdown-pre-face nil :inherit 'fixed-pitch)
+                    (if (string-match-p "\\*eldoc\\*" (buffer-name)) (variable-pitch-mode t)))))
 #+end_src
 
 #+begin_src emacs-lisp
