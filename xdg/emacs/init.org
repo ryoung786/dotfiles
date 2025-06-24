@@ -161,7 +161,8 @@ Treesitter is the modern way to get fast universal syntax highlighting, instead 
 #+end_src
 
 ** Org Mode
-Lots going on here, but we want prose to be =variable pitch= and the code blocks to be =fixed pitch=.  The headings also should be larger the more prominent they are.
+
+Lots going on here, but we want prose to be =variable pitch= and the code blocks to be =fixed pitch=.
 
 #+begin_src emacs-lisp
   (use-package org-mode
@@ -188,12 +189,12 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
     (org-verbatim ((t (:inherit (shadow fixed-pitch)))))
 
     ;; size for headings
-    (org-document-title ((t (:height 2.0 :weight normal))))
-    ;; (org-level-1 ((t (:height 1.8))))
-    ;; (org-level-2 ((t (:height 1.6))))
-    ;; (org-level-3 ((t (:height 1.4))))
-    ;; (org-level-4 ((t (:height 1.2))))
-    ;; (org-level-5 ((t (:height 1.1))))
+    (org-document-title ((t (:height 2.0 :weight light :family "Kalam"))))
+    (org-level-1 ((t (:height 1.2))))
+    (org-level-2 ((t (:height 1.2))))
+    (org-level-3 ((t (:height 1.2))))
+    (org-level-4 ((t (:height 1.2))))
+    (org-level-5 ((t (:height 1.2))))
 
     :init
     (require 'org)
@@ -209,6 +210,14 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
       (add-to-list 'org-structure-template-alist item)))
 #+end_src
 
+*** Org-modern
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :after org
+    :config (global-org-modern-mode)
+    :custom (org-modern-star 'replace))
+#+end_src
+
 *** Org-appear
 #+begin_src emacs-lisp
   (use-package org-appear
@@ -219,18 +228,6 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
           org-appear-autolinks t
           org-appear-inside-latex t))
 #+end_src
-
-*** Org-superstar
-
-Prettier bullets for headings and lists
-
-#+begin_src emacs-lisp
-  (use-package org-superstar
-    :after org
-    :hook (org-mode . org-superstar-mode)
-    :config (setq org-hide-leading-stars t))
-#+end_src
-
 ** Markdown
 
 #+begin_src emacs-lisp
@@ -708,7 +705,6 @@ Kitty Keyboard Protocol provides an alternative, improved way to transmit keyboa
 #+end_src
 
 * Version Control
-
 ** Magit
 
 I mainly only use magit for quickly opening its blame mode.
@@ -717,8 +713,7 @@ I mainly only use magit for quickly opening its blame mode.
   (use-package magit
     :ensure t
     :pin melpa
-    :config
-    (global-set-key (kbd "C-x g") 'magit-status)
+    :config (global-set-key (kbd "C-x g") 'magit-status)
     :bind ("s-i" . magit-blame))
 #+end_src
 
@@ -774,8 +769,7 @@ https://github.com/justbur/emacs-which-key
 #+begin_src emacs-lisp
   (use-package which-key
     :delight which-key-mode
-    :config
-    (which-key-mode))
+    :config (which-key-mode))
 #+end_src
 
 * General editing
@@ -962,7 +956,7 @@ Set up the default fonts and sizes.
 
   (set-face-attribute 'default nil :font my-font-s :weight 'light :height 160)
   (set-face-attribute 'fixed-pitch nil :font my-font-s :weight 'light :height 160)
-  (set-face-attribute 'variable-pitch nil :font "IBM Plex Sans-16" :weight 'light)
+  (set-face-attribute 'variable-pitch nil :font "Iosevka Etoile" :weight 'light :height 160)
 
   (setq-default line-spacing .2)
 
