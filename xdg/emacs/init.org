@@ -578,6 +578,8 @@ I prefer Eglot over LSP-mode. I find it is more emacs-native and less intrusive.
 #+begin_src emacs-lisp
   (use-package eglot
     :config
+    (add-to-list 'eglot-server-programs '(sql-mode . ("sqls")))
+
     (add-to-list 'eglot-server-programs
                  `((elixir-ts-mode heex-ts-mode elixir-mode) . ,(eglot-alternatives
   				                               '(("~/dev/language_servers/elixir/lexical/bin/start_lexical.sh") ; lexical
@@ -587,6 +589,7 @@ I prefer Eglot over LSP-mode. I find it is more emacs-native and less intrusive.
     (typescript-ts-mode . eglot-ensure)
     (tsx-ts-mode . eglot-ensure)
     (js-ts-mode . eglot-ensure)
+    (sql-mode . eglot-ensure)
     (elixir-ts-mode . eglot-ensure)
     (heex-ts-mode . eglot-ensure))
 #+end_src
