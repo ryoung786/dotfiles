@@ -2,7 +2,10 @@
 elixir = "1.18.4-otp-27"
 erlang = "27.3.4"
 node = "23.6.0"
+"npm:@postgrestools/postgrestools" = "latest"
+"npm:prettier" = "latest"
 sqlite = "3.44.1"
+"ubi:sqls-server/sqls" = "latest"
 
 [env]
 MISE_ENV_FILE = '.env'
