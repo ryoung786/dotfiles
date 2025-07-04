@@ -30,6 +30,12 @@ The early init config should be extremely fast and tiny, with only absolutely ne
                               (ns-transparent-titlebar . t)
   			    ))
 
+  ;; Option key is super.  Command key is meta.
+  (when (eq system-type 'darwin)
+    (setq mac-command-modifier 'meta)
+    (setq mac-option-modifier 'super) ; make opt key do Super
+    (setq ns-pop-up-frames nil))
+
   ;; test
   (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/14:/opt/homebrew/lib/gcc/14/gcc/aarch64-apple-darwin24/14")
 #+end_src
@@ -936,7 +942,6 @@ This can probably be replaced now that emacs has this functionality built in.
 #+end_src
 
 * Appearance
-
 ** Faces
 
 =what-face= can probably be deleted in favor of describe-face.  Maybe?
@@ -1027,17 +1032,6 @@ I use doom-material with a lot of customizations.
      '(corfu-current ((t (:background "DarkSlateGray4" :foreground "#f2fffc")))))
     (enable-theme 'doom-material)
     )
-#+end_src
-
-* OSX
-
-Option key is super.  Command key is meta.
-
-#+begin_src emacs-lisp
-  (when (eq system-type 'darwin)
-    (setq mac-command-modifier 'meta)
-    (setq mac-option-modifier 'super) ; make opt key do Super
-    (setq ns-pop-up-frames nil))
 #+end_src
 
 * Project and Projectile

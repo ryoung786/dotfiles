@@ -3,9 +3,13 @@ elixir = "1.18.4-otp-27"
 erlang = "27.3.4"
 node = "23.6.0"
 "npm:@postgrestools/postgrestools" = "latest"
+"npm:@google/gemini-cli" = "latest"
 "npm:prettier" = "latest"
 sqlite = "3.44.1"
 "ubi:sqls-server/sqls" = "latest"
+
+# This should work but is a mise bug: https://github.com/jdx/mise/discussions/4440
+# "ubi:lexical-lsp/lexical" = { version = "latest", matching_regex = "lexical.zip", extract_all = "true", bin_path = "bin", exe = "start_lexical.sh", rename_exe = "lexical" }
 
 [env]
 MISE_ENV_FILE = '.env'
