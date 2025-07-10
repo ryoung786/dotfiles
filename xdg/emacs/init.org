@@ -183,7 +183,7 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
 
     :custom-face
     ;; fixed pitch (aka monospace)
-    (org-block ((t (:inherit 'fixed-pitch))))
+    (org-block ((t (:inherit fixed-pitch))))
     (org-code ((t (:inherit (shadow fixed-pitch)))))
     (org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
     (org-indent ((t (:inherit (org-hide fixed-pitch)))))
@@ -627,7 +627,12 @@ Note: this may be redundant since I'm using emacs-plus osx - it might already ba
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
     :if (memq window-system '(mac ns))
-    :init (progn (exec-path-from-shell-initialize)))
+    :config
+    (setq exec-path-from-shell-variables
+          '("PATH" "MANPATH" "EDITOR" "GPG_TTY"
+            "XDG_CONFIG_HOME" "XDG_DATA_HOME" "XDG_CACHE_HOME" "ZDOTDIR"))
+    (setq exec-path-from-shell-arguments nil)
+    (exec-path-from-shell-initialize))
 #+end_src
 
 ** Mise
@@ -637,17 +642,9 @@ When opening a file or changing directory, mise mode keeps the versions in place
 See https://mise.jdx.dev/ide-integration.html#emacs
 
 #+begin_src emacs-lisp
-  ;; (use-package mise
-  ;;   :delight mise-mode
-  ;;   :init (add-hook 'after-init-hook #'global-mise-mode))
-#+end_src
-
-Mise mode doesn't work for me for some reason, so lets use a combination of shims and =mise x= to ensure exunit and mix can find the correct suite of elixir binaries.
-
-#+begin_src emacs-lisp
-  (setq exunit-comint-command '("mise" "x" "--" "iex" "-S" "mix" "test" "--trace"))
-  (setq exunit-mix-command '("mise" "x" "--" "mix" "test"))
-  (setq mix-path-to-bin (substitute-in-file-name "$HOME/.config/.local/share/mise/shims/mix"))
+  (use-package mise
+     :delight mise-mode
+     :init (add-hook 'after-init-hook #'global-mise-mode))
 #+end_src
 
 ** VTerm
@@ -939,6 +936,11 @@ This can probably be replaced now that emacs has this functionality built in.
     :config (setq global-hungry-delete-mode t)
     :bind (("C-]" . hungry-delete-backward)
            ("C-\\" . hungry-delete-forward)))
+#+end_src
+
+** Browse-url
+#+begin_src emacs-lisp
+  (global-set-key (kbd "M-o") #'browse-url)
 #+end_src
 
 * Appearance
