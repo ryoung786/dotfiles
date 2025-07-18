@@ -38,7 +38,7 @@ disabled = false
 format = "[$time]($style) "
 
 [aws]
-disabled = false
+disabled = true
 format = 'on [$symbol($profile )(\($region\) )]($style)'
 style = 'bold blue'
 symbol = '🅰 '

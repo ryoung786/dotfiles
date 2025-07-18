@@ -234,6 +234,31 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
           org-appear-autolinks t
           org-appear-inside-latex t))
 #+end_src
+
+*** Org Capture and Agenda
+#+begin_src emacs-lisp
+  (use-package org-capture
+    :ensure nil
+    :no-require t
+    :config
+    (make-directory "~/org/notes/" :parents)
+
+    (setq org-capture-templates
+          '(("n" "Note" entry (file+olp+datetree "~/org/notes/daily.org")
+             "* %U %^{Title} %^g\n%?\n\n%i"
+             :empty-lines 1)))
+
+    :bind ("C-c c" . org-capture))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    :ensure nil
+    :no-require t
+    :custom (org-agenda-files '("~/org/notes/"))
+    :bind ("C-c a" . org-agenda))
+#+end_src
+
 ** Markdown
 
 #+begin_src emacs-lisp
@@ -630,7 +655,9 @@ Note: this may be redundant since I'm using emacs-plus osx - it might already ba
     :config
     (setq exec-path-from-shell-variables
           '("PATH" "MANPATH" "EDITOR" "GPG_TTY"
-            "XDG_CONFIG_HOME" "XDG_DATA_HOME" "XDG_CACHE_HOME" "ZDOTDIR"))
+            "XDG_CONFIG_HOME" "XDG_DATA_HOME" "XDG_CACHE_HOME" "ZDOTDIR"
+            "AWS_CA_BUNDLE" "CURL_CA_BUNDLE" "REQUESTS_CA_BUNDLE"
+            "SSL_CERT_FILE" "NODE_EXTRA_CA_CERTS" "HEX_CACERTS_PATH" "GIT_SSL_CAINFO"))
     (setq exec-path-from-shell-arguments nil)
     (exec-path-from-shell-initialize))
 #+end_src
@@ -643,8 +670,8 @@ See https://mise.jdx.dev/ide-integration.html#emacs
 
 #+begin_src emacs-lisp
   (use-package mise
-     :delight mise-mode
-     :init (add-hook 'after-init-hook #'global-mise-mode))
+    :delight mise-mode
+    :init (add-hook 'after-init-hook #'global-mise-mode))
 #+end_src
 
 ** VTerm

@@ -9,3 +9,6 @@ export EDITOR='emacs -nw -Q'
 export GPG_TTY=$(tty)
 
 export PATH="/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
+
+F=~/.zshenv_private
+test -f $F && source $F
