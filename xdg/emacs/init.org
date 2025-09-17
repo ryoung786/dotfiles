@@ -171,9 +171,8 @@ Treesitter is the modern way to get fast universal syntax highlighting, instead 
 Lots going on here, but we want prose to be =variable pitch= and the code blocks to be =fixed pitch=.
 
 #+begin_src emacs-lisp
-  (use-package org-mode
+  (use-package org
     :ensure nil
-    :no-require t
     :hook
     (org-mode . variable-pitch-mode)
     (org-mode . visual-line-mode)
@@ -237,9 +236,8 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
 
 *** Org Capture and Agenda
 #+begin_src emacs-lisp
-  (use-package org-capture
+  (use-package org
     :ensure nil
-    :no-require t
     :config
     (make-directory "~/org/notes/" :parents)
 
