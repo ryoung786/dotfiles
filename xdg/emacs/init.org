@@ -1088,7 +1088,9 @@ I prefer project, but I still need a few specific functions projectile defines. 
     ;; (project-vc-extra-root-markers '("mix.exs"))
     :config
     (add-to-list 'project-switch-commands
-                 '(magit-project-status "Magit" 109) 'append)
+                 '(magit-project-status "Magit") 'append)
+    (add-to-list 'project-switch-commands
+                 '(ry/toggle-project-vterm "VTerm") 'append)
     :bind
     (:map project-prefix-map
           ("m" . magit-project-status)
