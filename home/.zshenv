@@ -8,7 +8,7 @@ export EDITOR='emacs -nw -Q'
 # for GPG signing of git commits
 export GPG_TTY=$(tty)
 
-export PATH="/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
+export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
 
 F=~/.zshenv_private
 test -f $F && source $F
