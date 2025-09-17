@@ -1004,13 +1004,7 @@ Set up the default fonts and sizes.
 
 #+begin_src emacs-lisp
   (require 'ansi-color)
-
-  (use-package compilation-buffer-appearance
-    :ensure nil
-    :no-require t
-    :hook
-    (compilation-filter-hook . (lambda () (let ((inhibit-read-only t))
-                                            (ansi-color-apply-on-region compilation-filter-start (point))))))
+  (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter) ; colorize mix compile output
 #+end_src
 
 ** Beacon
