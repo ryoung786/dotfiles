@@ -345,7 +345,9 @@ useful blog post as reference:
 
 #+begin_src emacs-lisp
   (use-package yasnippet
-    :delight yas-minor-mode)
+    :delight yas-minor-mode
+    :custom
+    (yas-snippet-dirs '("~/.config/emacs/private-snippets" "~/.config/emacs/snippets")))
 
   ;; https://github.com/AndreaCrotti/yasnippet-snippets
   (use-package yasnippet-snippets)
