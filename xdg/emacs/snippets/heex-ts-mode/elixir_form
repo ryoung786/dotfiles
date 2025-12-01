@@ -2,8 +2,6 @@
 # name: elixir form
 # key: .form
 # expand-env: ((yas-indent-line 'fixed))
-# group: eex
-# condition: (member (file-name-extension buffer-file-name) '("heex"))
 # --
 <.form let={f}
       for={${1:@changeset}}
@@ -12,5 +10,5 @@
       phx-change="validate"
       phx-submit="save">
   $0
-  <%= submit "${4:Submit}" phx_disable_with: "Saving..." %>
+  <.button type="submit" phx-disable-with="Saving...">${4:Submit}</.button>
 </.form>
