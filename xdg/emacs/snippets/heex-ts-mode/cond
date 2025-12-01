@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: cond
+# key: hcond
+# expand-env: ((yas-indent-line 'fixed))
+# --
+<%= cond do %>
+  <% ${1:@conditional} -> %>
+    ${2:<p>foo</p>}$0
+<% end %>
