@@ -37,7 +37,7 @@ The early init config should be extremely fast and tiny, with only absolutely ne
     (setq ns-pop-up-frames nil))
 
   ;; test
-  (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/14:/opt/homebrew/lib/gcc/14/gcc/aarch64-apple-darwin24/14")
+  (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/15:/opt/homebrew/lib/gcc/15/gcc/aarch64-apple-darwin24/15")
 #+end_src
 
 * General Emacs behaviour
@@ -614,7 +614,7 @@ I prefer Eglot over LSP-mode. I find it is more emacs-native and less intrusive.
     (add-to-list 'eglot-server-programs
                  `((elixir-ts-mode heex-ts-mode elixir-mode) .
                    ,(eglot-alternatives
-          	   '(("~/dev/language_servers/elixir/expert/nightly") ; expert
+          	   '(("~/dev/language_servers/elixir/expert/nightly" "--stdio") ; expert
           	     ("elixir-ls") ; elixir-ls
                        ))))
     :hook

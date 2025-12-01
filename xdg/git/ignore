@@ -38,6 +38,7 @@ flycheck_*.el
 
 /.elixir-tools/
 .lexical
+.expert
 .mix_tasks
 *.beam
 
