@@ -1400,20 +1400,54 @@ Note that =input= must already be defined in the iex session.
     (let ((mod (ry/elixir-module-at-point)))
       (ry/iex-send-string (concat "r " mod "; " mod ".part_two(input) |> PB.copy()"))))
 
+  (defun ry/aoc/toggle-input ()
+    "Toggle between AOC solution file and input file."
+    (interactive)
+    (let* ((file (buffer-file-name))
+           (root (locate-dominating-file file "mix.exs")))
+      (unless root
+        (error "Not inside an AOC project"))
+
+      (cond
+       ;; --- Case 1: in lib/aoc/years/YYYY/day_DD.ex ---
+       ((string-match
+         "\\(/years/\\([0-9]\\{4\\}\\)/day_\\([0-9]\\{2\\}\\)\\.ex\\)$"
+         file)
+        (let* ((year (match-string 2 file))
+               (day  (match-string 3 file))
+               (target (expand-file-name
+                        (format "priv/%s/%s.input" year day)
+                        root)))
+          (find-file target)))
+
+       ;; --- Case 2: in priv/YYYY/DD.input ---
+       ((string-match
+         "\\(/priv/\\([0-9]\\{4\\}\\)/\\([0-9]\\{2\\}\\)\\.input\\)$"
+         file)
+        (let* ((year (match-string 2 file))
+               (day  (match-string 3 file))
+               (target (expand-file-name
+                        (format "lib/aoc/years/%s/day_%s.ex" year day)
+                        root)))
+          (find-file target)))
+
+       (t
+        (error "Not in an AOC file I know how to toggle")))))
+
   (define-minor-mode ry/aoc-mode
     "Minor mode for AOC-specific helpers."
     :lighter " AOC"
     :keymap (let ((map (make-sparse-keymap)))
               (define-key map (kbd "C-c 1") #'ry/aoc/part1)
               (define-key map (kbd "C-c 2") #'ry/aoc/part2)
+              (define-key map (kbd "C-c t") #'ry/aoc/toggle-input)
               map))
 
   (defun ry/aoc--maybe-enable ()
-    (when (and (derived-mode-p 'elixir-ts-mode)
-               (string= (project-name (project-current)) "aoc"))
+    (when (string= (project-name (project-current)) "aoc")
       (ry/aoc-mode 1)))
 
-  (add-hook 'elixir-ts-mode-hook #'ry/aoc--maybe-enable)
+  (add-hook 'find-file-hook #'ry/aoc--maybe-enable)
 #+end_src
 * Private config
 
