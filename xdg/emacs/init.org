@@ -1384,6 +1384,37 @@ Embark is used in conjunction with Consult, often to dump the results of a consu
     (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 
+* Advent of Code
+I want to be able to have some custom keybindings for advent of code hacking.
+Note that =input= must already be defined in the iex session.
+#+begin_src emacs-lisp
+  (defun ry/aoc/part1 ()
+    "Runs part 1"
+    (interactive)
+    (let ((mod (ry/elixir-module-at-point)))
+      (ry/iex-send-string (concat "r " mod "; " mod ".part_one(input) |> PB.copy()"))))
+
+  (defun ry/aoc/part2 ()
+    "Runs part 2"
+    (interactive)
+    (let ((mod (ry/elixir-module-at-point)))
+      (ry/iex-send-string (concat "r " mod "; " mod ".part_two(input) |> PB.copy()"))))
+
+  (define-minor-mode ry/aoc-mode
+    "Minor mode for AOC-specific helpers."
+    :lighter " AOC"
+    :keymap (let ((map (make-sparse-keymap)))
+              (define-key map (kbd "C-c 1") #'ry/aoc/part1)
+              (define-key map (kbd "C-c 2") #'ry/aoc/part2)
+              map))
+
+  (defun ry/aoc--maybe-enable ()
+    (when (and (derived-mode-p 'elixir-ts-mode)
+               (string= (project-name (project-current)) "aoc"))
+      (ry/aoc-mode 1)))
+
+  (add-hook 'elixir-ts-mode-hook #'ry/aoc--maybe-enable)
+#+end_src
 * Private config
 
 If I have any emacs config that is private (usually work related) that I don't want to check in to my public repo, put them in a private file.
