@@ -1444,7 +1444,7 @@ Note that =input= must already be defined in the iex session.
               map))
 
   (defun ry/aoc--maybe-enable ()
-    (when (string= (project-name (project-current)) "aoc")
+    (when (and (project-current) (string= (project-name (project-current)) "aoc"))
       (ry/aoc-mode 1)))
 
   (add-hook 'find-file-hook #'ry/aoc--maybe-enable)
