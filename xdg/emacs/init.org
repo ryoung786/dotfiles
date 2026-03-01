@@ -333,8 +333,9 @@ Apheleia handles formatting on save across the board.  I've had some trouble wit
 #+end_src
 
 *** Rainbow delimiters
+This has been causing problems in some modes with deeply nested parens/brackets. I've found I don't really rely on it anymore, so I'm disabling it.  I'm leaving the config in here just in case I decide to use it again later.
 #+begin_src emacs-lisp
-  (use-package rainbow-delimiters :hook prog-mode)
+ ;; (use-package rainbow-delimiters :hook prog-mode)
 #+end_src
 
 *** Yasnippet
