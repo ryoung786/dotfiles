@@ -56,3 +56,5 @@ node_modules/
 
 restclient_playground/
 config_private
+
+.agent-shell
