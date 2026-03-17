@@ -27,6 +27,8 @@ flycheck_*.el
 .projectile
 .dir-locals.el
 /network-security.data
+.apheleia/
+.agent-shell
 
 # elixir LS
 .elixir_ls/
