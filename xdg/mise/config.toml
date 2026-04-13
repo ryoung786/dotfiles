@@ -8,6 +8,7 @@ node = "23.6.0"
 sqlite = "3.44.1"
 "ubi:sqls-server/sqls" = "latest"
 "aqua:elixir-lang/expert" = "latest"
+dexter = "latest"
 
 [env]
 MISE_ENV_FILE = '.env'

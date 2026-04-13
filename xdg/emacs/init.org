@@ -614,7 +614,8 @@ I prefer Eglot over LSP-mode. I find it is more emacs-native and less intrusive.
 
     (add-to-list 'eglot-server-programs
                  `((elixir-ts-mode heex-ts-mode elixir-mode) .
-                   ,(eglot-alternatives '(("expert" "--stdio")))))
+                   ,(eglot-alternatives '(("dexter" "lsp")
+                                          ("expert" "--stdio")))))
     :hook
     (typescript-ts-mode . eglot-ensure)
     (tsx-ts-mode . eglot-ensure)
