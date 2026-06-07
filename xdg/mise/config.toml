@@ -1,14 +1,16 @@
 [tools]
 elixir = "1.20.0-rc.1-otp-28"
 erlang = "28.3.1"
-node = "23.6.0"
+node = "24.8.0"
 "npm:@postgrestools/postgrestools" = "latest"
 "npm:@google/gemini-cli" = "latest"
 "npm:prettier" = "latest"
 sqlite = "3.44.1"
-"ubi:sqls-server/sqls" = "latest"
+"github:sqls-server/sqls" = "latest"
 "aqua:elixir-lang/expert" = "latest"
 dexter = "latest"
+oxfmt = "latest"
+oxlint = "latest"
 
 [env]
 MISE_ENV_FILE = '.env'

@@ -329,7 +329,10 @@ Apheleia handles formatting on save across the board.  I've had some trouble wit
   (use-package apheleia
     :delight apheleia-mode
     :init (apheleia-global-mode +1)
-    :config (add-to-list 'apheleia-mode-alist '(heex-ts-mode . mix-format)))
+    :config
+    (add-to-list 'apheleia-mode-alist '(heex-ts-mode . mix-format))
+    (dolist (mode '(js-ts-mode jsx-ts-mode typescript-ts-mode tsx-ts-mode css-ts-mode css-mode graphql-mode html-mode html-ts-mode js3-mode json-mode json-ts-mode js-json-mode js-mode js-ts-mode scss-mode typescript-mode web-mode yaml-mode yaml-ts-mode markdown-ts-mode markdown-mode toml-ts-mode))
+      (setf (alist-get mode apheleia-mode-alist) 'oxfmt)))
 #+end_src
 
 *** Rainbow delimiters
@@ -1052,7 +1055,7 @@ I use doom-material with a lot of customizations.
      '(elixir-ts-font-comment-doc-identifier-face ((t (:inherit font-lock-preprocessor-face :slant normal))))
      '(diff-added ((t (:foreground "#9cb970" :background "#354440"))))
      '(corfu-border ((t (:background "gray60"))))
-     '(corfu-current ((t (:background "DarkSlateGray4" :foreground "#f2fffc")))))
+     '(corfu-current ((t (:background "DarkSlateGray" :foreground "#f2fffc")))))
     (enable-theme 'doom-material)
     )
 #+end_src

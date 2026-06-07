@@ -60,3 +60,4 @@ restclient_playground/
 config_private
 
 .agent-shell
+.mise.local.toml
