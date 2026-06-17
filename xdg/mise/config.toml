@@ -8,7 +8,7 @@ node = "24.8.0"
 sqlite = "3.44.1"
 "github:sqls-server/sqls" = "latest"
 "aqua:elixir-lang/expert" = "latest"
-dexter = "latest"
+"github:remoteoss/dexter" = "latest"
 oxfmt = "latest"
 oxlint = "latest"
 
