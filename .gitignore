@@ -10,6 +10,8 @@ xdg/iterm2/AppSupport
 config_private
 
 xdg/homebrew/Brewfile.lock.json
+xdg/homebrew/trust.json
+xdg/homebrew/trust.json.lock
 
 xdg/zsh/*
 !xdg/zsh/.zshrc
