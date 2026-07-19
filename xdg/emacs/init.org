@@ -5,6 +5,8 @@
 * Early Init
 The early init config should be extremely fast and tiny, with only absolutely necessary config.
 #+begin_src emacs-lisp :tangle early-init.el
+  ;; -*- lexical-binding: t; -*-
+
   ;; Startup speed, annoyance suppression
   (setq gc-cons-threshold 10000000)
   (setq byte-compile-warnings '(not obsolete))
@@ -22,13 +24,7 @@ The early init config should be extremely fast and tiny, with only absolutely ne
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
   (setq default-frame-alist '((fullscreen . maximized)
-                              ;; Setting the face in here prevents flashes of
-                              ;; color as the theme gets activated
-                              (background-color . "#263238")
-  			    (foreground-color . "white")
-                              (ns-appearance . dark)
-                              (ns-transparent-titlebar . t)
-  			    ))
+                              (ns-transparent-titlebar . t)))
 
   ;; Option key is super.  Command key is meta.
   (when (eq system-type 'darwin)
@@ -37,10 +33,15 @@ The early init config should be extremely fast and tiny, with only absolutely ne
     (setq ns-pop-up-frames nil))
 
   ;; test
-  (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/15:/opt/homebrew/lib/gcc/15/gcc/aarch64-apple-darwin24/15")
+  (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/15:/opt/homebrew/lib/gcc/16/gcc/aarch64-apple-darwin24/15")
 #+end_src
 
 * General Emacs behaviour
+** Lexical Binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
 ** Package Repository
 Tell emacs where to look to find packages. By default it only knows about the official GNU repository, but nowadays most packages are hosted on MELPA.
 
@@ -153,19 +154,6 @@ Lock files just get in the way, and I've found them pretty much useless.
   	("C-c C-p" . flymake-goto-prev-error)))
 #+end_src
 
-** Treesitter
-
-Treesitter is the modern way to get fast universal syntax highlighting, instead of relying on major modes to define their own insane regexes.  However, we have to tell Emacs that when we encounter a major mode that doesn't have the treesitter grammer already installed, it should automatically find, download, and install it for us.
-
-#+begin_src emacs-lisp
-  (setq treesit-auto-install 't)
-  (use-package treesit-auto
-    :demand t
-    :config
-    (setq treesit-auto-install 'prompt)
-    (global-treesit-auto-mode))
-#+end_src
-
 ** Org Mode
 
 Lots going on here, but we want prose to be =variable pitch= and the code blocks to be =fixed pitch=.
@@ -181,19 +169,6 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
     (org-hide-emphasis-markers t)
 
     :custom-face
-    ;; fixed pitch (aka monospace)
-    (org-block ((t (:inherit fixed-pitch))))
-    (org-code ((t (:inherit (shadow fixed-pitch)))))
-    (org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-    (org-indent ((t (:inherit (org-hide fixed-pitch)))))
-    (org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-    (org-property-value ((t (:inherit fixed-pitch))) t)
-    (org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-    (org-table ((t (:inherit fixed-pitch))))
-    (org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
-    (org-verbatim ((t (:inherit (shadow fixed-pitch)))))
-
-    ;; size for headings
     (org-document-title ((t (:height 2.0 :weight light :family "Kalam"))))
     (org-level-1 ((t (:height 1.2))))
     (org-level-2 ((t (:height 1.2))))
@@ -205,9 +180,9 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
     (require 'org)
     (dolist (item '(("sh" . "src sh")
                     ("bsh" . "src bash")
-                    ("el" . "src emacs-lisp")
+                    ("em" . "src emacs-lisp")
                     ("li" . "src lisp")
-                    ("ex" . "src elixir")
+                    ("el" . "src elixir")
                     ("ts" . "src typescript")
                     ("py" . "src python")
                     ("yaml" . "src yaml")
@@ -260,24 +235,15 @@ Lots going on here, but we want prose to be =variable pitch= and the code blocks
 ** Markdown
 
 #+begin_src emacs-lisp
-  (use-package markdown-mode
+  (use-package markdown-ts-mode
     :mode
     (("README\\.md\\'" . gfm-mode)
      ("\\.livemd\\'" . gfm-mode))
-    :init
-    (require 'org)
     :custom
     (markdown-fontify-code-blocks-natively t)
     :hook
     (markdown-mode . olivetti-mode)
-    (markdown-mode . variable-pitch-mode)
-    :custom-face
-    (markdown-code-face ((t (:inherit 'fixed-pitch))))
-    (markdown-header-face-1 ((t (:height 1.8 :inherit org-level-1))))
-    (markdown-header-face-2 ((t (:height 1.6 :inherit org-level-2))))
-    (markdown-header-face-3 ((t (:height 1.4 :inherit org-level-3))))
-    (markdown-header-face-4 ((t (:height 1.2 :inherit org-level-4))))
-    (markdown-header-face-5 ((t (:height 1.1 :inherit org-level-5)))))
+    (markdown-mode . variable-pitch-mode))
 #+end_src
 
 *** Eldoc
@@ -305,11 +271,6 @@ Olivetti is usually used for a distraction free writing environment.  But I use 
   (use-package olivetti
     :delight
     :custom (olivetti-body-width 105))
-#+end_src
-
-*** gh-md
-#+begin_src emacs-lisp
-  (use-package gh-md)
 #+end_src
 
 ** Prog mode
@@ -350,14 +311,14 @@ useful blog post as reference:
 #+begin_src emacs-lisp
   (use-package yasnippet
     :delight yas-minor-mode
-    :custom
-    (yas-snippet-dirs '("~/.config/emacs/private-snippets" "~/.config/emacs/snippets")))
+    :hook ((prog-mode . yas-minor-mode))
+    :config
+    (setq yas-snippet-dirs '("~/.config/emacs/private-snippets" "~/.config/emacs/snippets"))
+    (yas-reload-all))
 
   ;; https://github.com/AndreaCrotti/yasnippet-snippets
-  (use-package yasnippet-snippets)
+  (use-package yasnippet-snippets :after yasnippet)
 
-  (yas-reload-all)
-  (add-hook 'prog-mode-hook #'yas-minor-mode)
 #+end_src
 
 *** Smartparens
@@ -388,14 +349,6 @@ I mainly only use this for the auto insert of pairs.  Prefer it over paredit.
 #+end_src
 
 ** Elixir
-
-To start, we need treesitter and elixir mode so that we can build on top of them.
-
-#+begin_src emacs-lisp
-  (require 'treesit)
-  (use-package elixir-mode)
-#+end_src
-
 *** IEx helper functions
 
 Usually, I will have a vterm buffer for my project, and usually it will be running some variation of =iex -S mix=.  When editing an elixir file, it's helpful to be able to send a snippet over to the dedicated iex process and evaluate it.  These custom helper files enable that workflow.
@@ -616,7 +569,7 @@ I prefer Eglot over LSP-mode. I find it is more emacs-native and less intrusive.
     (add-to-list 'eglot-server-programs '(sql-mode . ("sqls")))
 
     (add-to-list 'eglot-server-programs
-                 `((elixir-ts-mode heex-ts-mode elixir-mode) .
+                 `((elixir-ts-mode heex-ts-mode) .
                    ,(eglot-alternatives '(("dexter" "lsp")
                                           ("expert" "--stdio")))))
     :hook
@@ -636,14 +589,6 @@ Set the default shell to =zsh=
 #+begin_src emacs-lisp
   (setenv "ESHELL" "/bin/zsh")
   (setenv "SHELL" "/bin/zsh")
-#+end_src
-
-** load-env-vars
-
-I'm not sure this is needed anymore.  Maybe delete this.  Possibly the =exunit= package depends on it?
-
-#+begin_src emacs-lisp
-  (use-package load-env-vars)
 #+end_src
 
 ** exec-path-from-shell
@@ -685,7 +630,7 @@ VTerm is like a real terminal inside of Emacs.  I've tried shell, eshell, term, 
     (defun ry/toggle-dedicated-vterm ()
     "Open a vterm or switch focus to it if it's already visible"
     (interactive)
-    (if-let ((window (get-buffer-window "*vterm*")))
+    (if-let* ((window (get-buffer-window "*vterm*")))
         (if (string= (buffer-name (current-buffer)) "*vterm*")
   	  (ry/switch-to-mru-window)
   	(select-window window))
@@ -707,7 +652,7 @@ VTerm is like a real terminal inside of Emacs.  I've tried shell, eshell, term, 
   ;; mru = Most Recently Used
   (defun ry/switch-to-mru-window ()
     (interactive)
-    (if-let ((mru-window (get-mru-window nil nil t)))
+    (if-let* ((mru-window (get-mru-window nil nil t)))
         (select-window mru-window)
       (quit-windows-on (window-buffer mru-window))))
 
@@ -799,8 +744,7 @@ I'm not sure why i've added this.
 
 * Which-key
 
-Discover key bindings
-https://github.com/justbur/emacs-which-key
+Builtin, but we have to turn it on by default.
 
 #+begin_src emacs-lisp
   (use-package which-key
@@ -974,16 +918,19 @@ This can probably be replaced now that emacs has this functionality built in.
 #+end_src
 
 * Appearance
-** Faces
-
-=what-face= can probably be deleted in favor of describe-face.  Maybe?
+**
+Theme
+Try to use built-in themes
 
 #+begin_src emacs-lisp
-  (defun what-face (pos)
-    (interactive "d")
-    (let ((face (or (get-char-property (point) 'read-face-name)
-                    (get-char-property (point) 'face))))
-      (if face (message "Face: %s" face) (message "No face at %d" pos))))
+  (require-theme 'modus-themes)
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil
+        modus-themes-mixed-fonts t
+        modus-themes-variable-pitch-ui t
+        modus-themes-disable-other-themes t)
+
+  (modus-themes-load-theme 'modus-operandi-tinted)
 #+end_src
 
 ** Font
@@ -1011,57 +958,7 @@ Set up the default fonts and sizes.
   (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter) ; colorize mix compile output
 #+end_src
 
-** Beacon
-beacon flashes the cursor on scroll or buffer/window change
-#+begin_src emacs-lisp
-  (use-package beacon :custom (beacon-color "Magenta"))
-#+end_src
-
-** Doom themes
-I use doom-material with a lot of customizations.
-#+begin_src emacs-lisp
-  (use-package doom-themes
-    :config
-    (load-library "eglot")
-    (load-theme 'doom-material t)
-    (custom-theme-set-faces
-     'doom-material
-     '(ansi-color-black ((t (:background "dark orchid" :foreground "dark orchid"))))
-     '(ansi-color-bright-black ((t (:background "MediumPurple1" :foreground "MediumPurple1"))))
-     '(ansi-color-bright-magenta ((t (:background "orchid1" :foreground "orchid1"))))
-     '(ansi-color-magenta ((t (:background "magenta" :foreground "magenta"))))
-     '(blamer-face ((t :foreground "#7a88cf" :background nil :height 140 :italic t)))
-     '(font-lock-comment-face ((t (:foreground "bisque3" :slant italic))))
-     '(font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "bisque3"))))
-     '(flymake-error-echo ((t :foreground "LightCoral" :weight normal)))
-     '(header-line ((t (:inherit nil :background "DarkOrchid4"))))
-     '(hl-line ((t (:extend t :background "DarkSlateGray"))))
-     '(isearch ((t (:background "hotpink" :foreground "white"))))
-     '(lazy-highlight ((t (:inherit match :background "LightCyan4"))))
-     '(line-number ((t (:inherit default :foreground "gray60" :slant italic :weight normal))))
-     '(line-number-current-line ((t (:inherit (hl-line default) :background "DarkSlateGray" :foreground "snow1"))))
-     '(magit-hash ((t (:foreground "gray65"))))
-     '(markdown-blockquote-face ((t (:foreground "dark gray"))))
-     '(mode-line ((t (:background "DarkSlateGray" :foreground "snow1" :box (:line-width (1 . 1) :color "snow" :style flat-button)))))
-     '(mode-line-inactive ((t (:background "gray30" :foreground "#f2fffc" :box (:line-width (1 . 1) :color "gray30" :style released-button)))))
-     '(region ((t (:background "DarkSlateGray"))))
-     '(shadow ((t (:foreground "gray50"))))
-     '(vertico-current ((t (:background "DarkSlateGray"))))
-     '(vterm-color-black ((t (:foreground "gray55"))))
-     '(eglot-mode-line ((t (:foreground "PeachPuff1" :weight normal))))
-     '(web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face :foreground "plum"))))
-     '(elixir-ts-font-comment-doc-attribute-face ((t (:inherit font-lock-preprocessor-face))))
-     '(elixir-ts-font-comment-doc-face ((t (:inherit font-lock-doc-face :height 1.1))))
-     '(elixir-ts-font-comment-doc-identifier-face ((t (:inherit font-lock-preprocessor-face :slant normal))))
-     '(diff-added ((t (:foreground "#9cb970" :background "#354440"))))
-     '(corfu-border ((t (:background "gray60"))))
-     '(corfu-current ((t (:background "DarkSlateGray" :foreground "#f2fffc")))))
-    (enable-theme 'doom-material)
-    )
-#+end_src
-
 * Project and Projectile
-
 ** Projectile
 
 I prefer project, but I still need a few specific functions projectile defines.  So we must still install it.
@@ -1082,7 +979,6 @@ I prefer project, but I still need a few specific functions projectile defines. 
   (use-package project
     :custom
     (project-prompter 'project-prompt-project-name)
-    ;; (project-vc-extra-root-markers '("mix.exs"))
     :config
     (add-to-list 'project-switch-commands
                  '(magit-project-status "Magit") 'append)
@@ -1193,14 +1089,6 @@ Corfu is the autocompletion popup.  It does _not_ compute or provide the actual 
     :hook corfu-mode
     :custom (corfu-popupinfo-delay 0)
     :config (corfu-popupinfo-mode))
-#+end_src
-
-*** Corfu-terminal
-Make corfu popup come up in terminal overlay
-#+begin_src emacs-lisp
-(use-package corfu-terminal
-  :if (not (display-graphic-p))
-  :config (corfu-terminal-mode))
 #+end_src
 
 *** Kind-icon
