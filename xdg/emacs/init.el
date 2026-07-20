@@ -4,44 +4,47 @@
 
 ;;; Packages
 
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
-(setq use-package-always-ensure 't)
-
+(use-package ry/package-config
+  :ensure nil
+  :no-require t
+  :custom (use-package-always-ensure 't)
+  :init
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize))
 
 (use-package minions
   :custom
   (minions-prominent-modes '(flymake-mode eglot--managed-mode))
   :config (minions-mode 1))
 
-(setopt use-short-answers t)
-(setq column-number-mode t)
-(put 'dired-find-alternate-file 'disabled nil)
+(use-package ry/basic-emacs-config
+  :ensure nil
+  :no-require t
+  :bind  ("M-o" . browse-url)
+  :custom
+  (tab-width 2)
+  (column-number-mode t)
+  (custom-file (concat user-emacs-directory "custom.el"))
+  (backup-directory-alist '(("." . "~/.config/emacs/backup")))
+  (backup-by-copying t)    ; Don't delink hardlinks
+  (version-control t)      ; Use version numbers on backups
+  (delete-old-versions t)  ; Automatically delete excess backups
+  (kept-new-versions 20)   ; how many of the newest versions to keep
+  (kept-old-versions 5)    ; and how many of the old
+  (auto-save-file-name-transforms '((".*" "~/.config/emacs/autosave/" t)))
+  (create-lockfiles nil)
+  :init
+  (setopt use-short-answers t)
+  (load custom-file 'noerror)
+  (put 'dired-find-alternate-file 'disabled nil))
+
 (use-package nerd-icons-dired :hook dired-mode)
 
 
-;;; Clean up littering
-;; Emacs by default leaves random files in places like the home directory or the top level of the config
-(setq custom-file (concat user-emacs-directory "custom.el"))
-(load custom-file 'noerror)
 
-(setq backup-directory-alist '(("." . "~/.config/emacs/backup"))
-      backup-by-copying t    ; Don't delink hardlinks
-      version-control t      ; Use version numbers on backups
-      delete-old-versions t  ; Automatically delete excess backups
-      kept-new-versions 20   ; how many of the newest versions to keep
-      kept-old-versions 5    ; and how many of the old
-      )
 
-(setq auto-save-file-name-transforms '((".*" "~/.config/emacs/autosave/" t)))
-
-(setq create-lockfiles nil)
-
-;;;; Programming config
-
-(eval-after-load 'hideshow
-  '(bind-key "C-<tab>" 'hs-cycle hs-minor-mode-map))
+;;;; Programming config: language modes
 
 (use-package flymake
   :custom
@@ -50,7 +53,7 @@
   :bind
   (:map flymake-mode-map
         ("C-c C-n" . flymake-goto-next-error)
-	("C-c C-p" . flymake-goto-prev-error)))
+	      ("C-c C-p" . flymake-goto-prev-error)))
 
 ;;; Org mode config
 
@@ -117,12 +120,23 @@
 (use-package olivetti
   :custom (olivetti-body-width 105))
 
+(use-package hideshow
+  :bind (:map hs-minor-mode-map ("C-<tab>" . hs-cycle)))
+
 (use-package prog-mode
   :ensure nil
+  :custom (compilation-scroll-output t)
   :hook
   (prog-mode . display-line-numbers-mode)
   (prog-mode . hs-minor-mode)
   (prog-mode . (lambda () (indent-tabs-mode -1))))
+
+(use-package ry/treesitter
+  :ensure nil
+  :no-require t
+  :custom
+  (treesit-enabled-modes t) ;; auto-replace all modes with ts variants
+  (treesit-auto-install-grammar 'always)) ;; automatically install
 
 ;;; Auto formatting code files: Apheleia
 
@@ -133,6 +147,7 @@
   (dolist (mode '(js-ts-mode jsx-ts-mode typescript-ts-mode tsx-ts-mode css-ts-mode css-mode graphql-mode html-mode html-ts-mode js3-mode json-mode json-ts-mode js-json-mode js-mode js-ts-mode scss-mode typescript-mode web-mode yaml-mode yaml-ts-mode markdown-ts-mode markdown-mode toml-ts-mode))
     (setf (alist-get mode apheleia-mode-alist) 'oxfmt)))
 
+;;; Code snippets: Yasnippet
 (use-package yasnippet
   :hook ((prog-mode . yas-minor-mode))
   :config
@@ -146,86 +161,90 @@
 
 ;;; Elixir
 
-(defun ry/iex-send-string (str)
-  "Sends the str to the project's IEx session and executes it."
-  (let ((window-config (current-window-configuration)))
-    (ry/toggle-project-vterm)
-    (with-current-buffer (window-buffer)
-      (vterm-reset-cursor-point)
-      (let* ((inhibit-read-only t)
-             (line-num (line-number-at-pos))
-             (last-line (save-excursion
-                          (buffer-substring-no-properties
-                           (line-beginning-position)
-                           (line-end-position)))))
-        (if (string-match "^iex" last-line)
+(use-package ry/custom-iex-functions
+  :ensure nil
+  :no-require t
+  :init
+  (defun ry/iex-send-string (str)
+    "Sends the str to the project's IEx session and executes it."
+    (let ((window-config (current-window-configuration)))
+      (ry/toggle-project-vterm)
+      (with-current-buffer (window-buffer)
+        (vterm-reset-cursor-point)
+        (let* ((inhibit-read-only t)
+               (line-num (line-number-at-pos))
+               (last-line (save-excursion
+                            (buffer-substring-no-properties
+                             (line-beginning-position)
+                             (line-end-position)))))
+          (if (string-match "^iex" last-line)
+              (progn
+                (vterm-send-string str t)
+                (vterm-send-return))
             (progn
-              (vterm-send-string str t)
-              (vterm-send-return))
-          (progn
-            (message (concat "No IEx session running: " last-line))
-            (set-window-configuration window-config)))))))
+              (message (concat "No IEx session running: " last-line))
+              (set-window-configuration window-config)))))))
 
-(defun ry/elixir-module-at-point ()
-  "Return the full nested Elixir module name at point by checking enclosing `defmodule` blocks."
-  (interactive)
-  (save-excursion
-    (let ((modules '())
-          (point-pos (point)))
-      (goto-char (point-min))
-      (while (re-search-forward
-              "^\\s-*defmodule\\s-+\\([A-Z][A-Za-z0-9_\\.]*\\)\\s-+do\\b" nil t)
-        (let ((module-name (substring-no-properties (match-string 1)))
-              (start (match-beginning 0)))
-          (condition-case nil
-              (let ((end (save-excursion
-                           (goto-char start)
-                           (forward-sexp) ; move past the module's `do ... end`
-                           (point))))
-                (when (and (>= point-pos start)
-                           (<= point-pos end))
-                  (push module-name modules)))
-            (error nil)))) ; skip malformed blocks safely
-      (let ((full-name (string-join (reverse modules) ".")))
-        (if (called-interactively-p 'interactive)
-            (message "%s" full-name)
-          (unless (string-empty-p full-name)
-            full-name))))))
+  (defun ry/elixir-module-at-point ()
+    "Return the full nested Elixir module name at point by checking enclosing `defmodule` blocks."
+    (interactive)
+    (save-excursion
+      (let ((modules '())
+            (point-pos (point)))
+        (goto-char (point-min))
+        (while (re-search-forward
+                "^\\s-*defmodule\\s-+\\([A-Z][A-Za-z0-9_\\.]*\\)\\s-+do\\b" nil t)
+          (let ((module-name (substring-no-properties (match-string 1)))
+                (start (match-beginning 0)))
+            (condition-case nil
+                (let ((end (save-excursion
+                             (goto-char start)
+                             (forward-sexp) ; move past the module's `do ... end`
+                             (point))))
+                  (when (and (>= point-pos start)
+                             (<= point-pos end))
+                    (push module-name modules)))
+              (error nil)))) ; skip malformed blocks safely
+        (let ((full-name (string-join (reverse modules) ".")))
+          (if (called-interactively-p 'interactive)
+              (message "%s" full-name)
+            (unless (string-empty-p full-name)
+              full-name))))))
 
-(defun ry/iex-reload-module-at-point ()
-  "Reload the Elixir module at point in an IEx session using vterm.
+  (defun ry/iex-reload-module-at-point ()
+    "Reload the Elixir module at point in an IEx session using vterm.
 If no IEx session is detected, restore the previous window configuration."
-  (interactive)
-  (let ((mod (ry/elixir-module-at-point)))
-    (if (not mod)
-        (message "No Elixir module found at point.")
-      (ry/iex-send-string (format "r %s" mod)))))
+    (interactive)
+    (let ((mod (ry/elixir-module-at-point)))
+      (if (not mod)
+          (message "No Elixir module found at point.")
+        (ry/iex-send-string (format "r %s" mod)))))
 
-(defun ry/iex-send-current-line-or-region ()
-  "Insert text of current line or region in IEx and execute."
-  (interactive)
-  (let* ((current-line (buffer-substring
-                        (save-excursion
-                          (beginning-of-line)
-                          (point))
-                        (save-excursion
-                          (end-of-line)
-                          (point))))
-         (buf (current-buffer))
-         (command (string-trim
-                   (if (use-region-p)
-                       (buffer-substring (region-beginning) (region-end))
-                     current-line))))
-    (ry/iex-send-string command)))
+  (defun ry/iex-send-current-line-or-region ()
+    "Insert text of current line or region in IEx and execute."
+    (interactive)
+    (let* ((current-line (buffer-substring
+                          (save-excursion
+                            (beginning-of-line)
+                            (point))
+                          (save-excursion
+                            (end-of-line)
+                            (point))))
+           (buf (current-buffer))
+           (command (string-trim
+                     (if (use-region-p)
+                         (buffer-substring (region-beginning) (region-end))
+                       current-line))))
+      (ry/iex-send-string command)))
+  )
 
 (use-package elixir-ts-mode
   :hook
+                                        ;(add-hook 'compilation-filter-hook #'ansi-color-compilation-filter) ; colorize mix compile output
+  (compilation-filter . ansi-color-compilation-filter)
   (elixir-ts-mode . mix-minor-mode)
   (elixir-ts-mode . exunit-mode)
   (elixir-ts-mode . subword-mode))
-
-(setopt treesit-enabled-modes t) ;; auto-rempa all modes with ts variants
-(setopt treesit-auto-install-grammar 'always)
 
 (use-package heex-ts-mode
   :hook
@@ -236,8 +255,6 @@ If no IEx session is detected, restore the previous window configuration."
 
 (use-package mix
   :after elixir-ts-mode)
-
-(setq compilation-scroll-output t)
 
 (use-package exunit
   :after elixir-ts-mode
@@ -273,35 +290,24 @@ on every call."
         ("s-r" . exunit-rerun)
         ))
 
+
 ;;; HTML, JS, CSS
+(use-package web-mode
+  :custom
+  (web-mode-markup-indent-offset 2)
+  (web-mode-css-indent-offset 2)
+  (web-mode-code-indent-offset 2)
+  (web-mode-indent-style 2)
+  (js-indent-level 2)
+  (css-indent-offset 2)
+  :config
+  (add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.html.eex\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode)))
 
-(progn
-  (setq-default js-indent-level 2)
-  (setq-default css-indent-offset 2)
-  (add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-ts-mode)))
-
-(use-package web-mode)
-
-;; web-mode specific overrides of tab settings
-(defun ry/web-mode-hook ()
-  "Hooks for Web mode."
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-indent-style 2))
-
-(add-hook 'web-mode-hook  #'ry/web-mode-hook)
-
-(add-to-list 'auto-mode-alist '("\\.html.eex\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-
-(use-package sql
-  :ensure nil
-  :no-require t
-  :hook (sql-mode . (lambda () (setq tab-width 2))))
 
 ;;; Eglot LSP
 
@@ -323,8 +329,12 @@ on every call."
 
 ;;; Shells and environment variable config
 
-(setenv "ESHELL" "/bin/zsh")
-(setenv "SHELL" "/bin/zsh")
+(use-package ry/zsh
+  :ensure nil
+  :no-require t
+  :init
+  (setenv "ESHELL" "/bin/zsh")
+  (setenv "SHELL" "/bin/zsh"))
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
@@ -340,45 +350,14 @@ on every call."
 (use-package mise
   :init (add-hook 'after-init-hook #'global-mise-mode))
 
-(defun ry/toggle-dedicated-vterm ()
-  "Open a vterm or switch focus to it if it's already visible"
-  (interactive)
-  (if-let* ((window (get-buffer-window "*vterm*")))
-      (if (string= (buffer-name (current-buffer)) "*vterm*")
-	  (ry/switch-to-mru-window)
-	(select-window window))
-    (vterm)))
-
-;; A project vterm's buffer is *vterm <project-name.*
-(defun ry/toggle-project-vterm ()
-  "Open a project's vterm or switch focus to it if it's already visible"
-  (interactive)
-  (if-let* ((buf-name (concat "*vterm " (project-name (project-current)) "*"))
-	    (window (get-buffer-window buf-name)))
-      (if (string= (buffer-name (current-buffer)) buf-name)
-	  (ry/switch-to-mru-window)
-	(select-window window))
-    (if (buffer-live-p (get-buffer buf-name))
-	(pop-to-buffer buf-name)
-      (let ((default-directory (project-root (project-current t))))
-        (vterm buf-name)))))
-
-;; mru = Most Recently Used
-(defun ry/switch-to-mru-window ()
-  (interactive)
-  (if-let* ((mru-window (get-mru-window nil nil t)))
-      (select-window mru-window)
-    (quit-windows-on (window-buffer mru-window))))
-
 (use-package vterm
   :commands vterm
+  :custom (vterm-max-scrollback 10000)
   :hook
   (vterm-mode . (lambda () (setq term-prompt-regexp "^\\([0-9][0-9]:[0-9][0-9] \$ \\|iex([0-9]+)> \\)")))
-  :bind
-  (("C-M-8" . ry/toggle-project-vterm)
-   ("C-M-9" . ry/toggle-dedicated-vterm))
+
+
   :config
-  (setq vterm-max-scrollback 10000)
   ;; Position the dedicated vterm buffer to be at the bottom
   (add-to-list 'display-buffer-alist
                '("\\*vterm\\*"
@@ -388,9 +367,47 @@ on every call."
                  (side . bottom)
                  (window-parameters . ((no-delete-other-windows . t)))))
   (if (display-graphic-p)
-      (set-fontset-font nil 'symbol (font-spec :script 'symbol))))
+      (set-fontset-font nil 'symbol (font-spec :script 'symbol)))
+
+  :init
+  (defun ry/toggle-dedicated-vterm ()
+    "Open a vterm or switch focus to it if it's already visible"
+    (interactive)
+    (if-let* ((window (get-buffer-window "*vterm*")))
+        (if (string= (buffer-name (current-buffer)) "*vterm*")
+	          (ry/switch-to-mru-window)
+	        (select-window window))
+      (vterm)))
+
+  ;; A project vterm's buffer is *vterm <project-name>*
+  (defun ry/toggle-project-vterm ()
+    "Open a project's vterm or switch focus to it if it's already visible"
+    (interactive)
+    (if-let* ((buf-name (concat "*vterm " (project-name (project-current)) "*"))
+	            (window (get-buffer-window buf-name)))
+        (if (string= (buffer-name (current-buffer)) buf-name)
+	          (ry/switch-to-mru-window)
+	        (select-window window))
+      (if (buffer-live-p (get-buffer buf-name))
+	        (pop-to-buffer buf-name)
+        (let ((default-directory (project-root (project-current t))))
+          (vterm buf-name)))))
+
+  ;; mru = Most Recently Used
+  (defun ry/switch-to-mru-window ()
+    (interactive)
+    (if-let* ((mru-window (get-mru-window nil nil t)))
+        (select-window mru-window)
+      (quit-windows-on (window-buffer mru-window))))
+  :bind
+  (("C-M-8" . ry/toggle-project-vterm)
+   ("C-M-9" . ry/toggle-dedicated-vterm)))
 
 (use-package kkp :config (global-kkp-mode 1))
+
+
+
+;;; Version Control, Git
 
 (use-package magit
   :ensure t
@@ -416,44 +433,52 @@ on every call."
   :ensure nil
   :config (which-key-mode))
 
-;; spell checker
-(use-package jinx
-  :bind (("C-M-$" . jinx-correct))
-  :config (global-jinx-mode nil))
+
+
+;;;; Appearance: themes and fonts
+
+(use-package ef-themes
+  :ensure t
+  :config
+  (modus-themes-include-derivatives-mode)
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil
+        modus-themes-mixed-fonts t
+        modus-themes-variable-pitch-ui nil
+        modus-themes-disable-other-themes t
+        modus-themes-headings
+        '((0 . ("Kalam" light 2.0))
+          (1 . (1.5))
+          (2 . (semibold 1.2))
+          (t . (rainbow)))) ; style for all other headings
+  (modus-themes-load-theme 'ef-owl))
+
+(use-package ry/fonts
+  :ensure nil
+  :no-require t
+  :init
+  (setq my-font-s "IosevkaTerm Nerd Font Mono")
+  (add-to-list 'default-frame-alist '(font . "IosevkaTerm Nerd Font Mono-16"))
+
+  (set-face-attribute 'default nil :font my-font-s :weight 'light :height 160)
+  (set-face-attribute 'fixed-pitch nil :font my-font-s :weight 'light :height 160)
+  (set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :weight 'light :height 170)
+
+  (setq-default line-spacing .2))
+
+(use-package default-text-scale
+  :init (default-text-scale-mode 1))
+
 
 ;;; Whitespace and Comments
 
-(require 'whitespace)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-(setq whitespace-action '(auto-cleanup)) ;; automatically clean up bad whitespace
-(setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab)) ;; only show bad whitespace
-
-(defun align-whitespace (start end)
-  "Align columns by whitespace"
-  (interactive "r")
-  (align-regexp start end
-                "\\(\\s-*\\)\\s-" 1 0 t))
-
-(defun comment-dwim-line (&optional arg)
-  "Replacement for the comment-dwim command.
-   If no region is selected and current line is not blank and we are not at
-   the end of the line, then comment current line.
-   Replaces default behaviour of comment-dwim, when it inserts comment at
-   the end of the line."
-  (interactive "*P")
-  (comment-normalize-vars)
-  (if (region-active-p)
-      (let ((start (region-beginning))
-            (end (region-end)))
-        (goto-char start)
-        (let ((real-start (line-beginning-position)))
-          (goto-char end)
-          (comment-or-uncomment-region real-start (line-end-position))))
-    (comment-or-uncomment-region (line-beginning-position)
-				 (line-end-position))))
-
-(global-set-key "\M-;" 'comment-dwim-line)
+(use-package ry/whitespace
+  :ensure nil
+  :no-require t
+  :hook (before-save . delete-trailing-whitespace)
+  :custom
+  (whitespace-action '(auto-cleanup)) ;; automatically clean up bad whitespace
+  (whitespace-style '(trailing space-before-tab indentation empty space-after-tab))) ;; only show bad whitespace
 
 (use-package ry/swap-windows
   :ensure nil
@@ -463,7 +488,7 @@ on every call."
     "If you have 2 windows, it swaps them."
     (interactive)
     (cond ((not (= (count-windows) 2))
-  	   (message "You need exactly 2 windows to do this."))
+  	       (message "You need exactly 2 windows to do this."))
           (t
            (let* ((w1 (nth 1 (window-list)))
                   (w2 (nth 2 (window-list)))
@@ -488,6 +513,24 @@ on every call."
   :ensure nil
   :no-require t
   :init
+  (defun comment-dwim-line (&optional arg)
+    "Replacement for the comment-dwim command.
+    If no region is selected and current line is not blank and we are not at
+    the end of the line, then comment current line.
+    Replaces default behaviour of comment-dwim, when it inserts comment at
+    the end of the line."
+    (interactive "*P")
+    (comment-normalize-vars)
+    (if (region-active-p)
+        (let ((start (region-beginning))
+              (end (region-end)))
+          (goto-char start)
+          (let ((real-start (line-beginning-position)))
+            (goto-char end)
+            (comment-or-uncomment-region real-start (line-end-position))))
+      (comment-or-uncomment-region (line-beginning-position)
+				                           (line-end-position))))
+
   (defun beginning-of-line-dwim ()
     (interactive)
     (if (eq (current-column) 0)
@@ -501,8 +544,10 @@ on every call."
       (progn
         (search-backward-regexp "[^\t ]")
         (forward-char))))
+
   :bind (("C-a" . beginning-of-line-dwim)
-         ("C-e" . end-of-line-dwim)))
+         ("C-e" . end-of-line-dwim)
+         ("\M-;" . comment-dwim-line)))
 
 (use-package ry/scrolling
   :ensure nil
@@ -526,60 +571,19 @@ on every call."
     (interactive)
     (scroll-other-window-down 1))
 
-  (defun scroll-right-one ()
-    (interactive)
-    (scroll-right 1))
-
-  (defun scroll-left-one ()
-    (interactive)
-    (scroll-left 1))
-  :bind (("<up>" . scroll-down-one)
-         ("<down>" . scroll-up-one)
-         ("C-M-<up>" . scroll-other-window-down-one)
-         ("C-M-<down>" . scroll-other-window-up-one)))
+  :bind
+  (("<up>" . scroll-down-one)
+   ("<down>" . scroll-up-one)
+   ("C-M-<up>" . scroll-other-window-down-one)
+   ("C-M-<down>" . scroll-other-window-up-one)))
 
 (use-package hungry-delete
   :config (setq global-hungry-delete-mode t)
   :bind (("C-]" . hungry-delete-backward)
          ("C-\\" . hungry-delete-forward)))
 
-(global-set-key (kbd "M-o") #'browse-url)
 
-
-
-
-;;;; Appearance: themes and fonts
-
-(use-package ef-themes
-  :ensure t
-  :config
-  (ef-themes-take-over-modus-themes-mode)
-  (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs nil
-        modus-themes-mixed-fonts t
-        modus-themes-variable-pitch-ui nil
-        modus-themes-disable-other-themes t
-        modus-themes-headings
-        '((0 . ("Kalam" light 2.0))
-          (1 . (1.5))
-          (2 . (semibold 1.2))
-          (t . (rainbow)))) ; style for all other headings
-  (modus-themes-load-theme 'ef-owl))
-
-(setq my-font-s "IosevkaTerm Nerd Font Mono")
-(add-to-list 'default-frame-alist '(font . "IosevkaTerm Nerd Font Mono-16"))
-
-(set-face-attribute 'default nil :font my-font-s :weight 'light :height 160)
-(set-face-attribute 'fixed-pitch nil :font my-font-s :weight 'light :height 160)
-(set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :weight 'light :height 170)
-
-(setq-default line-spacing .2)
-
-(use-package default-text-scale
-  :init (default-text-scale-mode 1))
-
-(add-hook 'compilation-filter-hook #'ansi-color-compilation-filter) ; colorize mix compile output
-
+;;;; Project management
 (use-package project
   :custom
   (project-prompter 'project-prompt-project-name)
@@ -740,6 +744,9 @@ on every call."
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
+
+;;;; AI and LLMs
+
 (use-package agent-shell
   :ensure t
   :bind (("C-M-7" . agent-shell)
@@ -752,3 +759,11 @@ on every call."
 
 ;;;; PRIVATE emacs config
 (load (expand-file-name "private.el" user-emacs-directory) 'noerror)
+
+
+;;; Local Vars to fold this file automatically upon open
+
+;; Local Variables:
+;; eval: (hs-minor-mode 1)
+;; eval: (hs-hide-all)
+;; End:
