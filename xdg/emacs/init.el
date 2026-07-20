@@ -1,8 +1,6 @@
 ;; -*- lexical-binding: t; -*-
 
-;;;; General Emacs behaviour
-
-;;; Packages
+;;; Packages and general basic config
 
 (use-package ry/package-config
   :ensure nil
@@ -34,8 +32,8 @@
   (kept-old-versions 5)    ; and how many of the old
   (auto-save-file-name-transforms '((".*" "~/.config/emacs/autosave/" t)))
   (create-lockfiles nil)
+  (use-short-answers t)
   :init
-  (setopt use-short-answers t)
   (load custom-file 'noerror)
   (put 'dired-find-alternate-file 'disabled nil))
 
@@ -44,8 +42,9 @@
 
 
 
-;;;; Programming config: language modes
+;;; Programming config: language modes
 
+;;;; Flymake
 (use-package flymake
   :custom
   (flymake-mode-line-lighter "")
@@ -55,7 +54,23 @@
         ("C-c C-n" . flymake-goto-next-error)
 	      ("C-c C-p" . flymake-goto-prev-error)))
 
-;;; Org mode config
+;;;; Project management
+(use-package project
+  :custom
+  (project-prompter 'project-prompt-project-name)
+  :config
+  (add-to-list 'project-switch-commands
+               '(magit-project-status "Magit") 'append)
+  (add-to-list 'project-switch-commands
+               '(ry/toggle-project-vterm "VTerm") 'append)
+  :bind
+  (:map project-prefix-map
+        ("m" . magit-project-status)
+        ("v" . ry/toggle-project-vterm)))
+
+
+
+;;;; Org mode config
 
 (use-package org
   :ensure nil
@@ -114,21 +129,23 @@
   (markdown-ts-mode . variable-pitch-mode))
 
 (use-package eldoc
-  :after markdown-ts-mode
   :custom (help-window-select t))
 
 (use-package olivetti
   :custom (olivetti-body-width 105))
 
-(use-package hideshow
-  :bind (:map hs-minor-mode-map ("C-<tab>" . hs-cycle)))
+(use-package outline
+  :ensure nil
+  :custom (outline-minor-mode-cycle t)
+  :hook
+  (prog-mode . outline-minor-mode)
+  (emacs-lisp-mode . (lambda () (outline-hide-sublevels 1))))
 
 (use-package prog-mode
   :ensure nil
   :custom (compilation-scroll-output t)
   :hook
   (prog-mode . display-line-numbers-mode)
-  (prog-mode . hs-minor-mode)
   (prog-mode . (lambda () (indent-tabs-mode -1))))
 
 (use-package ry/treesitter
@@ -138,7 +155,7 @@
   (treesit-enabled-modes t) ;; auto-replace all modes with ts variants
   (treesit-auto-install-grammar 'always)) ;; automatically install
 
-;;; Auto formatting code files: Apheleia
+;;;; Auto formatting code files: Apheleia
 
 (use-package apheleia
   :init (apheleia-global-mode +1)
@@ -147,7 +164,7 @@
   (dolist (mode '(js-ts-mode jsx-ts-mode typescript-ts-mode tsx-ts-mode css-ts-mode css-mode graphql-mode html-mode html-ts-mode js3-mode json-mode json-ts-mode js-json-mode js-mode js-ts-mode scss-mode typescript-mode web-mode yaml-mode yaml-ts-mode markdown-ts-mode markdown-mode toml-ts-mode))
     (setf (alist-get mode apheleia-mode-alist) 'oxfmt)))
 
-;;; Code snippets: Yasnippet
+;;;; Code snippets: Yasnippet
 (use-package yasnippet
   :hook ((prog-mode . yas-minor-mode))
   :config
@@ -159,7 +176,7 @@
 (use-package yaml-ts-mode
   :hook (yaml-ts-mode . display-line-numbers-mode))
 
-;;; Elixir
+;;;; Elixir
 
 (use-package ry/custom-iex-functions
   :ensure nil
@@ -240,8 +257,8 @@ If no IEx session is detected, restore the previous window configuration."
 
 (use-package elixir-ts-mode
   :hook
-                                        ;(add-hook 'compilation-filter-hook #'ansi-color-compilation-filter) ; colorize mix compile output
   (compilation-filter . ansi-color-compilation-filter)
+  (elixir-ts-mode . (lambda () (outline-hide-sublevels 2)))
   (elixir-ts-mode . mix-minor-mode)
   (elixir-ts-mode . exunit-mode)
   (elixir-ts-mode . subword-mode))
@@ -291,7 +308,7 @@ on every call."
         ))
 
 
-;;; HTML, JS, CSS
+;;;; HTML, JS, CSS
 (use-package web-mode
   :custom
   (web-mode-markup-indent-offset 2)
@@ -309,7 +326,7 @@ on every call."
   (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode)))
 
 
-;;; Eglot LSP
+;;;; Eglot LSP
 
 (use-package eglot
   :config
@@ -327,28 +344,43 @@ on every call."
   (elixir-ts-mode . eglot-ensure)
   (heex-ts-mode . eglot-ensure))
 
+;;;; Version Control, Git
+
+(use-package magit
+  :ensure t
+  :pin melpa
+  :config (global-set-key (kbd "C-x g") 'magit-status)
+  :bind ("s-i" . magit-blame))
+
+(use-package git-gutter
+  :hook prog-mode
+  :bind ("C-c s" . git-gutter:stage-hunk)
+  :config (setq git-gutter:update-interval 0.02))
+
+(use-package git-gutter-fringe
+  :config
+  (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
+
+(use-package browse-at-remote
+  :bind ("C-c g g" . 'browse-at-remote))
+
+(use-package which-key
+  :ensure nil
+  :config (which-key-mode))
+
+
+
 ;;; Shells and environment variable config
 
+;;;; ZSH and VTerm
 (use-package ry/zsh
   :ensure nil
   :no-require t
   :init
   (setenv "ESHELL" "/bin/zsh")
   (setenv "SHELL" "/bin/zsh"))
-
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
-  :config
-  (setq exec-path-from-shell-variables
-        '("PATH" "MANPATH" "EDITOR" "GPG_TTY"
-          "XDG_CONFIG_HOME" "XDG_DATA_HOME" "XDG_CACHE_HOME" "ZDOTDIR"
-          "AWS_CA_BUNDLE" "CURL_CA_BUNDLE" "REQUESTS_CA_BUNDLE"
-          "SSL_CERT_FILE" "NODE_EXTRA_CA_CERTS" "HEX_CACERTS_PATH" "GIT_SSL_CAINFO"))
-  (setq exec-path-from-shell-arguments nil)
-  (exec-path-from-shell-initialize))
-
-(use-package mise
-  :init (add-hook 'after-init-hook #'global-mise-mode))
 
 (use-package vterm
   :commands vterm
@@ -403,40 +435,27 @@ on every call."
   (("C-M-8" . ry/toggle-project-vterm)
    ("C-M-9" . ry/toggle-dedicated-vterm)))
 
+;;;; Environment variables
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
+  :config
+  (setq exec-path-from-shell-variables
+        '("PATH" "MANPATH" "EDITOR" "GPG_TTY"
+          "XDG_CONFIG_HOME" "XDG_DATA_HOME" "XDG_CACHE_HOME" "ZDOTDIR"
+          "AWS_CA_BUNDLE" "CURL_CA_BUNDLE" "REQUESTS_CA_BUNDLE"
+          "SSL_CERT_FILE" "NODE_EXTRA_CA_CERTS" "HEX_CACERTS_PATH" "GIT_SSL_CAINFO"))
+  (setq exec-path-from-shell-arguments nil)
+  (exec-path-from-shell-initialize))
+
+(use-package mise
+  :init (add-hook 'after-init-hook #'global-mise-mode))
+
 (use-package kkp :config (global-kkp-mode 1))
 
 
 
-;;; Version Control, Git
-
-(use-package magit
-  :ensure t
-  :pin melpa
-  :config (global-set-key (kbd "C-x g") 'magit-status)
-  :bind ("s-i" . magit-blame))
-
-(use-package git-gutter
-  :hook prog-mode
-  :bind ("C-c s" . git-gutter:stage-hunk)
-  :config (setq git-gutter:update-interval 0.02))
-
-(use-package git-gutter-fringe
-  :config
-  (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
-
-(use-package browse-at-remote
-  :bind ("C-c g g" . 'browse-at-remote))
-
-(use-package which-key
-  :ensure nil
-  :config (which-key-mode))
-
-
-
-;;;; Appearance: themes and fonts
-
+;;; Appearance
+;;;; Themes
 (use-package ef-themes
   :ensure t
   :config
@@ -453,6 +472,7 @@ on every call."
           (t . (rainbow)))) ; style for all other headings
   (modus-themes-load-theme 'ef-owl))
 
+;;;; Fonts
 (use-package ry/fonts
   :ensure nil
   :no-require t
@@ -470,7 +490,7 @@ on every call."
   :init (default-text-scale-mode 1))
 
 
-;;; Whitespace and Comments
+;;; Editing, Whitespace, and Comments
 
 (use-package ry/whitespace
   :ensure nil
@@ -583,23 +603,7 @@ on every call."
          ("C-\\" . hungry-delete-forward)))
 
 
-;;;; Project management
-(use-package project
-  :custom
-  (project-prompter 'project-prompt-project-name)
-  :config
-  (add-to-list 'project-switch-commands
-               '(magit-project-status "Magit") 'append)
-  (add-to-list 'project-switch-commands
-               '(ry/toggle-project-vterm "VTerm") 'append)
-  :bind
-  (:map project-prefix-map
-        ("m" . magit-project-status)
-        ("v" . ry/toggle-project-vterm)))
-
-
-
-;;;; Completion, vertico etc
+;;; Completion, vertico etc
 
 (setq completion-cycle-threshold 3) ; TAB cycle if there are only few candidates
 
@@ -745,7 +749,7 @@ on every call."
   (embark-collect-mode . consult-preview-at-point-mode))
 
 
-;;;; AI and LLMs
+;;; AI and LLMs
 
 (use-package agent-shell
   :ensure t
@@ -757,13 +761,5 @@ on every call."
 
 
 
-;;;; PRIVATE emacs config
+;;; PRIVATE emacs config
 (load (expand-file-name "private.el" user-emacs-directory) 'noerror)
-
-
-;;; Local Vars to fold this file automatically upon open
-
-;; Local Variables:
-;; eval: (hs-minor-mode 1)
-;; eval: (hs-hide-all)
-;; End:
