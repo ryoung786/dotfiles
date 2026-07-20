@@ -104,9 +104,6 @@
   :bind ("C-c a" . org-agenda))
 
 (use-package markdown-ts-mode
-  ;; :mode
-  ;; (("README\\.md\\'" . gfm-mode)
-  ;;  ("\\.livemd\\'" . gfm-mode))
   :custom
   (markdown-fontify-code-blocks-natively t)
   :hook
@@ -548,6 +545,9 @@ on every call."
 
 (global-set-key (kbd "M-o") #'browse-url)
 
+
+
+
 ;;;; Appearance: themes and fonts
 
 (use-package ef-themes
@@ -748,4 +748,7 @@ on every call."
          ("C-c C-c" . shell-maker-submit)
          ("C-c C-k" . agent-shell-interrupt)))
 
+
+
+;;;; PRIVATE emacs config
 (load (expand-file-name "private.el" user-emacs-directory) 'noerror)
