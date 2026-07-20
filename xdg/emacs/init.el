@@ -12,7 +12,7 @@
 
 (use-package delight)
 (use-package autorevert :delight auto-revert-mode)
-(defalias 'yes-or-no-p 'y-or-n-p)
+(setopt use-short-answers t)
 (setq column-number-mode t)
 (put 'dired-find-alternate-file 'disabled nil)
 (use-package nerd-icons-dired :hook dired-mode)
@@ -65,8 +65,17 @@
   (org-level-4 ((t (:height 1.2))))
   (org-level-5 ((t (:height 1.2))))
 
+  :bind ("C-c c" . org-capture)
+
   :init
-  (require 'org)
+  (setq org-capture-templates
+        '(("n" "Note" entry (file+olp+datetree "~/org/notes/daily.org")
+           "* %U %^{Title} %^g\n%?\n\n%i"
+           :empty-lines 1)))
+
+  :config
+  (make-directory "~/org/notes/" :parents)
+
   (dolist (item '(("sh" . "src sh")
                   ("bsh" . "src bash")
                   ("em" . "src emacs-lisp")
@@ -91,18 +100,6 @@
         org-appear-autolinks t
         org-appear-inside-latex t))
 
-(use-package org
-  :ensure nil
-  :config
-  (make-directory "~/org/notes/" :parents)
-
-  (setq org-capture-templates
-        '(("n" "Note" entry (file+olp+datetree "~/org/notes/daily.org")
-           "* %U %^{Title} %^g\n%?\n\n%i"
-           :empty-lines 1)))
-
-  :bind ("C-c c" . org-capture))
-
 (use-package org-agenda
   :ensure nil
   :no-require t
@@ -110,9 +107,9 @@
   :bind ("C-c a" . org-agenda))
 
 (use-package markdown-ts-mode
-  :mode
-  (("README\\.md\\'" . gfm-mode)
-   ("\\.livemd\\'" . gfm-mode))
+  ;; :mode
+  ;; (("README\\.md\\'" . gfm-mode)
+  ;;  ("\\.livemd\\'" . gfm-mode))
   :custom
   (markdown-fontify-code-blocks-natively t)
   :hook
@@ -128,8 +125,6 @@
                   (set-face-attribute 'markdown-code-face nil :inherit 'fixed-pitch)
                   (set-face-attribute 'markdown-pre-face nil :inherit 'fixed-pitch)
                   (if (string-match-p "\\*eldoc\\*" (buffer-name)) (variable-pitch-mode t)))))
-
-(setq help-window-select t)
 
 (use-package olivetti
   :delight
@@ -160,8 +155,8 @@
 
 (use-package yasnippet-snippets :after yasnippet)
 
-(use-package yaml-mode
-  :hook (yaml-mode . display-line-numbers-mode))
+(use-package yaml-ts-mode
+  :hook (yaml-ts-mode . display-line-numbers-mode))
 
 ;;; Elixir
 
@@ -241,10 +236,11 @@ If no IEx session is detected, restore the previous window configuration."
   :hook
   (elixir-ts-mode . mix-minor-mode)
   (elixir-ts-mode . exunit-mode)
-  :config (global-subword-mode t)
+  (elixir-ts-mode . subword-mode)
   :delight subword-mode)
 
-(add-to-list 'major-mode-remap-alist '(elixir-mode . elixir-ts-mode))
+(setopt treesit-enabled-modes t) ;; auto-rempa all modes with ts variants
+(setopt treesit-auto-install-grammar 'always)
 
 (use-package heex-ts-mode
   :hook
@@ -255,8 +251,7 @@ If no IEx session is detected, restore the previous window configuration."
 
 (use-package mix
   :delight mix-minor-mode
-  :after elixir-ts-mode
-  :config (add-hook 'elixir-ts-mode-hook 'mix-minor-mode))
+  :after elixir-ts-mode)
 
 (setq compilation-scroll-output t)
 
@@ -300,35 +295,25 @@ on every call."
 (progn
   (setq-default js-indent-level 2)
   (setq-default css-indent-offset 2)
-
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-ts-mode)))
 
 (use-package web-mode)
 
 ;; web-mode specific overrides of tab settings
-(defun web-mode-hook ()
+(defun ry/web-mode-hook ()
   "Hooks for Web mode."
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
   (setq web-mode-code-indent-offset 2)
   (setq web-mode-indent-style 2))
 
-(add-hook 'web-mode-hook  'web-mode-hook)
+(add-hook 'web-mode-hook  #'ry/web-mode-hook)
 
 (add-to-list 'auto-mode-alist '("\\.html.eex\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.handlebars\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.rhtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
 (use-package sql
   :ensure nil
@@ -393,7 +378,8 @@ on every call."
 	(select-window window))
     (if (buffer-live-p (get-buffer buf-name))
 	(pop-to-buffer buf-name)
-      (projectile-run-vterm-other-window))))
+      (let ((default-directory (project-root (project-current t))))
+        (vterm buf-name)))))
 
 ;; mru = Most Recently Used
 (defun ry/switch-to-mru-window ()
@@ -446,6 +432,7 @@ on every call."
   :bind ("C-c g g" . 'browse-at-remote))
 
 (use-package which-key
+  :ensure nil
   :delight which-key-mode
   :config (which-key-mode))
 
@@ -612,15 +599,7 @@ on every call."
 (use-package default-text-scale
   :init (default-text-scale-mode 1))
 
-(require 'ansi-color)
 (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter) ; colorize mix compile output
-
-;; Only needed for the vterm dedicated window
-(use-package projectile
-  :delight projectile-mode
-  :commands (projectile-project-name)
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :init (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package project
   :custom

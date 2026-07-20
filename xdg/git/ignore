@@ -61,3 +61,4 @@ config_private
 
 .agent-shell
 .mise.local.toml
+**/.claude/settings.local.json
