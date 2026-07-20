@@ -10,8 +10,11 @@
 (setq use-package-always-ensure 't)
 
 
-(use-package delight)
-(use-package autorevert :delight auto-revert-mode)
+(use-package minions
+  :custom
+  (minions-prominent-modes '(flymake-mode eglot--managed-mode))
+  :config (minions-mode 1))
+
 (setopt use-short-answers t)
 (setq column-number-mode t)
 (put 'dired-find-alternate-file 'disabled nil)
@@ -37,6 +40,9 @@
 
 ;;;; Programming config
 
+(eval-after-load 'hideshow
+  '(bind-key "C-<tab>" 'hs-cycle hs-minor-mode-map))
+
 (use-package flymake
   :custom
   (flymake-mode-line-lighter "")
@@ -53,18 +59,9 @@
   :hook
   (org-mode . variable-pitch-mode)
   (org-mode . visual-line-mode)
+  (org-mode . olivetti-mode)
 
-  :custom
-  (org-hide-emphasis-markers t)
-
-  :custom-face
-  (org-document-title ((t (:height 2.0 :weight light :family "Kalam"))))
-  (org-level-1 ((t (:height 1.2))))
-  (org-level-2 ((t (:height 1.2))))
-  (org-level-3 ((t (:height 1.2))))
-  (org-level-4 ((t (:height 1.2))))
-  (org-level-5 ((t (:height 1.2))))
-
+  :custom (org-hide-emphasis-markers t)
   :bind ("C-c c" . org-capture)
 
   :init
@@ -113,33 +110,26 @@
   :custom
   (markdown-fontify-code-blocks-natively t)
   :hook
-  (markdown-mode . olivetti-mode)
-  (markdown-mode . variable-pitch-mode))
+  (markdown-ts-mode . olivetti-mode)
+  (markdown-ts-mode . variable-pitch-mode))
 
 (use-package eldoc
-  :delight eldoc-mode
   :after markdown-ts-mode
-  :custom (help-window-select t)
-  :hook
-  (eldoc-mode . (lambda ()
-                  (set-face-attribute 'markdown-code-face nil :inherit 'fixed-pitch)
-                  (set-face-attribute 'markdown-pre-face nil :inherit 'fixed-pitch)
-                  (if (string-match-p "\\*eldoc\\*" (buffer-name)) (variable-pitch-mode t)))))
+  :custom (help-window-select t))
 
 (use-package olivetti
-  :delight
   :custom (olivetti-body-width 105))
 
 (use-package prog-mode
   :ensure nil
   :hook
   (prog-mode . display-line-numbers-mode)
+  (prog-mode . hs-minor-mode)
   (prog-mode . (lambda () (indent-tabs-mode -1))))
 
 ;;; Auto formatting code files: Apheleia
 
 (use-package apheleia
-  :delight apheleia-mode
   :init (apheleia-global-mode +1)
   :config
   (add-to-list 'apheleia-mode-alist '(heex-ts-mode . mix-format))
@@ -147,7 +137,6 @@
     (setf (alist-get mode apheleia-mode-alist) 'oxfmt)))
 
 (use-package yasnippet
-  :delight yas-minor-mode
   :hook ((prog-mode . yas-minor-mode))
   :config
   (setq yas-snippet-dirs '("~/.config/emacs/private-snippets" "~/.config/emacs/snippets"))
@@ -236,8 +225,7 @@ If no IEx session is detected, restore the previous window configuration."
   :hook
   (elixir-ts-mode . mix-minor-mode)
   (elixir-ts-mode . exunit-mode)
-  (elixir-ts-mode . subword-mode)
-  :delight subword-mode)
+  (elixir-ts-mode . subword-mode))
 
 (setopt treesit-enabled-modes t) ;; auto-rempa all modes with ts variants
 (setopt treesit-auto-install-grammar 'always)
@@ -250,13 +238,11 @@ If no IEx session is detected, restore the previous window configuration."
   :init (add-to-list 'auto-mode-alist '("\\.[hl]?eex\\'" . heex-ts-mode)))
 
 (use-package mix
-  :delight mix-minor-mode
   :after elixir-ts-mode)
 
 (setq compilation-scroll-output t)
 
 (use-package exunit
-  :delight exunit-mode
   :after elixir-ts-mode
   :config
   ;; overwrite exunit's definition to prefer running tests from umbrella root
@@ -355,7 +341,6 @@ on every call."
   (exec-path-from-shell-initialize))
 
 (use-package mise
-  :delight mise-mode
   :init (add-hook 'after-init-hook #'global-mise-mode))
 
 (defun ry/toggle-dedicated-vterm ()
@@ -417,7 +402,6 @@ on every call."
   :bind ("s-i" . magit-blame))
 
 (use-package git-gutter
-  :delight
   :hook prog-mode
   :bind ("C-c s" . git-gutter:stage-hunk)
   :config (setq git-gutter:update-interval 0.02))
@@ -433,12 +417,10 @@ on every call."
 
 (use-package which-key
   :ensure nil
-  :delight which-key-mode
   :config (which-key-mode))
 
 ;; spell checker
 (use-package jinx
-  :delight
   :bind (("C-M-$" . jinx-correct))
   :config (global-jinx-mode nil))
 
@@ -560,7 +542,6 @@ on every call."
          ("C-M-<down>" . scroll-other-window-up-one)))
 
 (use-package hungry-delete
-  :delight
   :config (setq global-hungry-delete-mode t)
   :bind (("C-]" . hungry-delete-backward)
          ("C-\\" . hungry-delete-forward)))
@@ -569,30 +550,28 @@ on every call."
 
 ;;;; Appearance: themes and fonts
 
-(require-theme 'modus-themes)
-(setq modus-themes-italic-constructs t
-      modus-themes-bold-constructs nil
-      modus-themes-mixed-fonts t
-      modus-themes-variable-pitch-ui t
-      modus-themes-disable-other-themes t)
-
-(modus-themes-load-theme 'modus-operandi-tinted)
-
-(defun my/apply-theme (appearance)
-  "Load theme, taking current system APPEARANCE into consideration."
-  (mapc #'disable-theme custom-enabled-themes)
-  (pcase appearance
-    ('light (load-theme 'modus-operandi-tinted t))
-    ('dark (load-theme 'modus-vivendi t))))
-
-(add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
+(use-package ef-themes
+  :ensure t
+  :config
+  (ef-themes-take-over-modus-themes-mode)
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil
+        modus-themes-mixed-fonts t
+        modus-themes-variable-pitch-ui nil
+        modus-themes-disable-other-themes t
+        modus-themes-headings
+        '((0 . ("Kalam" light 2.0))
+          (1 . (1.5))
+          (2 . (semibold 1.2))
+          (t . (rainbow)))) ; style for all other headings
+  (modus-themes-load-theme 'ef-owl))
 
 (setq my-font-s "IosevkaTerm Nerd Font Mono")
 (add-to-list 'default-frame-alist '(font . "IosevkaTerm Nerd Font Mono-16"))
 
 (set-face-attribute 'default nil :font my-font-s :weight 'light :height 160)
 (set-face-attribute 'fixed-pitch nil :font my-font-s :weight 'light :height 160)
-(set-face-attribute 'variable-pitch nil :font "Iosevka Etoile" :weight 'light :height 160)
+(set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :weight 'light :height 170)
 
 (setq-default line-spacing .2)
 

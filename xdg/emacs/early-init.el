@@ -17,6 +17,9 @@
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 (setq default-frame-alist '((fullscreen . maximized)
+                            (background-color . "#263238")
+                            (foreground-color . "white")
+                            (ns-appearance . dark)
                             (ns-transparent-titlebar . t)))
 
 ;; Option key is super.  Command key is meta.
