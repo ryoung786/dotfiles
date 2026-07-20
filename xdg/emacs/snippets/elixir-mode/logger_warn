@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: Logger.warn
-# key: lwarn
-# --
-Logger.warn("[xxx] $1 #{inspect($0)}")
