@@ -591,6 +591,15 @@ on every call."
 
 (modus-themes-load-theme 'modus-operandi-tinted)
 
+(defun my/apply-theme (appearance)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (mapc #'disable-theme custom-enabled-themes)
+  (pcase appearance
+    ('light (load-theme 'modus-operandi-tinted t))
+    ('dark (load-theme 'modus-vivendi t))))
+
+(add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
+
 (setq my-font-s "IosevkaTerm Nerd Font Mono")
 (add-to-list 'default-frame-alist '(font . "IosevkaTerm Nerd Font Mono-16"))
 
