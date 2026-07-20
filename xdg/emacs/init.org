@@ -33,7 +33,7 @@ The early init config should be extremely fast and tiny, with only absolutely ne
     (setq ns-pop-up-frames nil))
 
   ;; test
-  (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/15:/opt/homebrew/lib/gcc/16/gcc/aarch64-apple-darwin24/15")
+  (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/16:/opt/homebrew/lib/gcc/16/gcc/aarch64-apple-darwin24/15")
 #+end_src
 
 * General Emacs behaviour
