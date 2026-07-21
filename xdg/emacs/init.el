@@ -2,22 +2,12 @@
 
 ;;; Packages and general basic config
 
-(use-package ry/package-config
-  :ensure nil
-  :no-require t
-  :custom (use-package-always-ensure 't)
-  :init
-  (require 'package)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  (package-initialize))
-
 (use-package minions
-  :custom
-  (minions-prominent-modes '(flymake-mode eglot--managed-mode))
+  :ensure t
+  :custom (minions-prominent-modes '(flymake-mode eglot--managed-mode))
   :config (minions-mode 1))
 
 (use-package ry/basic-emacs-config
-  :ensure nil
   :no-require t
   :bind  ("M-o" . browse-url)
   :custom
@@ -37,22 +27,17 @@
   (load custom-file 'noerror)
   (put 'dired-find-alternate-file 'disabled nil))
 
-(use-package nerd-icons-dired :hook dired-mode)
+(use-package nerd-icons-dired
+  :ensure t
+  :hook dired-mode)
 
 
 
 
 ;;; Programming config: language modes
 
-;;;; Flymake
-(use-package flymake
-  :custom
-  (flymake-mode-line-lighter "")
 
-  :bind
-  (:map flymake-mode-map
-        ("C-c C-n" . flymake-goto-next-error)
-	      ("C-c C-p" . flymake-goto-prev-error)))
+
 
 ;;;; Project management
 (use-package project
@@ -70,17 +55,20 @@
 
 
 
-;;;; Org mode config
+;;;; Org and Markdown
 
 (use-package org
-  :ensure nil
   :hook
   (org-mode . variable-pitch-mode)
   (org-mode . visual-line-mode)
-  (org-mode . olivetti-mode)
 
-  :custom (org-hide-emphasis-markers t)
-  :bind ("C-c c" . org-capture)
+  :custom
+  (org-hide-emphasis-markers t)
+  (org-agenda-files '("~/org/notes/"))
+
+  :bind
+  ("C-c c" . org-capture)
+  ("C-c a" . org-agenda)
 
   :init
   (setq org-capture-templates
@@ -103,11 +91,15 @@
     (add-to-list 'org-structure-template-alist item)))
 
 (use-package org-modern
+  :ensure t
   :after org
   :config (global-org-modern-mode)
-  :custom (org-modern-star 'replace))
+  :custom
+  (org-modern-star 'replace)
+  (org-modern-block-fringe nil))
 
 (use-package org-appear
+  :ensure t
   :hook (org-mode . org-appear-mode)
   :config
   (setq org-appear-autosubmarkers t
@@ -115,49 +107,51 @@
         org-appear-autolinks t
         org-appear-inside-latex t))
 
-(use-package org-agenda
-  :ensure nil
-  :no-require t
-  :custom (org-agenda-files '("~/org/notes/"))
-  :bind ("C-c a" . org-agenda))
+
 
 (use-package markdown-ts-mode
-  :custom
-  (markdown-fontify-code-blocks-natively t)
   :hook
-  (markdown-ts-mode . olivetti-mode)
   (markdown-ts-mode . variable-pitch-mode))
 
-(use-package eldoc
-  :custom (help-window-select t))
-
 (use-package olivetti
-  :custom (olivetti-body-width 105))
+  :ensure t
+  :custom (olivetti-body-width 105)
+  :hook
+  (org-mode . olivetti-mode)
+  (markdown-ts-mode . olivetti-mode))
 
 (use-package outline
-  :ensure nil
   :custom (outline-minor-mode-cycle t)
   :hook
   (prog-mode . outline-minor-mode)
   (emacs-lisp-mode . (lambda () (outline-hide-sublevels 1))))
 
+
+;;;; Prog-mode
+
 (use-package prog-mode
-  :ensure nil
   :custom (compilation-scroll-output t)
   :hook
   (prog-mode . display-line-numbers-mode)
   (prog-mode . (lambda () (indent-tabs-mode -1))))
 
+(use-package flymake
+  :custom
+  (flymake-mode-line-lighter "")
+
+  :bind
+  (:map flymake-mode-map
+        ("C-c C-n" . flymake-goto-next-error)
+	      ("C-c C-p" . flymake-goto-prev-error)))
 (use-package ry/treesitter
-  :ensure nil
   :no-require t
   :custom
   (treesit-enabled-modes t) ;; auto-replace all modes with ts variants
   (treesit-auto-install-grammar 'always)) ;; automatically install
 
-;;;; Auto formatting code files: Apheleia
 
 (use-package apheleia
+  :ensure t
   :init (apheleia-global-mode +1)
   :config
   (add-to-list 'apheleia-mode-alist '(heex-ts-mode . mix-format))
@@ -166,12 +160,15 @@
 
 ;;;; Code snippets: Yasnippet
 (use-package yasnippet
+  :ensure t
   :hook ((prog-mode . yas-minor-mode))
   :config
   (setq yas-snippet-dirs '("~/.config/emacs/private-snippets" "~/.config/emacs/snippets"))
   (yas-reload-all))
 
-(use-package yasnippet-snippets :after yasnippet)
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet)
 
 (use-package yaml-ts-mode
   :hook (yaml-ts-mode . display-line-numbers-mode))
@@ -179,7 +176,6 @@
 ;;;; Elixir
 
 (use-package ry/custom-iex-functions
-  :ensure nil
   :no-require t
   :init
   (defun ry/iex-send-string (str)
@@ -271,45 +267,25 @@ If no IEx session is detected, restore the previous window configuration."
   :init (add-to-list 'auto-mode-alist '("\\.[hl]?eex\\'" . heex-ts-mode)))
 
 (use-package mix
+  :ensure t
   :after elixir-ts-mode)
 
 (use-package exunit
+  :ensure t
   :after elixir-ts-mode
-  :config
-  ;; overwrite exunit's definition to prefer running tests from umbrella root
-  (defun exunit-test-for-file (file)
-    "Return the test file for FILE."
-    (replace-regexp-in-string "^\\(apps/.*/\\)?lib/\\(.*\\)\.ex$" "\\1test/\\2_test.exs" file))
-
-  (defun exunit-file-for-test (test-file)
-    "Return the file which is tested by TEST-FILE."
-    (replace-regexp-in-string "^\\(apps/.*/\\)?test/\\(.*\\)_test\.exs$" "\\1lib/\\2.ex" test-file))
-
-  (defun exunit-project-root ()
-    "Return the current project root.
-
-This value is cached in a buffer local to avoid filesytem access
-on every call."
-    (or
-     exunit-project-root
-     (let ((root (or (locate-dominating-file default-directory "apps") (locate-dominating-file default-directory "mix.exs"))))
-       (unless root
-         (error "Couldn't locate project root folder.  Make sure the current file is inside a project"))
-       (setq exunit-project-root (expand-file-name root)))))
-  :bind
-  (:map elixir-ts-mode-map
-        ("C-c , a" . exunit-verify-all)
-        ("C-c , A" . exunit-verify-all-in-umbrella)
-        ("C-c , s" . exunit-verify-single)
-        ("C-c , v" . exunit-verify)
-        ("C-c , r" . exunit-rerun)
-        ("C-c , t" . exunit-toggle-file-and-test)
-        ("s-r" . exunit-rerun)
-        ))
+  :bind  (:map elixir-ts-mode-map
+               ("C-c , a" . exunit-verify-all)
+               ("C-c , A" . exunit-verify-all-in-umbrella)
+               ("C-c , s" . exunit-verify-single)
+               ("C-c , v" . exunit-verify)
+               ("C-c , r" . exunit-rerun)
+               ("C-c , t" . exunit-toggle-file-and-test)
+               ("s-r" . exunit-rerun)))
 
 
 ;;;; HTML, JS, CSS
 (use-package web-mode
+  :ensure t
   :custom
   (web-mode-markup-indent-offset 2)
   (web-mode-css-indent-offset 2)
@@ -329,6 +305,9 @@ on every call."
 ;;;; Eglot LSP
 
 (use-package eglot
+  :custom
+  (help-window-select t) ; For eldoc documentation buffer
+  (eglot-documentation-renderer 'markdown-ts-view-mode)
   :config
   (add-to-list 'eglot-server-programs '(sql-mode . ("sqls")))
 
@@ -344,6 +323,7 @@ on every call."
   (elixir-ts-mode . eglot-ensure)
   (heex-ts-mode . eglot-ensure))
 
+
 ;;;; Version Control, Git
 
 (use-package magit
@@ -353,22 +333,19 @@ on every call."
   :bind ("s-i" . magit-blame))
 
 (use-package git-gutter
+  :ensure t
   :hook prog-mode
   :bind ("C-c s" . git-gutter:stage-hunk)
-  :config (setq git-gutter:update-interval 0.02))
+  :custom (git-gutter:update-interval 0.02))
 
 (use-package git-gutter-fringe
+  :ensure t
   :config
   (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 
-(use-package browse-at-remote
-  :bind ("C-c g g" . 'browse-at-remote))
-
-(use-package which-key
-  :ensure nil
-  :config (which-key-mode))
+(use-package which-key :config (which-key-mode))
 
 
 
@@ -376,18 +353,17 @@ on every call."
 
 ;;;; ZSH and VTerm
 (use-package ry/zsh
-  :ensure nil
   :no-require t
   :init
   (setenv "ESHELL" "/bin/zsh")
   (setenv "SHELL" "/bin/zsh"))
 
 (use-package vterm
+  :ensure t
   :commands vterm
   :custom (vterm-max-scrollback 10000)
   :hook
   (vterm-mode . (lambda () (setq term-prompt-regexp "^\\([0-9][0-9]:[0-9][0-9] \$ \\|iex([0-9]+)> \\)")))
-
 
   :config
   ;; Position the dedicated vterm buffer to be at the bottom
@@ -437,6 +413,7 @@ on every call."
 
 ;;;; Environment variables
 (use-package exec-path-from-shell
+  :ensure t
   :if (memq window-system '(mac ns))
   :config
   (setq exec-path-from-shell-variables
@@ -448,10 +425,8 @@ on every call."
   (exec-path-from-shell-initialize))
 
 (use-package mise
+  :ensure t
   :init (add-hook 'after-init-hook #'global-mise-mode))
-
-(use-package kkp :config (global-kkp-mode 1))
-
 
 
 ;;; Appearance
@@ -474,7 +449,6 @@ on every call."
 
 ;;;; Fonts
 (use-package ry/fonts
-  :ensure nil
   :no-require t
   :init
   ;; This is mainly so that org and markdown mode can use variable width
@@ -489,13 +463,13 @@ on every call."
   (setq-default line-spacing .2))
 
 (use-package default-text-scale
+  :ensure t
   :init (default-text-scale-mode 1))
 
 
 ;;; Editing, Whitespace, and Comments
 
 (use-package ry/whitespace
-  :ensure nil
   :no-require t
   :hook (before-save . delete-trailing-whitespace)
   :custom
@@ -503,7 +477,6 @@ on every call."
   (whitespace-style '(trailing space-before-tab indentation empty space-after-tab))) ;; only show bad whitespace
 
 (use-package ry/swap-windows
-  :ensure nil
   :no-require t
   :init
   (defun swap-windows ()
@@ -532,7 +505,6 @@ on every call."
    ("C-x i" . other-window-backwards)))
 
 (use-package ry/line-dwim
-  :ensure nil
   :no-require t
   :init
   (defun comment-dwim-line (&optional arg)
@@ -572,7 +544,6 @@ on every call."
          ("\M-;" . comment-dwim-line)))
 
 (use-package ry/scrolling
-  :ensure nil
   :no-require t
   :init
   (pixel-scroll-precision-mode)
@@ -600,6 +571,7 @@ on every call."
    ("C-M-<down>" . scroll-other-window-up-one)))
 
 (use-package hungry-delete
+  :ensure t
   :config (setq global-hungry-delete-mode t)
   :bind (("C-]" . hungry-delete-backward)
          ("C-\\" . hungry-delete-forward)))
@@ -610,6 +582,7 @@ on every call."
 (setq completion-cycle-threshold 3) ; TAB cycle if there are only few candidates
 
 (use-package vertico
+  :ensure t
   :init
   (vertico-mode)
 
@@ -621,15 +594,19 @@ on every call."
   ;; Enable recursive minibuffers
   (setq enable-recursive-minibuffers t))
 
-(use-package savehist :init (savehist-mode))
+(use-package savehist
+  :ensure t
+  :init (savehist-mode))
 
 (use-package orderless
+  :ensure t
   :init
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package marginalia
+  :ensure t
   ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
   ;; available in the *Completions* buffer, add it to the
   ;; `completion-list-mode-map'.
@@ -639,29 +616,30 @@ on every call."
   )
 
 (use-package nerd-icons-completion
+  :ensure t
   :after marginalia
   :config
   (nerd-icons-completion-mode)
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
 (use-package corfu
-  :custom
-  (corfu-auto t)  ;; Enable auto completion
-  :bind
-  (:map corfu-map ("s-SPC" . corfu-insert-separator))
+  :ensure t
+  :custom (corfu-auto t)  ;; Enable auto completion
+  :bind (:map corfu-map ("s-SPC" . corfu-insert-separator))
   :init
   (global-corfu-mode)
   (corfu-history-mode t)
   (add-to-list 'savehist-additional-variables 'corfu-history))
 
 (use-package corfu-popupinfo
-  :ensure nil ; this module is an extension within corfu, not its own package
+  ;; this module is an extension within corfu, not its own package
   :after corfu
   :hook corfu-mode
   :custom (corfu-popupinfo-delay 0)
   :config (corfu-popupinfo-mode))
 
 (use-package kind-icon
+  :ensure t
   :after corfu
   :custom
   (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
@@ -669,6 +647,7 @@ on every call."
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 (use-package cape
+  :ensure t
   :after (corfu eglot)
   :config
   ;; If eglot has no suggestions, then by default it stops.  Instead
@@ -682,6 +661,7 @@ on every call."
                            completion-at-point-functions))))
 
 (use-package consult
+  :ensure t
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-x bindings in `ctl-x-map'
          ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
@@ -747,8 +727,8 @@ on every call."
                  (window-parameters (mode-line-format . none)))))
 
 (use-package embark-consult
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+  :ensure t
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 
 ;;; AI and LLMs

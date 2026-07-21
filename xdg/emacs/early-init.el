@@ -29,6 +29,11 @@
   (setq mac-option-modifier 'super) ; make opt key do Super
   (setq ns-pop-up-frames nil))
 
+;;; Package archives (gnu, melpa)
+(setq package-archives
+      '(("gnu" . "http://elpa.gnu.org/packages/")
+        ("melpa" . "http://melpa.org/packages/")))
+
 ;;; LIBRARY_PATH env variable
 ;; Not really sure if this is needed, but it's set to gcc v16 now
 (setenv "LIBRARY_PATH" "/opt/homebrew/lib/gcc/16:/opt/homebrew/lib/gcc/16/gcc/aarch64-apple-darwin24/16")
