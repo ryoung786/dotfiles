@@ -45,13 +45,10 @@
   (project-prompter 'project-prompt-project-name)
   :config
   (add-to-list 'project-switch-commands
-               '(magit-project-status "Magit") 'append)
-  (add-to-list 'project-switch-commands
                '(ry/toggle-project-vterm "VTerm") 'append)
   :bind
   (:map project-prefix-map
-        ("m" . magit-project-status)
-        ("v" . ry/toggle-project-vterm)))
+        ("t" . ry/toggle-project-vterm)))
 
 
 
@@ -334,7 +331,7 @@ If no IEx session is detected, restore the previous window configuration."
 
 (use-package git-gutter
   :ensure t
-  :hook prog-mode
+  :hook (prog-mode . git-gutter-mode)
   :bind ("C-c s" . git-gutter:stage-hunk)
   :custom (git-gutter:update-interval 0.02))
 
@@ -426,7 +423,7 @@ If no IEx session is detected, restore the previous window configuration."
 
 (use-package mise
   :ensure t
-  :init (add-hook 'after-init-hook #'global-mise-mode))
+  :hook (after-init . global-mise-mode))
 
 
 ;;; Appearance
@@ -612,8 +609,7 @@ If no IEx session is detected, restore the previous window configuration."
   ;; `completion-list-mode-map'.
   :bind (:map minibuffer-local-map ("M-A" . marginalia-cycle))
   :custom (marginalia-align 'right)
-  :init (marginalia-mode t)
-  )
+  :init (marginalia-mode t))
 
 (use-package nerd-icons-completion
   :ensure t
