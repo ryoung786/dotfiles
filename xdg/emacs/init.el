@@ -477,6 +477,8 @@ on every call."
   :ensure nil
   :no-require t
   :init
+  ;; This is mainly so that org and markdown mode can use variable width
+  ;; fonts for prose and fixed width fonts for code blocks.
   (setq my-font-s "IosevkaTerm Nerd Font Mono")
   (add-to-list 'default-frame-alist '(font . "IosevkaTerm Nerd Font Mono-16"))
 
