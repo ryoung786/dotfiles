@@ -121,7 +121,8 @@
   :custom (outline-minor-mode-cycle t)
   :hook
   (prog-mode . outline-minor-mode)
-  (emacs-lisp-mode . (lambda () (outline-hide-sublevels 1))))
+  (emacs-lisp-mode . (lambda () (outline-hide-sublevels 1)))
+  :bind (:map outline-minor-mode-map ("<f8>" . outline-cycle-buffer)))
 
 
 ;;;; Prog-mode
@@ -251,7 +252,6 @@ If no IEx session is detected, restore the previous window configuration."
 (use-package elixir-ts-mode
   :hook
   (compilation-filter . ansi-color-compilation-filter)
-  (elixir-ts-mode . (lambda () (outline-hide-sublevels 2)))
   (elixir-ts-mode . mix-minor-mode)
   (elixir-ts-mode . exunit-mode)
   (elixir-ts-mode . subword-mode))
