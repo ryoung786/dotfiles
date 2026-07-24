@@ -303,7 +303,6 @@ If no IEx session is detected, restore the previous window configuration."
 
 (use-package eglot
   :custom
-  (help-window-select t) ; For eldoc documentation buffer
   (eglot-documentation-renderer 'markdown-ts-view-mode)
   :config
   (add-to-list 'eglot-server-programs '(sql-mode . ("sqls")))
@@ -312,6 +311,8 @@ If no IEx session is detected, restore the previous window configuration."
                `((elixir-ts-mode heex-ts-mode) .
                  ,(eglot-alternatives '(("dexter" "lsp")
                                         ("expert" "--stdio")))))
+  :bind
+  (:map eglot-mode-map ("<f9>" . eglot-code-actions))
   :hook
   (typescript-ts-mode . eglot-ensure)
   (tsx-ts-mode . eglot-ensure)
@@ -538,7 +539,7 @@ If no IEx session is detected, restore the previous window configuration."
 
   :bind (("C-a" . beginning-of-line-dwim)
          ("C-e" . end-of-line-dwim)
-         ("\M-;" . comment-dwim-line)))
+         ("M-;" . comment-dwim-line)))
 
 (use-package ry/scrolling
   :no-require t
