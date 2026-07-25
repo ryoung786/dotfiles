@@ -305,6 +305,7 @@ If no IEx session is detected, restore the previous window configuration."
   :custom
   (eglot-documentation-renderer 'markdown-ts-view-mode)
   :config
+  (fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
   (add-to-list 'eglot-server-programs '(sql-mode . ("sqls")))
 
   (add-to-list 'eglot-server-programs
