@@ -7,6 +7,7 @@
   :custom (minions-prominent-modes '(flymake-mode eglot--managed-mode))
   :config (minions-mode 1))
 
+
 (use-package ry/basic-emacs-config
   :no-require t
   :bind  ("M-o" . browse-url)
@@ -27,19 +28,16 @@
   (load custom-file 'noerror)
   (put 'dired-find-alternate-file 'disabled nil))
 
+
 (use-package nerd-icons-dired
   :ensure t
   :hook dired-mode)
 
 
-
-
 ;;; Programming config: language modes
 
-
-
-
 ;;;; Project management
+
 (use-package project
   :custom
   (project-prompter 'project-prompt-project-name)
@@ -49,7 +47,6 @@
   :bind
   (:map project-prefix-map
         ("t" . ry/toggle-project-vterm)))
-
 
 
 ;;;; Org and Markdown
@@ -75,7 +72,6 @@
 
   :config
   (make-directory "~/org/notes/" :parents)
-
   (dolist (item '(("sh" . "src sh")
                   ("bsh" . "src bash")
                   ("em" . "src emacs-lisp")
@@ -87,6 +83,7 @@
                   ("json" . "src json")))
     (add-to-list 'org-structure-template-alist item)))
 
+
 (use-package org-modern
   :ensure t
   :after org
@@ -94,6 +91,7 @@
   :custom
   (org-modern-star 'replace)
   (org-modern-block-fringe nil))
+
 
 (use-package org-appear
   :ensure t
@@ -105,10 +103,10 @@
         org-appear-inside-latex t))
 
 
-
 (use-package markdown-ts-mode
   :hook
   (markdown-ts-mode . variable-pitch-mode))
+
 
 (use-package olivetti
   :ensure t
@@ -117,13 +115,21 @@
   (org-mode . olivetti-mode)
   (markdown-ts-mode . olivetti-mode))
 
+
 (use-package outline
   :custom (outline-minor-mode-cycle t)
   :hook
   (prog-mode . outline-minor-mode)
   (emacs-lisp-mode . (lambda () (outline-hide-sublevels 1)))
-  :bind (:map outline-minor-mode-map ("<f8>" . outline-cycle-buffer)))
+  :bind (:map outline-minor-mode-map
+              ("C-c C-n" . outline-next-visible-heading)
+              ("C-c C-p" . outline-previous-visible-heading)
+              ("<f8>" . outline-cycle-buffer)))
 
+(use-package outline-minor-faces
+  :ensure t
+  :after outline
+  :config (add-hook 'outline-minor-mode-hook #'outline-minor-faces-mode))
 
 ;;;; Prog-mode
 
@@ -133,6 +139,7 @@
   (prog-mode . display-line-numbers-mode)
   (prog-mode . (lambda () (indent-tabs-mode -1))))
 
+
 (use-package flymake
   :custom
   (flymake-mode-line-lighter "")
@@ -141,6 +148,8 @@
   (:map flymake-mode-map
         ("C-c C-n" . flymake-goto-next-error)
 	      ("C-c C-p" . flymake-goto-prev-error)))
+
+
 (use-package ry/treesitter
   :no-require t
   :custom
@@ -156,7 +165,9 @@
   (dolist (mode '(js-ts-mode jsx-ts-mode typescript-ts-mode tsx-ts-mode css-ts-mode css-mode graphql-mode html-mode html-ts-mode js3-mode json-mode json-ts-mode js-json-mode js-mode js-ts-mode scss-mode typescript-mode web-mode yaml-mode yaml-ts-mode markdown-ts-mode markdown-mode toml-ts-mode))
     (setf (alist-get mode apheleia-mode-alist) 'oxfmt)))
 
+
 ;;;; Code snippets: Yasnippet
+
 (use-package yasnippet
   :ensure t
   :hook ((prog-mode . yas-minor-mode))
@@ -164,12 +175,15 @@
   (setq yas-snippet-dirs '("~/.config/emacs/private-snippets" "~/.config/emacs/snippets"))
   (yas-reload-all))
 
+
 (use-package yasnippet-snippets
   :ensure t
   :after yasnippet)
 
+
 (use-package yaml-ts-mode
   :hook (yaml-ts-mode . display-line-numbers-mode))
+
 
 ;;;; Elixir
 
@@ -249,12 +263,14 @@ If no IEx session is detected, restore the previous window configuration."
       (ry/iex-send-string command)))
   )
 
+
 (use-package elixir-ts-mode
   :hook
   (compilation-filter . ansi-color-compilation-filter)
   (elixir-ts-mode . mix-minor-mode)
   (elixir-ts-mode . exunit-mode)
   (elixir-ts-mode . subword-mode))
+
 
 (use-package heex-ts-mode
   :hook
@@ -263,9 +279,11 @@ If no IEx session is detected, restore the previous window configuration."
   (heex-ts-mode . (lambda () (indent-tabs-mode -1)))
   :init (add-to-list 'auto-mode-alist '("\\.[hl]?eex\\'" . heex-ts-mode)))
 
+
 (use-package mix
   :ensure t
   :after elixir-ts-mode)
+
 
 (use-package exunit
   :ensure t
@@ -281,6 +299,7 @@ If no IEx session is detected, restore the previous window configuration."
 
 
 ;;;; HTML, JS, CSS
+
 (use-package web-mode
   :ensure t
   :custom
@@ -331,11 +350,13 @@ If no IEx session is detected, restore the previous window configuration."
   :config (global-set-key (kbd "C-x g") 'magit-status)
   :bind ("s-i" . magit-blame))
 
+
 (use-package git-gutter
   :ensure t
   :hook (prog-mode . git-gutter-mode)
   :bind ("C-c s" . git-gutter:stage-hunk)
   :custom (git-gutter:update-interval 0.02))
+
 
 (use-package git-gutter-fringe
   :ensure t
@@ -344,18 +365,20 @@ If no IEx session is detected, restore the previous window configuration."
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 
-(use-package which-key :config (which-key-mode))
 
+(use-package which-key :config (which-key-mode))
 
 
 ;;; Shells and environment variable config
 
 ;;;; ZSH and VTerm
+
 (use-package ry/zsh
   :no-require t
   :init
   (setenv "ESHELL" "/bin/zsh")
   (setenv "SHELL" "/bin/zsh"))
+
 
 (use-package vterm
   :ensure t
@@ -410,7 +433,9 @@ If no IEx session is detected, restore the previous window configuration."
   (("C-M-8" . ry/toggle-project-vterm)
    ("C-M-9" . ry/toggle-dedicated-vterm)))
 
+
 ;;;; Environment variables
+
 (use-package exec-path-from-shell
   :ensure t
   :if (memq window-system '(mac ns))
@@ -423,13 +448,16 @@ If no IEx session is detected, restore the previous window configuration."
   (setq exec-path-from-shell-arguments nil)
   (exec-path-from-shell-initialize))
 
+
 (use-package mise
   :ensure t
   :hook (after-init . global-mise-mode))
 
 
 ;;; Appearance
+
 ;;;; Themes
+
 (use-package ef-themes
   :ensure t
   :config
@@ -446,7 +474,9 @@ If no IEx session is detected, restore the previous window configuration."
           (t . (rainbow)))) ; style for all other headings
   (modus-themes-load-theme 'ef-owl))
 
+
 ;;;; Fonts
+
 (use-package ry/fonts
   :no-require t
   :init
@@ -461,6 +491,7 @@ If no IEx session is detected, restore the previous window configuration."
 
   (setq-default line-spacing .2))
 
+
 (use-package default-text-scale
   :ensure t
   :init (default-text-scale-mode 1))
@@ -474,6 +505,7 @@ If no IEx session is detected, restore the previous window configuration."
   :custom
   (whitespace-action '(auto-cleanup)) ;; automatically clean up bad whitespace
   (whitespace-style '(trailing space-before-tab indentation empty space-after-tab))) ;; only show bad whitespace
+
 
 (use-package ry/swap-windows
   :no-require t
@@ -502,6 +534,7 @@ If no IEx session is detected, restore the previous window configuration."
   :bind
   (("C-o" . swap-windows)
    ("C-x i" . other-window-backwards)))
+
 
 (use-package ry/line-dwim
   :no-require t
@@ -542,6 +575,7 @@ If no IEx session is detected, restore the previous window configuration."
          ("C-e" . end-of-line-dwim)
          ("M-;" . comment-dwim-line)))
 
+
 (use-package ry/scrolling
   :no-require t
   :init
@@ -569,6 +603,7 @@ If no IEx session is detected, restore the previous window configuration."
    ("C-M-<up>" . scroll-other-window-down-one)
    ("C-M-<down>" . scroll-other-window-up-one)))
 
+
 (use-package hungry-delete
   :ensure t
   :config (setq global-hungry-delete-mode t)
@@ -579,6 +614,7 @@ If no IEx session is detected, restore the previous window configuration."
 ;;; Completion, vertico etc
 
 (setq completion-cycle-threshold 3) ; TAB cycle if there are only few candidates
+
 
 (use-package vertico
   :ensure t
@@ -593,9 +629,11 @@ If no IEx session is detected, restore the previous window configuration."
   ;; Enable recursive minibuffers
   (setq enable-recursive-minibuffers t))
 
+
 (use-package savehist
   :ensure t
   :init (savehist-mode))
+
 
 (use-package orderless
   :ensure t
@@ -603,6 +641,7 @@ If no IEx session is detected, restore the previous window configuration."
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
+
 
 (use-package marginalia
   :ensure t
@@ -613,12 +652,14 @@ If no IEx session is detected, restore the previous window configuration."
   :custom (marginalia-align 'right)
   :init (marginalia-mode t))
 
+
 (use-package nerd-icons-completion
   :ensure t
   :after marginalia
   :config
   (nerd-icons-completion-mode)
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
 
 (use-package corfu
   :ensure t
@@ -629,12 +670,14 @@ If no IEx session is detected, restore the previous window configuration."
   (corfu-history-mode t)
   (add-to-list 'savehist-additional-variables 'corfu-history))
 
+
 (use-package corfu-popupinfo
   ;; this module is an extension within corfu, not its own package
   :after corfu
   :hook corfu-mode
   :custom (corfu-popupinfo-delay 0)
   :config (corfu-popupinfo-mode))
+
 
 (use-package kind-icon
   :ensure t
@@ -643,6 +686,7 @@ If no IEx session is detected, restore the previous window configuration."
   (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
 
 (use-package cape
   :ensure t
@@ -657,6 +701,7 @@ If no IEx session is detected, restore the previous window configuration."
   (html-mode . (lambda () (delete
                            'ispell-completion-at-point
                            completion-at-point-functions))))
+
 
 (use-package consult
   :ensure t
@@ -705,6 +750,7 @@ If no IEx session is detected, restore the previous window configuration."
   (setq consult-narrow-key "<") ;; "C-+"
   )
 
+
 (use-package embark
   :ensure t
 
@@ -724,6 +770,7 @@ If no IEx session is detected, restore the previous window configuration."
                  nil
                  (window-parameters (mode-line-format . none)))))
 
+
 (use-package embark-consult
   :ensure t
   :hook (embark-collect-mode . consult-preview-at-point-mode))
@@ -738,7 +785,6 @@ If no IEx session is detected, restore the previous window configuration."
          ("RET" . newline)
          ("C-c C-c" . shell-maker-submit)
          ("C-c C-k" . agent-shell-interrupt)))
-
 
 
 ;;; PRIVATE emacs config
