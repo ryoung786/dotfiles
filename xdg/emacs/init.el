@@ -104,8 +104,7 @@
 
 
 (use-package markdown-ts-mode
-  :hook
-  (markdown-ts-mode . variable-pitch-mode))
+  :hook (markdown-ts-mode . variable-pitch-mode))
 
 
 (use-package olivetti
@@ -117,7 +116,9 @@
 
 
 (use-package outline
-  :custom (outline-minor-mode-cycle t)
+  :custom
+  (outline-minor-mode-cycle t)
+  (outline-blank-line t)
   :hook
   (prog-mode . outline-minor-mode)
   (emacs-lisp-mode . (lambda () (outline-hide-sublevels 1)))
