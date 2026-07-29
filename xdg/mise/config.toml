@@ -11,6 +11,7 @@ sqlite = "3.44.1"
 "github:remoteoss/dexter" = "latest"
 oxfmt = "latest"
 oxlint = "latest"
+python = "3.14.4"
 
 [env]
 MISE_ENV_FILE = '.env'
