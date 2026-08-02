@@ -10,7 +10,7 @@ fi
 # # for GPG signing of git commits
 export GPG_TTY=$(tty)
 
-export PATH="$HOME/.local/bin:/Applications/Postgres.app/Contents/Versions/latest/bin:/$HOMEBREW_PREFIX/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
+export PATH="$HOME/.local/bin:/Applications/Postgres.app/Contents/Versions/latest/bin:$HOMEBREW_PREFIX/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
 
 F=~/.zshenv_private
 test -f $F && source $F
