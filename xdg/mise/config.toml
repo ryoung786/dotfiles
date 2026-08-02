@@ -21,17 +21,16 @@ python = "3.14.4"
 
 # general usage applications
 bat = "latest"
-gh = "latest"
 jq = "latest"
 ripgrep = "latest"
 
 [env]
 MISE_ENV_FILE = '.env'
 
-EDITOR='emacs -nw -Q'
+EDITOR = 'emacs -nw -Q'
 
-ERL_AFLAGS="-kernel shell_history enabled"
-BAT_THEME="ansi"
+ERL_AFLAGS = "-kernel shell_history enabled"
+BAT_THEME = "ansi"
 
 [settings]
 experimental = true

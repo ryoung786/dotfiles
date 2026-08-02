@@ -14,8 +14,5 @@ unsetopt share_history
 
 alias -g tree='tree -C'
 
-# export ERL_AFLAGS="-kernel shell_history enabled"
-# export BAT_THEME="ansi"
-
 F=~/.zsh_private
 test -f $F && source $F
