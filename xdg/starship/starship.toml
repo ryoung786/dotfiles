@@ -39,9 +39,7 @@ format = "[$time]($style) "
 
 [aws]
 disabled = true
-format = 'on [$symbol($profile )(\($region\) )]($style)'
-style = 'bold blue'
-symbol = '🅰 '
+
 [aws.region_aliases]
 ap-southeast-2 = 'au'
 us-east-1 = 'va'
