@@ -30,23 +30,15 @@ flycheck_*.el
 .apheleia/
 .agent-shell
 
-# elixir LS
 .elixir_ls/
-/.elixir_ls/
-*.beam
 
 *-emacs-elixir-format*
-.adserver.secrets
 
 /.elixir-tools/
 .lexical
 .expert
 .mix_tasks
 *.beam
-
-# scala lsp
-.bloop
-.metals
 
 yarn.lock
 node_modules/
@@ -59,6 +51,5 @@ node_modules/
 restclient_playground/
 config_private
 
-.agent-shell
 .mise.local.toml
 **/.claude/settings.local.json
