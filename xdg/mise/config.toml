@@ -1,20 +1,36 @@
 [tools]
+# beam
 elixir = "1.20.2-otp-29"
 erlang = "29.0.3"
-node = "24.8.0"
-"npm:@postgrestools/postgrestools" = "latest"
-"npm:@google/gemini-cli" = "latest"
-"npm:prettier" = "latest"
-sqlite = "3.44.1"
-"github:sqls-server/sqls" = "latest"
 "github:elixir-lang/expert" = "latest"
 "github:remoteoss/dexter" = "latest"
+
+# javascript
+node = "24.8.0"
+"npm:prettier" = "latest"
 oxfmt = "latest"
 oxlint = "latest"
+
+# databases
+sqlite = "3.44.1"
+"npm:@postgrestools/postgrestools" = "latest"
+"github:sqls-server/sqls" = "latest"
+
+# python for some reason
 python = "3.14.4"
+
+# general usage applications
+bat = "latest"
+jq = "latest"
+ripgrep = "latest"
 
 [env]
 MISE_ENV_FILE = '.env'
+
+EDITOR = 'emacs -nw -Q'
+
+ERL_AFLAGS = "-kernel shell_history enabled"
+BAT_THEME = "ansi"
 
 [settings]
 experimental = true
