@@ -12,7 +12,7 @@ eval "$(~/.local/bin/mise activate zsh)"
 unsetopt inc_append_history
 unsetopt share_history
 
-alias -g tree='tree -C'
+alias tree='tree -C'
 
 F=~/.zsh_private
 test -f $F && source $F
