@@ -40,12 +40,6 @@ format = "[$time]($style) "
 [aws]
 disabled = true
 
-[aws.region_aliases]
-ap-southeast-2 = 'au'
-us-east-1 = 'va'
-[aws.profile_aliases]
-CompanyGroupFrobozzOnCallAccess = 'Frobozz'
-
 [git_status]
 staged = "[+](green)"
 renamed = "[»](green)"
