@@ -168,6 +168,15 @@
     (setf (alist-get mode apheleia-mode-alist) 'oxfmt)))
 
 
+(use-package smerge
+  :bind
+  (:map smerge-mode-map
+        ("C-c <up>" . smerge-keep-upper)
+        ("C-c <down>" . smerge-keep-lower)
+        ("C-c <right>" . smerge-next)
+        ("C-c <left>" . smerge-prev)))
+
+
 ;;;; Code snippets: Yasnippet
 
 (use-package yasnippet
