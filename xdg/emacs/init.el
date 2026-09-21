@@ -163,6 +163,12 @@
   :ensure t
   :init (apheleia-global-mode +1)
   :config
+  (defun ry/oxfmt-locate-config ()
+    "Locate config for oxfmt, falling back to .prettierrc.json."
+    (unless (locate-dominating-file default-directory ".oxfmtrc.json")
+      (apheleia-formatters-locate-file "--config" ".prettierrc.json")))
+  (setf (alist-get 'oxfmt apheleia-formatters)
+        '("apheleia-npx" "oxfmt" (ry/oxfmt-locate-config) inplace))
   (add-to-list 'apheleia-mode-alist '(heex-ts-mode . mix-format))
   (dolist (mode '(js-ts-mode jsx-ts-mode typescript-ts-mode tsx-ts-mode css-ts-mode css-mode graphql-mode html-mode html-ts-mode js3-mode json-mode json-ts-mode js-json-mode js-mode js-ts-mode scss-mode typescript-mode web-mode yaml-mode yaml-ts-mode markdown-ts-mode markdown-mode toml-ts-mode))
     (setf (alist-get mode apheleia-mode-alist) 'oxfmt)))
