@@ -14,6 +14,7 @@ unsetopt inc_append_history
 unsetopt share_history
 
 alias tree='tree -C'
+alias ldiff='git diff HEAD ~HEAD'
 
 F=~/.zsh_private
 test -f $F && source $F
