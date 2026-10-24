@@ -9,7 +9,7 @@ erlang = "29.0.3"
 node = "24.8.0"
 "npm:prettier" = "latest"
 oxfmt = "latest"
-oxlint = "latest"
+"npm:oxlint" = "latest"
 
 # databases
 sqlite = "3.44.1"
